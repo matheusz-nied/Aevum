@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:timing/core/constants/app_colors.dart';
 import 'package:timing/core/services/haptic_service.dart';
+import 'package:timing/core/widgets/glass_container.dart';
 import 'package:timing/features/tasks/domain/task_model.dart';
 
+/// Card de hábito com efeito "vidro" — calmo, escuro e minimalista.
 class TaskCard extends StatelessWidget {
   final TaskModel task;
   final bool isCompletedToday;
@@ -21,33 +23,12 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final accentColor = task.color;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      decoration: BoxDecoration(
-        color: isDark ? AppColors.darkSurfaceCard : Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isCompletedToday
-              ? accentColor.withValues(alpha: 0.5)
-              : (isDark
-                  ? Colors.white.withValues(alpha: 0.06)
-                  : Colors.black.withValues(alpha: 0.05)),
-          width: isCompletedToday ? 1.5 : 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
+      child: GlassContainer(
+        borderRadius: 20,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(20),
@@ -55,15 +36,20 @@ class TaskCard extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                // Icon Avatar with Accent Background
+                // Ícone da tarefa em orb de vidro
                 Container(
-                  width: 50,
-                  height: 50,
+                  width: 52,
+                  height: 52,
                   decoration: BoxDecoration(
-                    color: accentColor.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(16),
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        accentColor.withValues(alpha: 0.35),
+                        accentColor.withValues(alpha: 0.05),
+                      ],
+                    ),
                     border: Border.all(
-                      color: accentColor.withValues(alpha: 0.3),
+                      color: accentColor.withValues(alpha: 0.4),
                       width: 1,
                     ),
                   ),
@@ -71,13 +57,13 @@ class TaskCard extends StatelessWidget {
                     child: Icon(
                       task.iconData,
                       color: accentColor,
-                      size: 26,
+                      size: 24,
                     ),
                   ),
                 ),
                 const SizedBox(width: 14),
 
-                // Title & Details
+                // Título e metadados
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,62 +75,66 @@ class TaskCard extends StatelessWidget {
                               task.title,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: isDark ? Colors.white : Colors.black87,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textWhite,
+                                letterSpacing: -0.2,
                               ),
                             ),
                           ),
-                          if (isCompletedToday) ...[
-                            const SizedBox(width: 6),
-                            const Icon(
-                              Icons.check_circle_rounded,
-                              color: AppColors.sacredTeal,
-                              size: 16,
+                          if (isCompletedToday)
+                            Padding(
+                              padding: const EdgeInsets.only(left: 6),
+                              child: Icon(
+                                Icons.check_rounded,
+                                color: AppColors.softGlowEmerald,
+                                size: 16,
+                              ),
                             ),
-                          ],
                         ],
                       ),
                       const SizedBox(height: 6),
-
-                      // Duration and Visual Mode Badges
                       Row(
                         children: [
+                          // Badge suave: duração
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: isDark
-                                  ? const Color(0xFF1E232B)
-                                  : const Color(0xFFF1F3F6),
+                              color: Colors.white.withValues(alpha: 0.07),
                               borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.08),
+                              ),
                             ),
                             child: Text(
                               '${task.targetMinutes} min',
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? Colors.white70 : Colors.black87,
+                                color: AppColors.textWhite
+                                    .withValues(alpha: 0.8),
                               ),
                             ),
                           ),
                           const SizedBox(width: 8),
+                          // Visual mode
                           Row(
                             children: [
                               Icon(
                                 task.defaultVisualMode.icon,
                                 size: 12,
-                                color: isDark ? AppColors.textMuted : Colors.black45,
+                                color: AppColors.textMuted,
                               ),
                               const SizedBox(width: 4),
                               Text(
                                 task.defaultVisualMode.displayName,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 11,
-                                  color: isDark ? AppColors.textMuted : Colors.black54,
+                                  color: AppColors.textMuted,
                                 ),
                               ),
                             ],
@@ -155,31 +145,43 @@ class TaskCard extends StatelessWidget {
                   ),
                 ),
 
-                // Quick Play Action Button
-                IconButton.filled(
-                  onPressed: () {
-                    HapticService.lightImpact();
-                    onTap();
-                  },
-                  style: IconButton.styleFrom(
-                    backgroundColor: accentColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.all(12),
+                // Botão de play rápido
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: accentColor.withValues(alpha: 0.35),
+                        blurRadius: 10,
+                        spreadRadius: 1,
+                      ),
+                    ],
                   ),
-                  icon: const Icon(
-                    Icons.play_arrow_rounded,
-                    size: 22,
+                  child: IconButton.filled(
+                    onPressed: () {
+                      HapticService.lightImpact();
+                      onTap();
+                    },
+                    style: IconButton.styleFrom(
+                      backgroundColor: accentColor,
+                      foregroundColor: AppColors.forestDeep,
+                      padding: const EdgeInsets.all(12),
+                    ),
+                    icon: const Icon(
+                      Icons.play_arrow_rounded,
+                      size: 22,
+                    ),
                   ),
                 ),
 
-                // More options (Edit / Delete)
+                // Menu de opções
                 PopupMenuButton<String>(
                   icon: Icon(
                     Icons.more_vert_rounded,
-                    color: isDark ? AppColors.textMuted : Colors.black45,
+                    color: AppColors.textMuted,
                     size: 20,
                   ),
-                  color: isDark ? AppColors.darkSurfaceElevated : Colors.white,
+                  color: AppColors.forestSurfaceElevated,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -202,9 +204,11 @@ class TaskCard extends StatelessWidget {
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete_outline, color: Colors.redAccent, size: 18),
+                          Icon(Icons.delete_outline,
+                              color: AppColors.warning, size: 18),
                           SizedBox(width: 10),
-                          Text('Excluir', style: TextStyle(color: Colors.redAccent)),
+                          Text('Excluir',
+                              style: TextStyle(color: AppColors.warning)),
                         ],
                       ),
                     ),

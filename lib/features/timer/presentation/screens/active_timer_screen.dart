@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timing/core/constants/app_colors.dart';
 import 'package:timing/core/services/haptic_service.dart';
+import 'package:timing/core/widgets/forest_background.dart';
 import 'package:timing/features/tasks/domain/task_model.dart';
 import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
 import 'package:timing/features/tasks/providers/task_providers.dart';
@@ -63,8 +64,6 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
   Widget build(BuildContext context) {
     final timerState = ref.watch(timerControllerProvider);
     final timerNotifier = ref.read(timerControllerProvider.notifier);
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final accentColor = widget.task.color;
 
     // Listen for timer auto-completion
@@ -75,70 +74,87 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
     });
 
     return Scaffold(
-      backgroundColor:
-          isDark ? AppColors.darkBackground : AppColors.lightBackground,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
-          onPressed: () {
-            HapticService.lightImpact();
-            timerNotifier.pause();
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Text(
-          widget.task.title,
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          // Finish session early button
-          TextButton(
-            onPressed: () {
-              HapticService.mediumImpact();
-              timerNotifier.complete();
-            },
-            child: Text(
-              'Concluir',
-              style: TextStyle(
-                color: accentColor,
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 8),
+      extendBodyBehindAppBar: true,
+      body: ForestBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              const SizedBox(height: 4),
 
-            // Mode Selector Pill (Allows switching freely)
-            Center(
-              child: TimerModeSelector(
-                currentMode: timerState.visualMode,
-                accentColor: accentColor,
-                onModeChanged: (newMode) {
-                  timerNotifier.setVisualMode(newMode);
-                },
-              ),
-            ),
-
-            const SizedBox(height: 12),
-
-            // Active View based on Selected Mode
-            Expanded(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 350),
-                child: _buildVisualModeView(
-                  timerState.visualMode,
-                  timerState,
-                  timerNotifier,
+              // App bar inline (transparente)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: 20,
+                        color: AppColors.textWhite,
+                      ),
+                      onPressed: () {
+                        HapticService.lightImpact();
+                        timerNotifier.pause();
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        widget.task.title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textWhite,
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        HapticService.mediumImpact();
+                        timerNotifier.complete();
+                      },
+                      child: Text(
+                        'Concluir',
+                        style: TextStyle(
+                          color: accentColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 8),
+
+              // Mode Selector
+              Center(
+                child: TimerModeSelector(
+                  currentMode: timerState.visualMode,
+                  accentColor: accentColor,
+                  onModeChanged: (newMode) {
+                    timerNotifier.setVisualMode(newMode);
+                  },
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Visual Mode View
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 400),
+                  child: _buildVisualModeView(
+                    timerState.visualMode,
+                    timerState,
+                    timerNotifier,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

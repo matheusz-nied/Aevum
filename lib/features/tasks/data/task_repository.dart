@@ -26,7 +26,7 @@ class TaskRepository {
           title: 'Escrita Diária',
           targetMinutes: 15,
           iconCodePoint: Icons.edit_note_rounded.codePoint,
-          colorValue: AppColors.coralNeon.toARGB32(),
+          colorValue: AppColors.emeraldMist.toARGB32(),
           defaultVisualMode: TimerVisualMode.minimalDial,
         ),
         TaskModel(
@@ -34,7 +34,7 @@ class TaskRepository {
           title: 'Meditação & Respiração',
           targetMinutes: 10,
           iconCodePoint: Icons.self_improvement_rounded.codePoint,
-          colorValue: AppColors.sacredTeal.toARGB32(),
+          colorValue: AppColors.sage.toARGB32(),
           defaultVisualMode: TimerVisualMode.sacredMandala,
         ),
         TaskModel(
@@ -42,7 +42,7 @@ class TaskRepository {
           title: 'Leitura Focada',
           targetMinutes: 20,
           iconCodePoint: Icons.menu_book_rounded.codePoint,
-          colorValue: AppColors.warmAmber.toARGB32(),
+          colorValue: AppColors.eucalyptus.toARGB32(),
           defaultVisualMode: TimerVisualMode.inspirational,
         ),
         TaskModel(
@@ -50,7 +50,7 @@ class TaskRepository {
           title: 'Foco Profundo Zen',
           targetMinutes: 25,
           iconCodePoint: Icons.spa_rounded.codePoint,
-          colorValue: AppColors.mysticPurple.toARGB32(),
+          colorValue: AppColors.mossCalm.toARGB32(),
           defaultVisualMode: TimerVisualMode.anxietyFree,
         ),
       ];

@@ -38,9 +38,8 @@ class TimingApp extends StatelessWidget {
     return MaterialApp(
       title: 'Timing',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.dark, // Padrão OLED Dark elegante
+      theme: AppTheme.darkTheme,
+      themeMode: ThemeMode.dark, // Tema "Floresta Nebulosa" fixo
       home: const HomeScreen(),
     );
   }

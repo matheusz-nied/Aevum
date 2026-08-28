@@ -1,45 +1,47 @@
 import 'package:flutter/material.dart';
 
+/// Paleta "Floresta Nebulosa" — verdes profundos, calmos e suaves.
+/// Inspirada em florestas de pinheiros com névoa matinal.
 class AppColors {
-  // Base backgrounds
-  static const Color darkBackground = Color(0xFF0D0F12);
-  static const Color darkSurface = Color(0xFF161A20);
-  static const Color darkSurfaceElevated = Color(0xFF1E232B);
-  static const Color darkSurfaceCard = Color(0xFF1A1F27);
+  // A base da floresta: quase preto com toque de verde
+  static const Color forestDeep = Color(0xFF060C0A);
+  static const Color forestMid = Color(0xFF0D1712);
+  static const Color forestSurface = Color(0xFF152019);
+  static const Color forestSurfaceElevated = Color(0xFF1B2A21);
+  static const Color forestSurfaceCard = Color(0xFF18251E);
 
-  static const Color lightBackground = Color(0xFFF7F8FA);
-  static const Color lightSurface = Color(0xFFFFFFFF);
-  static const Color lightSurfaceElevated = Color(0xFFF0F2F5);
+  // Névoa/glow de fundo (usado no ForestBackground)
+  static const Color fogGlow = Color(0xFF274535);
+  static const Color fogGlow2 = Color(0xFF182C20);
 
-  // Vibrant Accents (Inspired by references)
-  static const Color coralNeon = Color(0xFFFF5722);    // Ref 1 (Tactile Dial)
-  static const Color warmAmber = Color(0xFFFF9800);    // Ref 2 (Glowing Task theme)
-  static const Color amberGlow = Color(0xFFFFB74D);
-  static const Color sacredTeal = Color(0xFF00E5BC);   // Ref 4 (Apple Design sacred geometry)
-  static const Color zenGreen = Color(0xFF4CAF50);     // Ref 3 (Forest calm)
-  static const Color mysticPurple = Color(0xFF9C27B0); // Ref 5 (Orb inspiration)
-  static const Color electricBlue = Color(0xFF2979FF);
-  static const Color softRose = Color(0xFFE91E63);
+  // Acentos verdes calmantes
+  static const Color sage = Color(0xFF9DC5B0); // verde-sálvia suave (primário)
+  static const Color emeraldMist = Color(0xFF6FBF8E); // esmeralda médio
+  static const Color mossCalm = Color(0xFF4E8F6E); // musgo calmo
+  static const Color eucalyptus = Color(0xFF7FAE9B); // eucalipto dessaturado
+  static const Color pineDeep = Color(0xFF3A6150); // pinheiro profundo
 
-  // Preset Colors for Tasks
+  // Paleta de cores por tarefa (tons de verde calmantes)
   static const List<Color> taskColors = [
-    coralNeon,
-    warmAmber,
-    sacredTeal,
-    zenGreen,
-    electricBlue,
-    mysticPurple,
-    softRose,
+    emeraldMist,
+    sage,
+    mossCalm,
+    eucalyptus,
+    pineDeep,
   ];
 
-  // Glassmorphism overlays
-  static Color glassDark = const Color(0xFF1E232B).withValues(alpha: 0.7);
-  static Color glassBorderDark = Colors.white.withValues(alpha: 0.12);
-  static Color glassLight = Colors.white.withValues(alpha: 0.85);
-  static Color glassBorderLight = Colors.black.withValues(alpha: 0.08);
+  // Glassmorphism: overlays suaves de vidro
+  static Color glassDark = const Color(0xFF18251E).withValues(alpha: 0.55);
+  static Color glassBorderDark = Colors.white.withValues(alpha: 0.14);
+  static Color glassLightOnly = Colors.white.withValues(alpha: 0.07);
+  static Color glassHighlight = Colors.white.withValues(alpha: 0.10);
 
-  // Text Colors
-  static const Color textWhite = Color(0xFFFFFFFF);
-  static const Color textMuted = Color(0xFF8E99A8);
-  static const Color textDark = Color(0xFF191D23);
+  // Texto
+  static const Color textWhite = Color(0xFFF2F7F4); // branco esverdeado suave
+  static const Color textMuted = Color(0xFF8EA39B); // cinza-esverdeado quebrado
+
+  // Secundárias (para destaques pontuais calmos)
+  static const Color softGlowEmerald = Color(0xFF88D4A9);
+  static const Color warning =
+      Color(0xFFC98A4D); // brunâmato suave para avisos (em vez de vermelho)
 }

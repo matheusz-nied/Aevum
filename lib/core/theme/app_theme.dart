@@ -1,25 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:timing/core/constants/app_colors.dart';
 
+/// Tema "Floresta Nebulosa" — somente modo escuro, com verdes profundos
+/// calmantes e componentes premium para complementar o efeito glass.
 class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: AppColors.darkBackground,
+      scaffoldBackgroundColor: Colors.transparent,
       colorScheme: const ColorScheme.dark(
-        primary: AppColors.warmAmber,
-        secondary: AppColors.sacredTeal,
-        surface: AppColors.darkSurface,
-        surfaceContainerHigh: AppColors.darkSurfaceElevated,
+        primary: AppColors.sage,
+        secondary: AppColors.emeraldMist,
+        surface: AppColors.forestSurface,
+        surfaceContainerHigh: AppColors.forestSurfaceElevated,
         onSurface: AppColors.textWhite,
-        error: Colors.redAccent,
+        error: AppColors.warning,
       ),
       cardTheme: CardThemeData(
-        color: AppColors.darkSurfaceCard,
+        color: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(22),
           side: BorderSide(
             color: AppColors.glassBorderDark,
             width: 1,
@@ -39,12 +41,12 @@ class AppTheme {
         iconTheme: IconThemeData(color: AppColors.textWhite),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: AppColors.warmAmber,
-        foregroundColor: Colors.black,
+        backgroundColor: AppColors.sage,
+        foregroundColor: AppColors.forestDeep,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
         ),
-        elevation: 6,
+        elevation: 4,
       ),
       textTheme: const TextTheme(
         headlineLarge: TextStyle(
@@ -70,80 +72,6 @@ class AppTheme {
         ),
         bodyMedium: TextStyle(
           color: AppColors.textMuted,
-          fontSize: 13,
-        ),
-      ),
-    );
-  }
-
-  static ThemeData get lightTheme {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.light,
-      scaffoldBackgroundColor: AppColors.lightBackground,
-      colorScheme: const ColorScheme.light(
-        primary: AppColors.coralNeon,
-        secondary: AppColors.sacredTeal,
-        surface: AppColors.lightSurface,
-        surfaceContainerHigh: AppColors.lightSurfaceElevated,
-        onSurface: AppColors.textDark,
-        error: Colors.redAccent,
-      ),
-      cardTheme: CardThemeData(
-        color: AppColors.lightSurface,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-            color: AppColors.glassBorderLight,
-            width: 1,
-          ),
-        ),
-      ),
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: false,
-        titleTextStyle: TextStyle(
-          color: AppColors.textDark,
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          letterSpacing: -0.5,
-        ),
-        iconTheme: IconThemeData(color: AppColors.textDark),
-      ),
-      floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: AppColors.coralNeon,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
-        elevation: 6,
-      ),
-      textTheme: const TextTheme(
-        headlineLarge: TextStyle(
-          color: AppColors.textDark,
-          fontSize: 32,
-          fontWeight: FontWeight.w800,
-          letterSpacing: -1,
-        ),
-        headlineMedium: TextStyle(
-          color: AppColors.textDark,
-          fontSize: 24,
-          fontWeight: FontWeight.w700,
-          letterSpacing: -0.5,
-        ),
-        titleLarge: TextStyle(
-          color: AppColors.textDark,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        ),
-        bodyLarge: TextStyle(
-          color: AppColors.textDark,
-          fontSize: 15,
-        ),
-        bodyMedium: TextStyle(
-          color: Color(0xFF64748B),
           fontSize: 13,
         ),
       ),

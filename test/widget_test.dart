@@ -24,8 +24,8 @@ void main() {
     );
 
     expect(find.text('50%'), findsOneWidget);
-    expect(find.text('45 min focados hoje'), findsOneWidget);
-    expect(find.text('2 de 4 hábitos concluídos'), findsOneWidget);
+    expect(find.text('45 min'), findsOneWidget);
+    expect(find.text('2 de 4 hábitos completos'), findsOneWidget);
   });
 
   testWidgets('TaskCard renders title and duration, and responds to tap',
@@ -36,7 +36,7 @@ void main() {
       title: 'Escrita Diária',
       targetMinutes: 15,
       iconCodePoint: Icons.edit.codePoint,
-      colorValue: AppColors.coralNeon.toARGB32(),
+      colorValue: AppColors.emeraldMist.toARGB32(),
       defaultVisualMode: TimerVisualMode.minimalDial,
     );
 
@@ -72,7 +72,7 @@ void main() {
             builder: (context, setState) {
               return TimerModeSelector(
                 currentMode: selected,
-                accentColor: AppColors.sacredTeal,
+                accentColor: AppColors.emeraldMist,
                 onModeChanged: (mode) {
                   setState(() => selected = mode);
                 },

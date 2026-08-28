@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:timing/core/constants/app_colors.dart';
 import 'package:timing/core/quotes/inspiration_quotes.dart';
@@ -60,44 +61,47 @@ class _InspirationalViewState extends State<InspirationalView> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final accentColor = widget.task.color;
-
     final displayTime =
         TimeUtils.formatSeconds(widget.state.remainingSeconds);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        // Top Task Badge
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: accentColor.withValues(alpha: 0.12),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: accentColor.withValues(alpha: 0.3),
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(widget.task.iconData, size: 16, color: accentColor),
-              const SizedBox(width: 8),
-              Text(
-                widget.task.title,
-                style: TextStyle(
-                  color: isDark ? Colors.white : Colors.black87,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+        // Badge superior em vidro
+        ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: accentColor.withValues(alpha: 0.35),
                 ),
               ),
-            ],
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(widget.task.iconData, size: 16, color: accentColor),
+                  const SizedBox(width: 8),
+                  Text(
+                    widget.task.title,
+                    style: const TextStyle(
+                      color: AppColors.textWhite,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
 
-        // Central Affirmation Card with Circular Glow (Ref 2 & 5)
+        // Orbe central com glow
         Center(
           child: Container(
             width: 300,
@@ -105,17 +109,17 @@ class _InspirationalViewState extends State<InspirationalView> {
             padding: const EdgeInsets.all(28),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isDark ? AppColors.darkSurfaceCard : Colors.white,
+              color: AppColors.glassLightOnly,
               border: Border.all(
-                color: accentColor.withValues(alpha: 0.4),
+                color: accentColor.withValues(alpha: 0.35),
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
                   color: accentColor.withValues(
-                    alpha: widget.state.isRunning ? 0.25 : 0.1,
+                    alpha: widget.state.isRunning ? 0.28 : 0.12,
                   ),
-                  blurRadius: 30,
+                  blurRadius: 32,
                   spreadRadius: 4,
                 ),
               ],
@@ -139,11 +143,11 @@ class _InspirationalViewState extends State<InspirationalView> {
                     _currentQuote,
                     key: ValueKey(_currentQuote),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
+                    style: const TextStyle(
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
                       height: 1.4,
-                      color: isDark ? AppColors.textWhite : AppColors.textDark,
+                      color: AppColors.textWhite,
                       fontStyle: FontStyle.italic,
                     ),
                   ),
@@ -153,7 +157,7 @@ class _InspirationalViewState extends State<InspirationalView> {
                   displayTime,
                   style: TextStyle(
                     fontSize: 22,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w600,
                     color: accentColor,
                     letterSpacing: 1,
                   ),
@@ -163,49 +167,88 @@ class _InspirationalViewState extends State<InspirationalView> {
           ),
         ),
 
-        // Controls
+        // Controles
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            IconButton.filled(
+            _GlassIconButton(
+              icon: Icons.add,
               onPressed: () => widget.onAddMinutes(1),
-              style: IconButton.styleFrom(
-                backgroundColor: isDark
-                    ? const Color(0xFF1E232B)
-                    : const Color(0xFFEFF2F5),
-                foregroundColor: isDark ? Colors.white : Colors.black87,
-                padding: const EdgeInsets.all(14),
-              ),
-              icon: const Icon(Icons.add, size: 20),
             ),
             const SizedBox(width: 20),
-            FloatingActionButton.large(
-              onPressed: widget.onTogglePlayPause,
-              backgroundColor: accentColor,
-              foregroundColor: Colors.white,
-              elevation: 4,
-              child: Icon(
-                widget.state.isRunning
-                    ? Icons.pause_rounded
-                    : Icons.play_arrow_rounded,
-                size: 40,
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: accentColor.withValues(alpha: 0.35),
+                    blurRadius: 22,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: FloatingActionButton.large(
+                onPressed: widget.onTogglePlayPause,
+                backgroundColor: accentColor,
+                foregroundColor: AppColors.forestDeep,
+                elevation: 0,
+                child: Icon(
+                  widget.state.isRunning
+                      ? Icons.pause_rounded
+                      : Icons.play_arrow_rounded,
+                  size: 40,
+                ),
               ),
             ),
             const SizedBox(width: 20),
-            IconButton.filled(
+            _GlassIconButton(
+              icon: Icons.refresh_rounded,
               onPressed: widget.onReset,
-              style: IconButton.styleFrom(
-                backgroundColor: isDark
-                    ? const Color(0xFF1E232B)
-                    : const Color(0xFFEFF2F5),
-                foregroundColor: isDark ? Colors.white : Colors.black87,
-                padding: const EdgeInsets.all(14),
-              ),
-              icon: const Icon(Icons.refresh_rounded, size: 20),
             ),
           ],
         ),
       ],
+    );
+  }
+}
+
+class _GlassIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const _GlassIconButton({required this.icon, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(16),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+        child: Container(
+          width: 46,
+          height: 46,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.09),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.12),
+            ),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onPressed,
+              child: Center(
+                child: Icon(
+                  icon,
+                  color: AppColors.textWhite,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

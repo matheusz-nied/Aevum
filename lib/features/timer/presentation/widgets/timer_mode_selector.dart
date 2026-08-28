@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:timing/core/constants/app_colors.dart';
 import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
 
+/// Seletor de modo do timer com chips calmos e flutuantes.
 class TimerModeSelector extends StatelessWidget {
   final TimerVisualMode currentMode;
   final ValueChanged<TimerVisualMode> onModeChanged;
@@ -15,18 +17,13 @@ class TimerModeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF161A20) : const Color(0xFFE9ECEF),
+        color: Colors.white.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.08)
-              : Colors.black.withValues(alpha: 0.05),
+          color: Colors.white.withValues(alpha: 0.1),
         ),
       ),
       child: Row(
@@ -42,15 +39,13 @@ class TimerModeSelector extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? (isDark ? const Color(0xFF222834) : Colors.white)
+                    ? AppColors.forestSurfaceElevated.withValues(alpha: 0.8)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: isSelected
                     ? [
                         BoxShadow(
-                          color: Colors.black.withValues(
-                            alpha: isDark ? 0.3 : 0.08,
-                          ),
+                          color: Colors.black.withValues(alpha: 0.3),
                           blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),
@@ -63,18 +58,16 @@ class TimerModeSelector extends StatelessWidget {
                   Icon(
                     mode.icon,
                     size: 16,
-                    color: isSelected
-                        ? accentColor
-                        : (isDark ? Colors.white54 : Colors.black45),
+                    color: isSelected ? accentColor : AppColors.textMuted,
                   ),
                   if (isSelected) ...[
                     const SizedBox(width: 6),
                     Text(
                       mode.displayName,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black87,
+                        color: AppColors.textWhite,
                       ),
                     ),
                   ],

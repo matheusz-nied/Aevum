@@ -4,6 +4,8 @@ import 'package:timing/core/constants/app_colors.dart';
 import 'package:timing/features/tasks/domain/task_model.dart';
 import 'package:timing/features/timer/domain/timer_state.dart';
 
+/// View "Sem Pressa" — cápsula de vidro calmante, a que mais se parece
+/// com o design de referência forest.jpg.
 class AnxietyFreeView extends StatefulWidget {
   final TaskModel task;
   final TimerState state;
@@ -43,66 +45,67 @@ class _AnxietyFreeViewState extends State<AnxietyFreeView>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final accentColor = widget.task.color;
 
     return AnimatedBuilder(
       animation: _ambientController,
       builder: (context, child) {
-        final glowIntensity = 0.2 + (_ambientController.value * 0.25);
+        final glowIntensity = 0.15 + (_ambientController.value * 0.25);
 
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // Zen Header (Ref 3)
+            // Header
             Column(
               children: [
                 Icon(
-                  Icons.spa_rounded,
-                  color: accentColor,
-                  size: 28,
+                  Icons.eco_rounded,
+                  color: AppColors.sage,
+                  size: 26,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Modo Sem Pressa',
+                  'modo calma',
                   style: TextStyle(
-                    color: isDark ? Colors.white70 : Colors.black54,
-                    fontSize: 14,
+                    color: AppColors.textMuted,
+                    fontSize: 13,
                     fontWeight: FontWeight.w500,
-                    letterSpacing: 1.5,
+                    letterSpacing: 2,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   widget.task.title,
-                  style: TextStyle(
-                    color: isDark ? Colors.white : Colors.black87,
-                    fontSize: 22,
+                  style: const TextStyle(
+                    color: AppColors.textWhite,
+                    fontSize: 21,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
             ),
 
-            // Glassmorphism Zen Capsule (Ref 3)
+            // Cápsula de vidro → o estilo central da referência
             Center(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(50),
+                borderRadius: BorderRadius.circular(48),
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                  filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
                   child: Container(
                     width: 260,
                     height: 380,
                     decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF161A20).withValues(alpha: 0.75)
-                          : Colors.white.withValues(alpha: 0.8),
-                      borderRadius: BorderRadius.circular(50),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Colors.white.withValues(alpha: 0.14),
+                          Colors.white.withValues(alpha: 0.04),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(48),
                       border: Border.all(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.12)
-                            : Colors.black.withValues(alpha: 0.08),
+                        color: Colors.white.withValues(alpha: 0.16),
                         width: 1.5,
                       ),
                       boxShadow: [
@@ -113,12 +116,14 @@ class _AnxietyFreeViewState extends State<AnxietyFreeView>
                         ),
                       ],
                     ),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 32,
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // Soft glowing orb in capsule window
+                        // Orbe calmante
                         Container(
                           width: 120,
                           height: 120,
@@ -126,7 +131,7 @@ class _AnxietyFreeViewState extends State<AnxietyFreeView>
                             shape: BoxShape.circle,
                             gradient: RadialGradient(
                               colors: [
-                                accentColor.withValues(alpha: 0.8),
+                                accentColor.withValues(alpha: 0.85),
                                 accentColor.withValues(alpha: 0.2),
                                 Colors.transparent,
                               ],
@@ -136,54 +141,65 @@ class _AnxietyFreeViewState extends State<AnxietyFreeView>
                             child: Icon(
                               widget.task.iconData,
                               size: 40,
-                              color: Colors.white,
+                              color: AppColors.textWhite,
                             ),
                           ),
                         ),
 
-                        // Peaceful status message (ZERO digits)
+                        // Mensagens
                         Column(
                           children: [
                             Text(
                               widget.state.isRunning
-                                  ? 'Foco em andamento...'
+                                  ? 'Foco em andamento'
                                   : widget.state.isPaused
-                                      ? 'Em pausa suave'
+                                      ? 'Pausa suave'
                                       : 'Pronto para iniciar',
                               textAlign: TextAlign.center,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
-                                color: isDark ? Colors.white : Colors.black87,
+                                color: AppColors.textWhite,
                               ),
                             ),
                             const SizedBox(height: 8),
-                            Text(
-                              'Apenas concentre-se na sua atividade. Avisaremos com som sutil ao terminar.',
+                            const Text(
+                              'Apenas concentre-se. Avisaremos com som suave ao terminar.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 12,
                                 height: 1.4,
-                                color:
-                                    isDark ? AppColors.textMuted : Colors.black54,
+                                color: AppColors.textMuted,
                               ),
                             ),
                           ],
                         ),
 
-                        // Play / Pause in capsule
-                        IconButton.filled(
-                          onPressed: widget.onTogglePlayPause,
-                          style: IconButton.styleFrom(
-                            backgroundColor: accentColor,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.all(18),
+                        // Play/Pause
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: accentColor.withValues(alpha: 0.4),
+                                blurRadius: 20,
+                                spreadRadius: 2,
+                              ),
+                            ],
                           ),
-                          icon: Icon(
-                            widget.state.isRunning
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
-                            size: 32,
+                          child: IconButton.filled(
+                            onPressed: widget.onTogglePlayPause,
+                            style: IconButton.styleFrom(
+                              backgroundColor: accentColor,
+                              foregroundColor: AppColors.forestDeep,
+                              padding: const EdgeInsets.all(16),
+                            ),
+                            icon: Icon(
+                              widget.state.isRunning
+                                  ? Icons.pause_rounded
+                                  : Icons.play_arrow_rounded,
+                              size: 32,
+                            ),
                           ),
                         ),
                       ],
@@ -193,16 +209,18 @@ class _AnxietyFreeViewState extends State<AnxietyFreeView>
               ),
             ),
 
-            // Subtle Reset
+            // Reset
             TextButton.icon(
               onPressed: widget.onReset,
-              icon: Icon(Icons.refresh_rounded,
-                  size: 18,
-                  color: isDark ? AppColors.textMuted : Colors.black45),
-              label: Text(
+              icon: const Icon(
+                Icons.refresh_rounded,
+                size: 18,
+                color: AppColors.textMuted,
+              ),
+              label: const Text(
                 'Recomeçar sessão',
                 style: TextStyle(
-                  color: isDark ? AppColors.textMuted : Colors.black45,
+                  color: AppColors.textMuted,
                   fontSize: 13,
                 ),
               ),

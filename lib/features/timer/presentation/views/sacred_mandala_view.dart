@@ -56,10 +56,8 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final accentColor = widget.task.color == AppColors.coralNeon
-        ? AppColors.sacredTeal
+    final accentColor = widget.task.color == AppColors.sage
+        ? AppColors.emeraldMist
         : widget.task.color;
 
     final displayTime =
@@ -74,7 +72,6 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
         return Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // Top Breathing Guidance / Title
             Column(
               children: [
                 Text(
@@ -92,16 +89,16 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
                 Text(
                   displayTime,
                   style: TextStyle(
-                    color: isDark ? Colors.white : Colors.black87,
+                    color: AppColors.textWhite,
                     fontSize: 38,
-                    fontWeight: FontWeight.w300,
+                    fontWeight: FontWeight.w200,
                     letterSpacing: 4,
                   ),
                 ),
               ],
             ),
 
-            // Sacred Geometry Mandala (Ref 4 Apple Design Award)
+            // Mandala
             Center(
               child: SizedBox(
                 width: 290,
@@ -109,7 +106,7 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
-                    // Outer subtle glowing aura
+                    // Aura
                     Container(
                       width: 270 * breathScale,
                       height: 270 * breathScale,
@@ -118,7 +115,7 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
                         boxShadow: [
                           BoxShadow(
                             color: accentColor.withValues(
-                              alpha: widget.state.isRunning ? 0.25 : 0.1,
+                              alpha: widget.state.isRunning ? 0.28 : 0.12,
                             ),
                             blurRadius: 36,
                             spreadRadius: 8,
@@ -127,7 +124,6 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
                       ),
                     ),
 
-                    // Mandala Painter
                     CustomPaint(
                       size: const Size(290, 290),
                       painter: _MandalaPainter(
@@ -135,11 +131,10 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
                         rotation: rotation,
                         progress: widget.state.progress,
                         accentColor: accentColor,
-                        isDark: isDark,
                       ),
                     ),
 
-                    // Central Touch target to Play/Pause
+                    // Play/Pause central
                     GestureDetector(
                       onTap: widget.onTogglePlayPause,
                       child: Container(
@@ -147,7 +142,7 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
                         height: 72,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: accentColor.withValues(alpha: 0.15),
+                          color: Colors.white.withValues(alpha: 0.10),
                           border: Border.all(
                             color: accentColor.withValues(alpha: 0.5),
                             width: 1.5,
@@ -167,21 +162,19 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
               ),
             ),
 
-            // Bottom Action Controls
+            // Botões
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _MandalaButton(
                   label: '+1 min',
                   accentColor: accentColor,
-                  isDark: isDark,
                   onTap: () => widget.onAddMinutes(1),
                 ),
                 const SizedBox(width: 20),
                 _MandalaButton(
                   label: 'Reiniciar',
                   accentColor: accentColor,
-                  isDark: isDark,
                   onTap: widget.onReset,
                 ),
               ],
@@ -196,13 +189,11 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
 class _MandalaButton extends StatelessWidget {
   final String label;
   final Color accentColor;
-  final bool isDark;
   final VoidCallback onTap;
 
   const _MandalaButton({
     required this.label,
     required this.accentColor,
-    required this.isDark,
     required this.onTap,
   });
 
@@ -214,9 +205,7 @@ class _MandalaButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.05)
-              : Colors.black.withValues(alpha: 0.04),
+          color: Colors.white.withValues(alpha: 0.07),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: accentColor.withValues(alpha: 0.3),
@@ -225,8 +214,8 @@ class _MandalaButton extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: TextStyle(
-            color: isDark ? Colors.white70 : Colors.black87,
+          style: const TextStyle(
+            color: AppColors.textWhite,
             fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
@@ -241,14 +230,12 @@ class _MandalaPainter extends CustomPainter {
   final double rotation;
   final double progress;
   final Color accentColor;
-  final bool isDark;
 
   _MandalaPainter({
     required this.breathScale,
     required this.rotation,
     required this.progress,
     required this.accentColor,
-    required this.isDark,
   });
 
   @override
@@ -257,7 +244,7 @@ class _MandalaPainter extends CustomPainter {
     final baseRadius = (size.width / 2 - 20) * breathScale;
 
     final petalPaint = Paint()
-      ..color = accentColor.withValues(alpha: isDark ? 0.35 : 0.45)
+      ..color = accentColor.withValues(alpha: 0.35)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.4;
 
@@ -266,9 +253,7 @@ class _MandalaPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final progressTrackPaint = Paint()
-      ..color = isDark
-          ? Colors.white.withValues(alpha: 0.06)
-          : Colors.black.withValues(alpha: 0.05)
+      ..color = Colors.white.withValues(alpha: 0.06)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
 
@@ -278,7 +263,7 @@ class _MandalaPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 4;
 
-    // Draw outer progress arc
+    // Track de progresso
     canvas.drawCircle(center, size.width / 2 - 10, progressTrackPaint);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: size.width / 2 - 10),
@@ -288,7 +273,6 @@ class _MandalaPainter extends CustomPainter {
       progressArcPaint,
     );
 
-    // Draw Sacred Geometry Petals (Flower of Life harmony)
     const int petalCount = 8;
     final double radius = baseRadius * 0.65;
 
@@ -296,7 +280,6 @@ class _MandalaPainter extends CustomPainter {
     canvas.translate(center.dx, center.dy);
     canvas.rotate(rotation);
 
-    // Center ring
     canvas.drawCircle(Offset.zero, radius * 0.5, petalPaint);
 
     for (int i = 0; i < petalCount; i++) {
@@ -304,10 +287,8 @@ class _MandalaPainter extends CustomPainter {
       final petalCenter =
           Offset(radius * 0.5 * cos(angle), radius * 0.5 * sin(angle));
 
-      // Overlapping circular harmonic arcs
       canvas.drawCircle(petalCenter, radius * 0.5, petalPaint);
 
-      // Outer nodes / luminous points (Ref 4)
       final outerPoint = Offset(radius * cos(angle), radius * sin(angle));
       canvas.drawCircle(outerPoint, 3.5, nodePaint);
       canvas.drawCircle(
@@ -318,7 +299,6 @@ class _MandalaPainter extends CustomPainter {
             ..style = PaintingStyle.fill);
     }
 
-    // Outer geometric enclosing ring
     canvas.drawCircle(Offset.zero, radius, petalPaint..strokeWidth = 1.0);
 
     canvas.restore();

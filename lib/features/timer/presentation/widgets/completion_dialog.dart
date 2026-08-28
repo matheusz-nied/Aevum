@@ -19,16 +19,18 @@ class CompletionDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final accentColor = task.color;
     final minutes = durationSeconds ~/ 60;
     final praise = InspirationQuotes.getRandomCompletionPraise();
 
     return Dialog(
-      backgroundColor: isDark ? AppColors.darkSurfaceCard : Colors.white,
+      backgroundColor: AppColors.forestSurfaceElevated,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(28),
+        side: BorderSide(
+          color: AppColors.glassBorderDark,
+          width: 1,
+        ),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Padding(
@@ -36,13 +38,13 @@ class CompletionDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Celebration Glow Icon
+            // Celebração em orb calmante
             Container(
               width: 80,
               height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: accentColor.withValues(alpha: 0.15),
+                color: accentColor.withValues(alpha: 0.18),
                 boxShadow: [
                   BoxShadow(
                     color: accentColor.withValues(alpha: 0.3),
@@ -61,12 +63,12 @@ class CompletionDialog extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            Text(
+            const Text(
               'Meta Concluída!',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.w800,
-                color: isDark ? Colors.white : Colors.black87,
+                color: AppColors.textWhite,
                 letterSpacing: -0.5,
               ),
             ),
@@ -85,15 +87,15 @@ class CompletionDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF14171D) : const Color(0xFFF1F3F6),
+                color: Colors.white.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Text(
                 '$minutes minutos registrados com sucesso',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
-                  color: isDark ? Colors.white70 : Colors.black87,
+                  color: AppColors.textWhite,
                 ),
               ),
             ),
@@ -102,16 +104,16 @@ class CompletionDialog extends StatelessWidget {
             Text(
               praise,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 fontStyle: FontStyle.italic,
                 height: 1.4,
-                color: isDark ? AppColors.textMuted : Colors.black54,
+                color: AppColors.textMuted,
               ),
             ),
             const SizedBox(height: 28),
 
-            // Confirm Button
+            // Botão
             SizedBox(
               width: double.infinity,
               height: 52,
@@ -128,8 +130,8 @@ class CompletionDialog extends StatelessWidget {
                   Navigator.of(context).pop();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: accentColor,
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.sage,
+                  foregroundColor: AppColors.forestDeep,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),

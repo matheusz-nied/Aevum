@@ -49,9 +49,12 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
     final task = widget.existingTask;
     _titleController = TextEditingController(text: task?.title ?? '');
     _targetMinutes = task?.targetMinutes ?? 15;
-    _selectedColorValue = task?.colorValue ?? AppColors.coralNeon.toARGB32();
-    _selectedIconCode = task?.iconCodePoint ?? Icons.edit_note_rounded.codePoint;
-    _selectedVisualMode = task?.defaultVisualMode ?? TimerVisualMode.minimalDial;
+    _selectedColorValue =
+        task?.colorValue ?? AppColors.emeraldMist.toARGB32();
+    _selectedIconCode =
+        task?.iconCodePoint ?? Icons.edit_note_rounded.codePoint;
+    _selectedVisualMode =
+        task?.defaultVisualMode ?? TimerVisualMode.minimalDial;
   }
 
   @override
@@ -81,14 +84,18 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final isEditing = widget.existingTask != null;
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkSurfaceElevated : Colors.white,
+        color: AppColors.forestSurfaceElevated,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        border: Border(
+          top: BorderSide(
+            color: AppColors.glassBorderDark,
+            width: 1,
+          ),
+        ),
       ),
       padding: EdgeInsets.only(
         left: 24,
@@ -101,46 +108,46 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Drag handle
+            // Handle
             Center(
               child: Container(
-                width: 40,
+                width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.white24 : Colors.black12,
+                  color: Colors.white.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
             const SizedBox(height: 18),
 
-            // Header Title
             Text(
-              isEditing ? 'Editar Hábito' : 'Novo Hábito ou Tarefa',
-              style: TextStyle(
+              isEditing ? 'Editar Hábito' : 'Novo Hábito',
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
+                color: AppColors.textWhite,
               ),
             ),
             const SizedBox(height: 16),
 
-            // Title text field
+            // Input título
             TextField(
               controller: _titleController,
               autofocus: !isEditing,
-              style: TextStyle(
-                color: isDark ? Colors.white : Colors.black87,
+              style: const TextStyle(
+                color: AppColors.textWhite,
                 fontSize: 16,
               ),
               decoration: InputDecoration(
                 hintText: 'Ex: Escrita do dia, Meditação...',
-                hintStyle: TextStyle(
-                  color: isDark ? AppColors.textMuted : Colors.black38,
+                hintStyle: const TextStyle(
+                  color: AppColors.textMuted,
                 ),
                 filled: true,
-                fillColor: isDark ? const Color(0xFF14171E) : const Color(0xFFF1F3F6),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                fillColor: Colors.white.withValues(alpha: 0.05),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(16),
                   borderSide: BorderSide.none,
@@ -149,13 +156,13 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
             ),
             const SizedBox(height: 20),
 
-            // Duration selector
+            // Duração
             Text(
-              'Meta de Tempo: $_targetMinutes minutos',
-              style: TextStyle(
-                fontSize: 14,
+              'Meta: $_targetMinutes min',
+              style: const TextStyle(
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white70 : Colors.black87,
+                color: AppColors.textMuted,
               ),
             ),
             const SizedBox(height: 10),
@@ -176,18 +183,17 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                   selectedColor: Color(_selectedColorValue),
                   labelStyle: TextStyle(
                     color: isSelected
-                        ? Colors.white
-                        : (isDark ? Colors.white70 : Colors.black87),
+                        ? AppColors.forestDeep
+                        : AppColors.textWhite,
                     fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
-                  backgroundColor:
-                      isDark ? const Color(0xFF161A20) : const Color(0xFFF1F3F6),
+                  backgroundColor: Colors.white.withValues(alpha: 0.05),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                     side: BorderSide(
                       color: isSelected
                           ? Colors.transparent
-                          : (isDark ? Colors.white10 : Colors.black12),
+                          : Colors.white.withValues(alpha: 0.08),
                     ),
                   ),
                 );
@@ -195,13 +201,13 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
             ),
             const SizedBox(height: 20),
 
-            // Visual Mode Choice for this Task
+            // Visual Mode
             Text(
-              'Estilo do Timer Preferido',
-              style: TextStyle(
-                fontSize: 14,
+              'Estilo do Timer',
+              style: const TextStyle(
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white70 : Colors.black87,
+                color: AppColors.textMuted,
               ),
             ),
             const SizedBox(height: 10),
@@ -217,8 +223,8 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                         mode.icon,
                         size: 16,
                         color: isSelected
-                            ? Colors.white
-                            : (isDark ? Colors.white60 : Colors.black54),
+                            ? AppColors.forestDeep
+                            : AppColors.textMuted,
                       ),
                       label: Text(mode.displayName),
                       selected: isSelected,
@@ -231,18 +237,18 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                       selectedColor: Color(_selectedColorValue),
                       labelStyle: TextStyle(
                         color: isSelected
-                            ? Colors.white
-                            : (isDark ? Colors.white70 : Colors.black87),
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            ? AppColors.forestDeep
+                            : AppColors.textWhite,
+                        fontWeight:
+                            isSelected ? FontWeight.bold : FontWeight.normal,
                       ),
-                      backgroundColor:
-                          isDark ? const Color(0xFF161A20) : const Color(0xFFF1F3F6),
+                      backgroundColor: Colors.white.withValues(alpha: 0.05),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                         side: BorderSide(
                           color: isSelected
                               ? Colors.transparent
-                              : (isDark ? Colors.white10 : Colors.black12),
+                              : Colors.white.withValues(alpha: 0.08),
                         ),
                       ),
                     ),
@@ -252,61 +258,64 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
             ),
             const SizedBox(height: 20),
 
-            // Color Picker
-            Text(
-              'Cor de Destaque',
+            // Cor de destaque (tons de verde)
+            const Text(
+              'Cor de destaque',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white70 : Colors.black87,
+                color: AppColors.textMuted,
               ),
             ),
             const SizedBox(height: 10),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: AppColors.taskColors.map((color) {
                 final isSelected = _selectedColorValue == color.toARGB32();
-                return GestureDetector(
-                  onTap: () {
-                    setState(() => _selectedColorValue = color.toARGB32());
-                    HapticService.selectionClick();
-                  },
-                  child: Container(
-                    width: 38,
-                    height: 38,
-                    decoration: BoxDecoration(
-                      color: color,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: isSelected ? Colors.white : Colors.transparent,
-                        width: 2.5,
+                return Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() => _selectedColorValue = color.toARGB32());
+                      HapticService.selectionClick();
+                    },
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: isSelected ? Colors.white : Colors.transparent,
+                          width: 2.5,
+                        ),
+                        boxShadow: isSelected
+                            ? [
+                                BoxShadow(
+                                  color: color.withValues(alpha: 0.35),
+                                  blurRadius: 8,
+                                  spreadRadius: 1,
+                                ),
+                              ]
+                            : null,
                       ),
-                      boxShadow: isSelected
-                          ? [
-                              BoxShadow(
-                                color: color.withValues(alpha: 0.6),
-                                blurRadius: 8,
-                                spreadRadius: 1,
-                              ),
-                            ]
+                      child: isSelected
+                          ? const Icon(Icons.check_rounded, color: Colors.white, size: 18)
                           : null,
                     ),
-                    child: isSelected
-                        ? const Icon(Icons.check, size: 20, color: Colors.white)
-                        : null,
                   ),
                 );
               }).toList(),
             ),
             const SizedBox(height: 20),
 
-            // Icon Picker
-            Text(
+            // Ícones
+            const Text(
               'Ícone',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w600,
-                color: isDark ? Colors.white70 : Colors.black87,
+                color: AppColors.textMuted,
               ),
             ),
             const SizedBox(height: 10),
@@ -328,8 +337,9 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                         height: 44,
                         decoration: BoxDecoration(
                           color: isSelected
-                              ? Color(_selectedColorValue).withValues(alpha: 0.2)
-                              : (isDark ? const Color(0xFF14171E) : const Color(0xFFF1F3F6)),
+                              ? Color(_selectedColorValue)
+                                  .withValues(alpha: 0.18)
+                              : Colors.white.withValues(alpha: 0.04),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: isSelected
@@ -342,7 +352,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                           icon,
                           color: isSelected
                               ? Color(_selectedColorValue)
-                              : (isDark ? Colors.white70 : Colors.black54),
+                              : AppColors.textMuted,
                           size: 22,
                         ),
                       ),
@@ -353,15 +363,15 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
             ),
             const SizedBox(height: 28),
 
-            // Save Button
+            // Botão salvar
             SizedBox(
               width: double.infinity,
               height: 52,
               child: ElevatedButton(
                 onPressed: _submit,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(_selectedColorValue),
-                  foregroundColor: Colors.white,
+                  backgroundColor: AppColors.sage,
+                  foregroundColor: AppColors.forestDeep,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
