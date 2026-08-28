@@ -15,8 +15,11 @@ import 'package:timing/features/timer/presentation/screens/active_timer_screen.d
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
-  void _openCreateTaskSheet(BuildContext context, WidgetRef ref,
-      [TaskModel? existing]) {
+  void _openCreateTaskSheet(
+    BuildContext context,
+    WidgetRef ref, [
+    TaskModel? existing,
+  ]) {
     HapticService.lightImpact();
     showModalBottomSheet(
       context: context,
@@ -42,7 +45,8 @@ class HomeScreen extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         title: const Text('Excluir hábito?'),
         content: Text(
-            'Deseja realmente remover "${task.title}"? O histórico de sessões será mantido.'),
+          'Deseja realmente remover "${task.title}"? O histórico de sessões será mantido.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
@@ -53,8 +57,10 @@ class HomeScreen extends ConsumerWidget {
               ref.read(taskListProvider.notifier).deleteTask(task.id);
               Navigator.of(ctx).pop();
             },
-            child: const Text('Excluir',
-                style: TextStyle(color: AppColors.warning)),
+            child: const Text(
+              'Excluir',
+              style: TextStyle(color: AppColors.warning),
+            ),
           ),
         ],
       ),
@@ -87,34 +93,44 @@ class HomeScreen extends ConsumerWidget {
             SliverToBoxAdapter(
               child: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(7),
-                            decoration: BoxDecoration(
-                              color: AppColors.sage
-                                  .withValues(alpha: 0.18),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                          GlassContainer(
+                            isCircle: true,
+                            padding: const EdgeInsets.all(10),
                             child: const Icon(
-                              Icons.eco_rounded,
+                              Icons.park_outlined,
                               color: AppColors.sage,
-                              size: 20,
+                              size: 18,
                             ),
                           ),
-                          const SizedBox(width: 10),
-                          const Text(
-                            'Timing',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 22,
-                              letterSpacing: -0.5,
-                              color: AppColors.textWhite,
-                            ),
+                          const SizedBox(width: 11),
+                          const Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Timing',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 21,
+                                  letterSpacing: -0.5,
+                                  color: AppColors.textWhite,
+                                ),
+                              ),
+                              Text(
+                                'SUA FLORESTA DE FOCO',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 8,
+                                  letterSpacing: 1.35,
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -132,8 +148,8 @@ class HomeScreen extends ConsumerWidget {
                           },
                           icon: const Icon(
                             Icons.insights_rounded,
-                            size: 22,
-                            color: AppColors.textWhite,
+                            size: 20,
+                            color: AppColors.sage,
                           ),
                           tooltip: 'Estatísticas',
                         ),
@@ -161,22 +177,24 @@ class HomeScreen extends ConsumerWidget {
             // Section Title
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 18, 20, 10),
+                padding: const EdgeInsets.fromLTRB(20, 22, 20, 9),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Seus Hábitos & Timers',
+                      'Seus hábitos',
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textWhite.withValues(alpha: 0.85),
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.25,
+                        color: AppColors.textWhite,
                       ),
                     ),
                     Text(
-                      '${tasks.length} ativos',
+                      '${tasks.length} ${tasks.length == 1 ? 'ativo' : 'ativos'}',
                       style: const TextStyle(
-                        fontSize: 13,
+                        fontSize: 11,
+                        letterSpacing: 0.4,
                         color: AppColors.textMuted,
                       ),
                     ),
@@ -196,7 +214,7 @@ class HomeScreen extends ConsumerWidget {
                       const Icon(
                         Icons.park_rounded,
                         size: 64,
-                        color: Colors.white24,
+                        color: AppColors.textFaint,
                       ),
                       const SizedBox(height: 16),
                       Text(
@@ -204,8 +222,7 @@ class HomeScreen extends ConsumerWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.textWhite
-                              .withValues(alpha: 0.75),
+                          color: AppColors.textWhite.withValues(alpha: 0.75),
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -222,33 +239,27 @@ class HomeScreen extends ConsumerWidget {
               )
             else
               SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final task = tasks[index];
-                    final isDone =
-                        todaySessions.any((s) => s.taskId == task.id);
+                delegate: SliverChildBuilderDelegate((context, index) {
+                  final task = tasks[index];
+                  final isDone = todaySessions.any((s) => s.taskId == task.id);
 
-                    return TaskCard(
-                      task: task,
-                      isCompletedToday: isDone,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => ActiveTimerScreen(task: task),
-                          ),
-                        );
-                      },
-                      onEdit: () => _openCreateTaskSheet(context, ref, task),
-                      onDelete: () => _confirmDelete(context, ref, task),
-                    );
-                  },
-                  childCount: tasks.length,
-                ),
+                  return TaskCard(
+                    task: task,
+                    isCompletedToday: isDone,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ActiveTimerScreen(task: task),
+                        ),
+                      );
+                    },
+                    onEdit: () => _openCreateTaskSheet(context, ref, task),
+                    onDelete: () => _confirmDelete(context, ref, task),
+                  );
+                }, childCount: tasks.length),
               ),
 
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 90),
-            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 90)),
           ],
         ),
       ),
@@ -256,10 +267,11 @@ class HomeScreen extends ConsumerWidget {
         onPressed: () => _openCreateTaskSheet(context, ref),
         backgroundColor: AppColors.sage,
         foregroundColor: AppColors.forestDeep,
+        elevation: 8,
         icon: const Icon(Icons.add_rounded),
         label: const Text(
-          'Novo Hábito',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          'Novo hábito',
+          style: TextStyle(fontWeight: FontWeight.w700),
         ),
       ),
     );

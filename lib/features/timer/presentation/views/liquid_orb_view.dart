@@ -68,7 +68,7 @@ class _LiquidOrbViewState extends State<LiquidOrbView>
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: widget.state.isRunning
-                            ? const Color(0xFF00E5FF)
+                            ? AppColors.sage
                             : AppColors.textMuted.withValues(alpha: 0.5),
                       ),
                     ),
@@ -174,8 +174,8 @@ class _MattePlayPauseButtonState extends State<_MattePlayPauseButton> {
               height: 54,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFF14201A).withValues(alpha: 0.88),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+                color: AppColors.forestSurface.withValues(alpha: 0.84),
+                border: Border.all(color: AppColors.glassBorderDark),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.35),
@@ -190,7 +190,7 @@ class _MattePlayPauseButtonState extends State<_MattePlayPauseButton> {
                       ? Icons.pause_rounded
                       : Icons.play_arrow_rounded,
                   size: 24,
-                  color: Colors.white.withValues(alpha: 0.65),
+                  color: AppColors.sage,
                 ),
               ),
             ),

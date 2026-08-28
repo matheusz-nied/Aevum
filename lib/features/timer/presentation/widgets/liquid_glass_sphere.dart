@@ -187,9 +187,9 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
       Paint()
         ..shader = RadialGradient(
           colors: [
-            const Color(0xFF00E5FF).withValues(alpha: 0.32 * breathScale),
-            const Color(0xFF6BFF7A).withValues(alpha: 0.20 * breathScale),
-            const Color(0xFF0066FF).withValues(alpha: 0.10 * breathScale),
+            const Color(0xFFB7D2B7).withValues(alpha: 0.32 * breathScale),
+            const Color(0xFF8FAC95).withValues(alpha: 0.20 * breathScale),
+            const Color(0xFF536D5D).withValues(alpha: 0.10 * breathScale),
             Colors.transparent,
           ],
           stops: const [0, 0.35, 0.68, 1],
@@ -205,8 +205,8 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
       Paint()
         ..shader = RadialGradient(
           colors: [
-            const Color(0xFF0077FE).withValues(alpha: 0.16),
-            const Color(0xFF00D4FF).withValues(alpha: 0.07),
+            const Color(0xFF718B70).withValues(alpha: 0.16),
+            const Color(0xFF91AAA0).withValues(alpha: 0.07),
             Colors.transparent,
           ],
           stops: const [0.74, 0.90, 1],
@@ -221,7 +221,7 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
         ..shader = const RadialGradient(
           center: Alignment(-0.35, -0.35),
           radius: 1,
-          colors: [Color(0xFF0D224A), Color(0xFF071228), Color(0xFF02050E)],
+          colors: [Color(0xFF183025), Color(0xFF0B1712), Color(0xFF020806)],
           stops: [0, 0.58, 1],
         ).createShader(bounds),
     );
@@ -276,10 +276,10 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
             -math.sin(rotation) * 0.85,
           ),
           colors: const [
-            Color(0xFF00E5FF),
-            Color(0xFF0077FE),
-            Color(0xFF0C389E),
-            Color(0xFF061440),
+            Color(0xFFB7D2B7),
+            Color(0xFF8FAC95),
+            Color(0xFF536D5D),
+            Color(0xFF12251C),
           ],
           stops: const [0, 0.36, 0.70, 1],
         ).createShader(bounds),
@@ -325,8 +325,8 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
           ),
           radius: 0.75,
           colors: [
-            const Color(0xFF00F0FF).withValues(alpha: 0.60),
-            const Color(0xFF0072FF).withValues(alpha: 0.32),
+            const Color(0xFFC4D4C6).withValues(alpha: 0.60),
+            const Color(0xFF718B70).withValues(alpha: 0.32),
             Colors.transparent,
           ],
           stops: const [0, 0.52, 1],
@@ -351,7 +351,7 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
       );
     final sphereBounds = Rect.fromCircle(center: center, radius: radius);
     final ribbonShader = const LinearGradient(
-      colors: [Color(0xFF33FFA8), Color(0xFF00E5FF), Color(0xFF0077FE)],
+      colors: [Color(0xFFB7D2B7), Color(0xFF91AAA0), Color(0xFF718B70)],
     ).createShader(sphereBounds);
 
     canvas.drawPath(
@@ -368,7 +368,7 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
       mainRibbon,
       Paint()
         ..shader = const LinearGradient(
-          colors: [Color(0xFF88FFAA), Color(0xFF80F2FF), Color(0xFF40A0FF)],
+          colors: [Color(0xFFC6D6C6), Color(0xFF91AAA0), Color(0xFF718B70)],
         ).createShader(sphereBounds)
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
@@ -402,8 +402,8 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
         ..shader = SweepGradient(
           colors: [
             Colors.transparent,
-            const Color(0xFF00E5FF).withValues(alpha: 0.60),
-            const Color(0xFF55FF88).withValues(alpha: 0.70),
+            const Color(0xFF91AAA0).withValues(alpha: 0.60),
+            const Color(0xFFA7B78F).withValues(alpha: 0.70),
             Colors.transparent,
           ],
           stops: const [0, 0.45, 0.70, 1],
@@ -426,9 +426,9 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
         ..shader = SweepGradient(
           colors: [
             Colors.transparent,
-            const Color(0xFF90F038).withValues(alpha: 0.52),
-            const Color(0xFF00E5FF).withValues(alpha: 0.68),
-            const Color(0xFF7040FF).withValues(alpha: 0.38),
+            const Color(0xFFA7B78F).withValues(alpha: 0.52),
+            const Color(0xFF91AAA0).withValues(alpha: 0.68),
+            const Color(0xFF61766A).withValues(alpha: 0.38),
             Colors.transparent,
           ],
           stops: const [0, 0.28, 0.48, 0.75, 1],
@@ -471,9 +471,9 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
         ..shader = SweepGradient(
           colors: [
             Colors.white.withValues(alpha: 0.92),
-            const Color(0xFF00E5FF).withValues(alpha: 0.82),
+            const Color(0xFF91AAA0).withValues(alpha: 0.82),
             Colors.white.withValues(alpha: 0.25),
-            const Color(0xFF88FF66).withValues(alpha: 0.68),
+            const Color(0xFFA7B78F).withValues(alpha: 0.68),
             Colors.white.withValues(alpha: 0.78),
           ],
           stops: const [0, 0.30, 0.60, 0.82, 1],
@@ -510,8 +510,8 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
           end: const Alignment(0.4, 0.4),
           colors: [
             Colors.white.withValues(alpha: 0.88),
-            const Color(0xFFBBE8FF).withValues(alpha: 0.65),
-            const Color(0xFF00D4FF).withValues(alpha: 0.20),
+            const Color(0xFFC8D1CB).withValues(alpha: 0.65),
+            const Color(0xFF91AAA0).withValues(alpha: 0.20),
             Colors.transparent,
           ],
           stops: const [0, 0.35, 0.70, 1],
@@ -537,7 +537,7 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
         ..shader = RadialGradient(
           colors: [
             Colors.white.withValues(alpha: 0.68),
-            const Color(0xFF00E5FF).withValues(alpha: 0.28),
+            const Color(0xFF91AAA0).withValues(alpha: 0.28),
             Colors.transparent,
           ],
           stops: const [0, 0.45, 1],

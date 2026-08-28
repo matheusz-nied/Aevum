@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timing/core/constants/app_colors.dart';
 import 'package:timing/core/services/haptic_service.dart';
 import 'package:timing/core/widgets/forest_background.dart';
+import 'package:timing/core/widgets/glass_container.dart';
 import 'package:timing/features/tasks/domain/task_model.dart';
 import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
 import 'package:timing/features/tasks/providers/task_providers.dart';
@@ -81,43 +82,65 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
 
               // App bar inline (transparente)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Row(
                   children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: 20,
-                        color: AppColors.textWhite,
-                      ),
-                      onPressed: () {
-                        HapticService.lightImpact();
-                        timerNotifier.pause();
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                    const SizedBox(width: 4),
-                    Expanded(
-                      child: Text(
-                        widget.task.title,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                    GlassContainer(
+                      isCircle: true,
+                      child: IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                          size: 17,
                           color: AppColors.textWhite,
                         ),
+                        onPressed: () {
+                          HapticService.lightImpact();
+                          timerNotifier.pause();
+                          Navigator.of(context).pop();
+                        },
                       ),
                     ),
-                    TextButton(
-                      onPressed: () {
-                        HapticService.mediumImpact();
-                        timerNotifier.complete();
-                      },
-                      child: Text(
-                        'Concluir',
-                        style: TextStyle(
-                          color: accentColor,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.task.title,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textWhite,
+                            ),
+                          ),
+                          const Text(
+                            'SESSÃO EM ANDAMENTO',
+                            style: TextStyle(
+                              fontSize: 8,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 1.2,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    GlassContainer(
+                      borderRadius: 18,
+                      child: TextButton(
+                        onPressed: () {
+                          HapticService.mediumImpact();
+                          timerNotifier.complete();
+                        },
+                        child: Text(
+                          'Concluir',
+                          style: TextStyle(
+                            color: accentColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ),

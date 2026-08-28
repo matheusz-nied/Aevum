@@ -28,37 +28,37 @@ class TaskCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: GlassContainer(
-        borderRadius: 20,
+        borderRadius: 22,
+        blur: 16,
+        color: isCompletedToday
+            ? AppColors.emeraldMist.withValues(alpha: 0.10)
+            : null,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(20),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.fromLTRB(14, 13, 8, 13),
             child: Row(
               children: [
                 // Ícone da tarefa em orb de vidro
                 Container(
-                  width: 52,
-                  height: 52,
+                  width: 50,
+                  height: 50,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: [
-                        accentColor.withValues(alpha: 0.35),
-                        accentColor.withValues(alpha: 0.05),
+                        accentColor.withValues(alpha: 0.22),
+                        AppColors.forestDeep.withValues(alpha: 0.10),
                       ],
                     ),
                     border: Border.all(
-                      color: accentColor.withValues(alpha: 0.4),
-                      width: 1,
+                      color: accentColor.withValues(alpha: 0.30),
+                      width: 0.8,
                     ),
                   ),
                   child: Center(
-                    child: Icon(
-                      task.iconData,
-                      color: accentColor,
-                      size: 24,
-                    ),
+                    child: Icon(task.iconData, color: accentColor, size: 22),
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -88,7 +88,7 @@ class TaskCard extends StatelessWidget {
                               padding: const EdgeInsets.only(left: 6),
                               child: Icon(
                                 Icons.check_rounded,
-                                color: AppColors.softGlowEmerald,
+                                color: AppColors.sage,
                                 size: 16,
                               ),
                             ),
@@ -104,10 +104,10 @@ class TaskCard extends StatelessWidget {
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.07),
+                              color: AppColors.glassLightOnly,
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.08),
+                                color: AppColors.glassBorderSoft,
                               ),
                             ),
                             child: Text(
@@ -115,8 +115,9 @@ class TaskCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textWhite
-                                    .withValues(alpha: 0.8),
+                                color: AppColors.textWhite.withValues(
+                                  alpha: 0.8,
+                                ),
                               ),
                             ),
                           ),
@@ -145,33 +146,21 @@ class TaskCard extends StatelessWidget {
                   ),
                 ),
 
-                // Botão de play rápido
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: accentColor.withValues(alpha: 0.35),
-                        blurRadius: 10,
-                        spreadRadius: 1,
-                      ),
-                    ],
-                  ),
-                  child: IconButton.filled(
-                    onPressed: () {
-                      HapticService.lightImpact();
-                      onTap();
-                    },
-                    style: IconButton.styleFrom(
-                      backgroundColor: accentColor,
-                      foregroundColor: AppColors.forestDeep,
-                      padding: const EdgeInsets.all(12),
+                // Botão de play rápido em vidro tonal.
+                IconButton.filled(
+                  onPressed: () {
+                    HapticService.lightImpact();
+                    onTap();
+                  },
+                  style: IconButton.styleFrom(
+                    backgroundColor: accentColor.withValues(alpha: 0.16),
+                    foregroundColor: accentColor,
+                    side: BorderSide(
+                      color: accentColor.withValues(alpha: 0.25),
                     ),
-                    icon: const Icon(
-                      Icons.play_arrow_rounded,
-                      size: 22,
-                    ),
+                    padding: const EdgeInsets.all(10),
                   ),
+                  icon: const Icon(Icons.play_arrow_rounded, size: 22),
                 ),
 
                 // Menu de opções
@@ -181,7 +170,6 @@ class TaskCard extends StatelessWidget {
                     color: AppColors.textMuted,
                     size: 20,
                   ),
-                  color: AppColors.forestSurfaceElevated,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -204,11 +192,16 @@ class TaskCard extends StatelessWidget {
                       value: 'delete',
                       child: Row(
                         children: [
-                          Icon(Icons.delete_outline,
-                              color: AppColors.warning, size: 18),
+                          Icon(
+                            Icons.delete_outline,
+                            color: AppColors.warning,
+                            size: 18,
+                          ),
                           SizedBox(width: 10),
-                          Text('Excluir',
-                              style: TextStyle(color: AppColors.warning)),
+                          Text(
+                            'Excluir',
+                            style: TextStyle(color: AppColors.warning),
+                          ),
                         ],
                       ),
                     ),

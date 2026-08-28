@@ -234,10 +234,10 @@ class _LiquidGlassPainter extends CustomPainter {
         center: const Alignment(-0.36, -0.48),
         radius: 1.12,
         colors: [
-          const Color(0xFFD9F7FF).withValues(alpha: 0.22),
-          const Color(0xFF3657C9).withValues(alpha: 0.30),
-          const Color(0xFF09152F).withValues(alpha: 0.98),
-          const Color(0xFF02070D),
+          const Color(0xFFD7E0D9).withValues(alpha: 0.22),
+          const Color(0xFF61766A).withValues(alpha: 0.30),
+          const Color(0xFF0B1A13).withValues(alpha: 0.98),
+          const Color(0xFF020806),
         ],
         stops: const [0, 0.24, 0.67, 1],
       ).createShader(bounds);
@@ -264,14 +264,14 @@ class _LiquidGlassPainter extends CustomPainter {
       width: radius * 2.45,
       height: radius * 1.2,
     );
-    final glowColor = Color.lerp(const Color(0xFF176BFF), accentColor, 0.36)!;
+    final glowColor = Color.lerp(const Color(0xFF718B70), accentColor, 0.36)!;
     canvas.drawOval(
       glowRect,
       Paint()
         ..shader = RadialGradient(
           colors: [
             glowColor.withValues(alpha: isPaused ? 0.08 : 0.15),
-            const Color(0xFF1B68C7).withValues(alpha: 0.05),
+            const Color(0xFF61766A).withValues(alpha: 0.05),
             Colors.transparent,
           ],
           stops: const [0, 0.48, 1],
@@ -294,7 +294,7 @@ class _LiquidGlassPainter extends CustomPainter {
     canvas.drawPath(
       orbPath,
       Paint()
-        ..color = const Color(0xFF226CFF)
+        ..color = const Color(0xFF718B70)
             .withValues(alpha: isPaused ? 0.07 : 0.12)
         ..style = PaintingStyle.stroke
         ..strokeWidth = radius * 0.055
@@ -320,8 +320,8 @@ class _LiquidGlassPainter extends CustomPainter {
         ..shader = RadialGradient(
           center: const Alignment(0.22, -0.2),
           colors: [
-            const Color(0xFF174D9F).withValues(alpha: 0.42),
-            const Color(0xFF051020).withValues(alpha: 0.76),
+            const Color(0xFF536D5D).withValues(alpha: 0.42),
+            const Color(0xFF07120D).withValues(alpha: 0.76),
             Colors.black.withValues(alpha: 0.80),
           ],
           stops: const [0, 0.62, 1],
@@ -338,8 +338,8 @@ class _LiquidGlassPainter extends CustomPainter {
       Paint()
         ..shader = RadialGradient(
           colors: [
-            const Color(0xFF6EA7FF).withValues(alpha: 0.24),
-            const Color(0xFF203B9F).withValues(alpha: 0.08),
+            const Color(0xFF91AAA0).withValues(alpha: 0.24),
+            const Color(0xFF536D5D).withValues(alpha: 0.08),
             Colors.transparent,
           ],
           stops: const [0, 0.46, 1],
@@ -357,7 +357,7 @@ class _LiquidGlassPainter extends CustomPainter {
       Paint()
         ..shader = RadialGradient(
           colors: [
-            const Color(0xFF07142C).withValues(alpha: 0.08),
+            const Color(0xFF08150F).withValues(alpha: 0.08),
             Colors.black.withValues(alpha: 0.72),
           ],
         ).createShader(lowerDepth),
@@ -383,8 +383,8 @@ class _LiquidGlassPainter extends CustomPainter {
   ) {
     final wave = math.sin(_time);
     final slowWave = math.cos(_time * 2 + 0.5);
-    final cyan = Color.lerp(const Color(0xFF21D8FF), accentColor, 0.22)!;
-    final violet = Color.lerp(const Color(0xFF7965FF), accentColor, 0.12)!;
+    final cyan = Color.lerp(const Color(0xFF91AAA0), accentColor, 0.22)!;
+    final violet = Color.lerp(const Color(0xFF61766A), accentColor, 0.12)!;
 
     final upperFold = Path()
       ..moveTo(center.dx - radius * 1.04, center.dy - radius * 0.16)
@@ -412,9 +412,9 @@ class _LiquidGlassPainter extends CustomPainter {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            const Color(0xFFB9F2FF).withValues(alpha: 0.30),
+            const Color(0xFFC8D1CB).withValues(alpha: 0.30),
             violet.withValues(alpha: 0.38),
-            const Color(0xFF071737).withValues(alpha: 0.08),
+            const Color(0xFF081A12).withValues(alpha: 0.08),
           ],
           stops: const [0, 0.48, 1],
         ).createShader(bounds)
@@ -449,7 +449,7 @@ class _LiquidGlassPainter extends CustomPainter {
           colors: [
             Colors.transparent,
             cyan.withValues(alpha: 0.14),
-            const Color(0xFF135DFF).withValues(alpha: 0.48),
+            const Color(0xFF718B70).withValues(alpha: 0.48),
             violet.withValues(alpha: 0.26),
             Colors.transparent,
           ],
@@ -485,7 +485,7 @@ class _LiquidGlassPainter extends CustomPainter {
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,
           colors: [
-            const Color(0xFF4F6EFF).withValues(alpha: 0.30),
+            const Color(0xFF61766A).withValues(alpha: 0.30),
             cyan.withValues(alpha: 0.28),
             Colors.transparent,
           ],
@@ -495,7 +495,7 @@ class _LiquidGlassPainter extends CustomPainter {
   }
 
   void _paintCaustics(Canvas canvas, Offset center, double radius) {
-    final cyan = Color.lerp(const Color(0xFF43E6FF), accentColor, 0.28)!;
+    final cyan = Color.lerp(const Color(0xFF91AAA0), accentColor, 0.28)!;
     final causticPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
@@ -531,7 +531,7 @@ class _LiquidGlassPainter extends CustomPainter {
       strandTwo,
       causticPaint
         ..strokeWidth = math.max(0.8, radius * 0.009)
-        ..color = const Color(0xFF557BFF).withValues(alpha: 0.42),
+        ..color = const Color(0xFF718B70).withValues(alpha: 0.42),
     );
 
     final filament = Path()
@@ -589,7 +589,7 @@ class _LiquidGlassPainter extends CustomPainter {
           end: Alignment.bottomRight,
           colors: [
             Colors.white.withValues(alpha: 0.34 * shimmer),
-            const Color(0xFF98DFFF).withValues(alpha: 0.14),
+            const Color(0xFFAFC2B8).withValues(alpha: 0.14),
             Colors.transparent,
           ],
         ).createShader(bounds)
@@ -623,8 +623,8 @@ class _LiquidGlassPainter extends CustomPainter {
       transform: GradientRotation(math.sin(_time) * 0.22),
       colors: [
         Colors.white.withValues(alpha: 0.52),
-        const Color(0xFF5AE8FF).withValues(alpha: 0.56),
-        const Color(0xFF486BFF).withValues(alpha: 0.18),
+        const Color(0xFF91AAA0).withValues(alpha: 0.56),
+        const Color(0xFF536D5D).withValues(alpha: 0.18),
         Colors.white.withValues(alpha: 0.07),
         accentColor.withValues(alpha: 0.43),
         Colors.white.withValues(alpha: 0.52),
@@ -656,7 +656,7 @@ class _LiquidGlassPainter extends CustomPainter {
     );
     canvas.drawPath(
       metric.extractPath(metric.length * 0.47, metric.length * 0.57),
-      brightRim..color = const Color(0xFF88F0FF).withValues(alpha: 0.42),
+      brightRim..color = const Color(0xFFB7D2B7).withValues(alpha: 0.42),
     );
   }
 
