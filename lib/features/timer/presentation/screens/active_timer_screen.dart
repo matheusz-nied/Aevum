@@ -9,6 +9,7 @@ import 'package:timing/features/tasks/providers/task_providers.dart';
 import 'package:timing/features/timer/domain/timer_state.dart';
 import 'package:timing/features/timer/presentation/views/anxiety_free_view.dart';
 import 'package:timing/features/timer/presentation/views/inspirational_view.dart';
+import 'package:timing/features/timer/presentation/views/liquid_orb_view.dart';
 import 'package:timing/features/timer/presentation/views/minimal_dial_view.dart';
 import 'package:timing/features/timer/presentation/views/sacred_mandala_view.dart';
 import 'package:timing/features/timer/presentation/widgets/completion_dialog.dart';
@@ -18,10 +19,7 @@ import 'package:timing/features/timer/providers/timer_controller.dart';
 class ActiveTimerScreen extends ConsumerStatefulWidget {
   final TaskModel task;
 
-  const ActiveTimerScreen({
-    super.key,
-    required this.task,
-  });
+  const ActiveTimerScreen({super.key, required this.task});
 
   @override
   ConsumerState<ActiveTimerScreen> createState() => _ActiveTimerScreenState();
@@ -227,6 +225,22 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
             }
           },
           onReset: () => notifier.reset(),
+        );
+
+      case TimerVisualMode.liquidOrb:
+        return LiquidOrbView(
+          key: const ValueKey('liquidOrb'),
+          task: widget.task,
+          state: state,
+          onTogglePlayPause: () {
+            if (state.isRunning) {
+              notifier.pause();
+            } else {
+              notifier.resume();
+            }
+          },
+          onReset: () => notifier.reset(),
+          onAddMinutes: (mins) => notifier.addMinutes(mins),
         );
     }
   }

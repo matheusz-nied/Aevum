@@ -4,7 +4,8 @@ enum TimerVisualMode {
   minimalDial,
   sacredMandala,
   inspirational,
-  anxietyFree;
+  anxietyFree,
+  liquidOrb;
 
   String get displayName {
     switch (this) {
@@ -16,6 +17,8 @@ enum TimerVisualMode {
         return 'Inspiracional';
       case TimerVisualMode.anxietyFree:
         return 'Anti-Ansiedade';
+      case TimerVisualMode.liquidOrb:
+        return 'Orbe Líquido';
     }
   }
 
@@ -29,6 +32,8 @@ enum TimerVisualMode {
         return 'Frases rotativas de apoio, elogios e reforço de foco';
       case TimerVisualMode.anxietyFree:
         return 'Sem relógio visível para eliminar a pressa e ansiedade';
+      case TimerVisualMode.liquidOrb:
+        return 'Vórtice de vidro interativo com fluxo e refração contínuos';
     }
   }
 
@@ -41,7 +46,9 @@ enum TimerVisualMode {
       case TimerVisualMode.inspirational:
         return Icons.auto_awesome_outlined;
       case TimerVisualMode.anxietyFree:
-        return Icons.visibility_off_outlined;
+        return Icons.self_improvement_rounded;
+      case TimerVisualMode.liquidOrb:
+        return Icons.water_drop_outlined;
     }
   }
 

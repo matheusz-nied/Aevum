@@ -31,47 +31,39 @@ class TimerModeSelector extends StatelessWidget {
         children: TimerVisualMode.values.map((mode) {
           final isSelected = mode == currentMode;
 
-          return GestureDetector(
-            onTap: () => onModeChanged(mode),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.forestSurfaceElevated.withValues(alpha: 0.8)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: isSelected
-                    ? [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
+          return Tooltip(
+            message: mode.displayName,
+            child: Semantics(
+              button: true,
+              selected: isSelected,
+              label: mode.displayName,
+              child: GestureDetector(
+                onTap: () => onModeChanged(mode),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  curve: Curves.easeInOut,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? AppColors.forestSurfaceElevated.withValues(alpha: 0.8)
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: isSelected
+                        ? [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.3),
+                              blurRadius: 6,
+                              offset: const Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                  ),
+                  child: Icon(
                     mode.icon,
-                    size: 16,
+                    size: 18,
                     color: isSelected ? accentColor : AppColors.textMuted,
                   ),
-                  if (isSelected) ...[
-                    const SizedBox(width: 6),
-                    Text(
-                      mode.displayName,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textWhite,
-                      ),
-                    ),
-                  ],
-                ],
+                ),
               ),
             ),
           );

@@ -49,8 +49,12 @@ void main() {
     test('TimerVisualMode displays correct metadata', () {
       expect(TimerVisualMode.minimalDial.displayName, equals('Minimal Tátil'));
       expect(TimerVisualMode.sacredMandala.displayName, equals('Mandala Flow'));
-      expect(TimerVisualMode.inspirational.displayName, equals('Inspiracional'));
+      expect(
+        TimerVisualMode.inspirational.displayName,
+        equals('Inspiracional'),
+      );
       expect(TimerVisualMode.anxietyFree.displayName, equals('Anti-Ansiedade'));
+      expect(TimerVisualMode.liquidOrb.displayName, equals('Orbe Líquido'));
     });
   });
 }
