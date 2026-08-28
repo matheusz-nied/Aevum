@@ -2,11 +2,10 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/utils/time_utils.dart';
 import 'package:timing/features/tasks/domain/task_model.dart';
 import 'package:timing/features/timer/domain/timer_state.dart';
 
-/// View "Discógono Mínimo" — cápsula de vidro com dial analógico suave.
+/// View "Minimal Tátil" — dial analógico circular puro com progresso.
 class MinimalDialView extends StatelessWidget {
   final TaskModel task;
   final TimerState state;
@@ -26,49 +25,21 @@ class MinimalDialView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accentColor = task.color;
-    final displayTime = TimeUtils.formatSeconds(state.remainingSeconds);
-    final targetTime = TimeUtils.formatSeconds(state.targetSeconds);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        // Horário em destaque
-        Column(
-          children: [
-            Text(
-              displayTime,
-              style: TextStyle(
-                color: accentColor,
-                fontSize: 52,
-                fontWeight: FontWeight.w200,
-                letterSpacing: -1.5,
-                fontFeatures: const [FontFeature.tabularFigures()],
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'meta: $targetTime',
-              style: const TextStyle(
-                color: AppColors.textMuted,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-
-        // Dial em vidro
+        // Dial circular em vidro (sem borda quadrada, sem timer digital)
         Center(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(28),
+          child: ClipOval(
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(
                 width: 290,
                 height: 290,
                 decoration: BoxDecoration(
+                  shape: BoxShape.circle,
                   color: AppColors.glassLightOnly,
-                  borderRadius: BorderRadius.circular(28),
                   border: Border.all(
                     color: AppColors.glassBorderDark,
                     width: 1.5,
