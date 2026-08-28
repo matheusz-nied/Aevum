@@ -1,7 +1,7 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/utils/time_utils.dart';
 import 'package:timing/features/tasks/domain/task_model.dart';
 import 'package:timing/features/timer/domain/timer_state.dart';
 
@@ -60,9 +60,6 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
         ? AppColors.emeraldMist
         : widget.task.color;
 
-    final displayTime =
-        TimeUtils.formatSeconds(widget.state.remainingSeconds);
-
     return AnimatedBuilder(
       animation: _breathingController,
       builder: (context, child) {
@@ -70,114 +67,108 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
         final rotation = _breathingController.value * 0.15;
 
         return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Column(
-              children: [
-                Text(
-                  widget.state.isRunning
-                      ? 'Respire no ritmo da luz'
-                      : 'Pronto para focar',
-                  style: TextStyle(
-                    color: accentColor,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    letterSpacing: 2,
-                  ),
+            // Frase-guia no topo (sem timer digital)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(
+                widget.state.isRunning
+                    ? 'Respire no ritmo da luz'
+                    : 'Pronto para focar',
+                style: TextStyle(
+                  color: accentColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 2,
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  displayTime,
-                  style: TextStyle(
-                    color: AppColors.textWhite,
-                    fontSize: 38,
-                    fontWeight: FontWeight.w200,
-                    letterSpacing: 4,
-                  ),
-                ),
-              ],
+              ),
             ),
 
-            // Mandala
-            Center(
-              child: SizedBox(
-                width: 290,
-                height: 290,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Aura
-                    Container(
-                      width: 270 * breathScale,
-                      height: 270 * breathScale,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: accentColor.withValues(
-                              alpha: widget.state.isRunning ? 0.28 : 0.12,
-                            ),
-                            blurRadius: 36,
-                            spreadRadius: 8,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    CustomPaint(
-                      size: const Size(290, 290),
-                      painter: _MandalaPainter(
-                        breathScale: breathScale,
-                        rotation: rotation,
-                        progress: widget.state.progress,
-                        accentColor: accentColor,
-                      ),
-                    ),
-
-                    // Play/Pause central
-                    GestureDetector(
-                      onTap: widget.onTogglePlayPause,
-                      child: Container(
-                        width: 72,
-                        height: 72,
+            // Mandala centralizada verticalmente no espaço restante
+            Expanded(
+              child: Center(
+                child: SizedBox(
+                  width: 290,
+                  height: 290,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // Aura
+                      Container(
+                        width: 270 * breathScale,
+                        height: 270 * breathScale,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.10),
-                          border: Border.all(
-                            color: accentColor.withValues(alpha: 0.5),
-                            width: 1.5,
-                          ),
-                        ),
-                        child: Icon(
-                          widget.state.isRunning
-                              ? Icons.pause_rounded
-                              : Icons.play_arrow_rounded,
-                          color: accentColor,
-                          size: 36,
+                          boxShadow: [
+                            BoxShadow(
+                              color: accentColor.withValues(
+                                alpha: widget.state.isRunning ? 0.28 : 0.12,
+                              ),
+                              blurRadius: 36,
+                              spreadRadius: 8,
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ],
+
+                      CustomPaint(
+                        size: const Size(290, 290),
+                        painter: _MandalaPainter(
+                          breathScale: breathScale,
+                          rotation: rotation,
+                          progress: widget.state.progress,
+                          accentColor: accentColor,
+                        ),
+                      ),
+
+                      // Play/Pause central
+                      GestureDetector(
+                        onTap: widget.onTogglePlayPause,
+                        child: Container(
+                          width: 72,
+                          height: 72,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.10),
+                            border: Border.all(
+                              color: accentColor.withValues(alpha: 0.5),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Icon(
+                            widget.state.isRunning
+                                ? Icons.pause_rounded
+                                : Icons.play_arrow_rounded,
+                            color: accentColor,
+                            size: 36,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
 
             // Botões
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _MandalaButton(
-                  label: '+1 min',
-                  accentColor: accentColor,
-                  onTap: () => widget.onAddMinutes(1),
-                ),
-                const SizedBox(width: 20),
-                _MandalaButton(
-                  label: 'Reiniciar',
-                  accentColor: accentColor,
-                  onTap: widget.onReset,
-                ),
-              ],
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _MandalaButton(
+                    label: '+1 min',
+                    accentColor: accentColor,
+                    onTap: () => widget.onAddMinutes(1),
+                  ),
+                  const SizedBox(width: 20),
+                  _MandalaButton(
+                    label: 'Reiniciar',
+                    accentColor: accentColor,
+                    onTap: widget.onReset,
+                  ),
+                ],
+              ),
             ),
           ],
         );
@@ -284,19 +275,22 @@ class _MandalaPainter extends CustomPainter {
 
     for (int i = 0; i < petalCount; i++) {
       final angle = (i * 2 * pi) / petalCount;
-      final petalCenter =
-          Offset(radius * 0.5 * cos(angle), radius * 0.5 * sin(angle));
+      final petalCenter = Offset(
+        radius * 0.5 * cos(angle),
+        radius * 0.5 * sin(angle),
+      );
 
       canvas.drawCircle(petalCenter, radius * 0.5, petalPaint);
 
       final outerPoint = Offset(radius * cos(angle), radius * sin(angle));
       canvas.drawCircle(outerPoint, 3.5, nodePaint);
       canvas.drawCircle(
-          outerPoint,
-          6,
-          Paint()
-            ..color = accentColor.withValues(alpha: 0.25)
-            ..style = PaintingStyle.fill);
+        outerPoint,
+        6,
+        Paint()
+          ..color = accentColor.withValues(alpha: 0.25)
+          ..style = PaintingStyle.fill,
+      );
     }
 
     canvas.drawCircle(Offset.zero, radius, petalPaint..strokeWidth = 1.0);
