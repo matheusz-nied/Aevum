@@ -4,6 +4,7 @@ import 'package:timing/core/constants/app_colors.dart';
 import 'package:timing/features/tasks/domain/task_model.dart';
 import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
 import 'package:timing/features/tasks/presentation/widgets/daily_progress_header.dart';
+import 'package:timing/features/tasks/presentation/widgets/glass_create_task_button.dart';
 import 'package:timing/features/tasks/presentation/widgets/task_card.dart';
 import 'package:timing/features/timer/domain/timer_state.dart';
 import 'package:timing/features/timer/presentation/views/anxiety_free_view.dart';
@@ -210,5 +211,30 @@ void main() {
 
     await tester.tap(find.byTooltip('Pausar'));
     expect(pauseTapped, isTrue);
+  });
+
+  testWidgets('GlassCreateTaskButton renders and handles tap with animation', (
+    WidgetTester tester,
+  ) async {
+    bool tapped = false;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: GlassCreateTaskButton(
+            onPressed: () => tapped = true,
+            label: 'Novo hábito',
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Novo hábito'), findsOneWidget);
+    expect(find.byIcon(Icons.add_rounded), findsOneWidget);
+
+    await tester.tap(find.byType(GlassCreateTaskButton));
+    await tester.pumpAndSettle();
+
+    expect(tapped, isTrue);
   });
 }

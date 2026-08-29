@@ -8,6 +8,7 @@ import 'package:timing/features/stats/presentation/screens/stats_screen.dart';
 import 'package:timing/features/tasks/domain/task_model.dart';
 import 'package:timing/features/tasks/presentation/widgets/create_task_sheet.dart';
 import 'package:timing/features/tasks/presentation/widgets/daily_progress_header.dart';
+import 'package:timing/features/tasks/presentation/widgets/glass_create_task_button.dart';
 import 'package:timing/features/tasks/presentation/widgets/task_card.dart';
 import 'package:timing/features/tasks/providers/task_providers.dart';
 import 'package:timing/features/timer/presentation/screens/active_timer_screen.dart';
@@ -101,6 +102,7 @@ class HomeScreen extends ConsumerWidget {
                         children: [
                           GlassContainer(
                             isCircle: true,
+                            accentColor: AppColors.sage,
                             padding: const EdgeInsets.all(10),
                             child: const Icon(
                               Icons.park_outlined,
@@ -137,6 +139,7 @@ class HomeScreen extends ConsumerWidget {
                       // Botão de stats em vidro
                       GlassContainer(
                         isCircle: true,
+                        accentColor: AppColors.sage,
                         child: IconButton(
                           onPressed: () {
                             HapticService.lightImpact();
@@ -263,15 +266,11 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _openCreateTaskSheet(context, ref),
-        backgroundColor: AppColors.sage,
-        foregroundColor: AppColors.forestDeep,
-        elevation: 8,
-        icon: const Icon(Icons.add_rounded),
-        label: const Text(
-          'Novo hábito',
-          style: TextStyle(fontWeight: FontWeight.w700),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(right: 2, bottom: 4),
+        child: GlassCreateTaskButton(
+          onPressed: () => _openCreateTaskSheet(context, ref),
         ),
       ),
     );

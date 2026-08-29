@@ -87,6 +87,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
                   children: [
                     GlassContainer(
                       isCircle: true,
+                      accentColor: accentColor,
                       child: IconButton(
                         icon: const Icon(
                           Icons.arrow_back_ios_new_rounded,
@@ -129,6 +130,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
                     ),
                     GlassContainer(
                       borderRadius: 18,
+                      accentColor: accentColor,
                       child: TextButton(
                         onPressed: () {
                           HapticService.mediumImpact();

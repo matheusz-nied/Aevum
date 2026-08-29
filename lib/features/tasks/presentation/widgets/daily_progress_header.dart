@@ -28,14 +28,15 @@ class DailyProgressHeader extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 6),
       child: GlassContainer(
-        borderRadius: 30,
-        blur: 20,
+        borderRadius: 32,
+        blur: 26,
         strong: true,
+        accentColor: AppColors.sage,
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: onOpenStats,
-            borderRadius: BorderRadius.circular(30),
+            borderRadius: BorderRadius.circular(32),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(22, 22, 22, 20),
               child: Column(

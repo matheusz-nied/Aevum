@@ -20,7 +20,8 @@ class TimerModeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassContainer(
       borderRadius: 24,
-      blur: 16,
+      blur: 20,
+      accentColor: accentColor,
       padding: const EdgeInsets.all(4),
       child: Row(
         mainAxisSize: MainAxisSize.min,

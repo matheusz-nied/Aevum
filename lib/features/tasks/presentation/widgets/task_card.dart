@@ -4,7 +4,7 @@ import 'package:timing/core/services/haptic_service.dart';
 import 'package:timing/core/widgets/glass_container.dart';
 import 'package:timing/features/tasks/domain/task_model.dart';
 
-/// Card de hábito com efeito "vidro" — calmo, escuro e minimalista.
+/// Card de hábito em liquid glass, com a cor da tarefa refratada na borda.
 class TaskCard extends StatelessWidget {
   final TaskModel task;
   final bool isCompletedToday;
@@ -26,16 +26,17 @@ class TaskCard extends StatelessWidget {
     final accentColor = task.color;
 
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: GlassContainer(
-        borderRadius: 22,
-        blur: 16,
+        borderRadius: 26,
+        blur: 22,
+        accentColor: accentColor,
         color: isCompletedToday
-            ? AppColors.emeraldMist.withValues(alpha: 0.10)
+            ? AppColors.emeraldMist.withValues(alpha: 0.18)
             : null,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(26),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(14, 13, 8, 13),
             child: Row(
@@ -53,9 +54,21 @@ class TaskCard extends StatelessWidget {
                       ],
                     ),
                     border: Border.all(
-                      color: accentColor.withValues(alpha: 0.30),
-                      width: 0.8,
+                      color: Colors.white.withValues(alpha: 0.22),
+                      width: 1,
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: accentColor.withValues(alpha: 0.14),
+                        blurRadius: 14,
+                        spreadRadius: -4,
+                      ),
+                      BoxShadow(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        blurRadius: 2,
+                        offset: const Offset(-1, -1),
+                      ),
+                    ],
                   ),
                   child: Center(
                     child: Icon(task.iconData, color: accentColor, size: 22),
@@ -147,20 +160,22 @@ class TaskCard extends StatelessWidget {
                 ),
 
                 // Botão de play rápido em vidro tonal.
-                IconButton.filled(
-                  onPressed: () {
-                    HapticService.lightImpact();
-                    onTap();
-                  },
-                  style: IconButton.styleFrom(
-                    backgroundColor: accentColor.withValues(alpha: 0.16),
-                    foregroundColor: accentColor,
-                    side: BorderSide(
-                      color: accentColor.withValues(alpha: 0.25),
+                GlassContainer(
+                  isCircle: true,
+                  blur: 12,
+                  accentColor: accentColor,
+                  color: accentColor.withValues(alpha: 0.12),
+                  child: IconButton(
+                    onPressed: () {
+                      HapticService.lightImpact();
+                      onTap();
+                    },
+                    style: IconButton.styleFrom(
+                      foregroundColor: accentColor,
+                      padding: const EdgeInsets.all(10),
                     ),
-                    padding: const EdgeInsets.all(10),
+                    icon: const Icon(Icons.play_arrow_rounded, size: 22),
                   ),
-                  icon: const Icon(Icons.play_arrow_rounded, size: 22),
                 ),
 
                 // Menu de opções

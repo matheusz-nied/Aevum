@@ -110,9 +110,10 @@ class StatsScreen extends ConsumerWidget {
                 const SizedBox(height: 12),
 
                 GlassContainer(
-                  borderRadius: 24,
-                  blur: 18,
+                  borderRadius: 28,
+                  blur: 24,
                   strong: true,
+                  accentColor: AppColors.sage,
                   child: Padding(
                     padding: const EdgeInsets.only(
                       top: 24,
@@ -267,8 +268,9 @@ class StatsScreen extends ConsumerWidget {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 8),
                       child: GlassContainer(
-                        borderRadius: 16,
-                        blur: 14,
+                        borderRadius: 20,
+                        blur: 20,
+                        accentColor: task.color,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -377,8 +379,9 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GlassContainer(
-      borderRadius: 20,
-      blur: 16,
+      borderRadius: 24,
+      blur: 20,
+      accentColor: accentColor,
       child: Padding(
         padding: const EdgeInsets.all(14),
         child: Column(
