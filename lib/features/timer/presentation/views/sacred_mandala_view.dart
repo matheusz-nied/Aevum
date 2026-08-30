@@ -68,32 +68,27 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
 
         return Column(
           children: [
-            // Frase-guia no topo (sem timer digital)
-            Padding(
-              padding: const EdgeInsets.only(top: 4),
-              child: Text(
-                widget.state.isRunning
-                    ? 'Respire no ritmo da luz'
-                    : 'Pronto para focar',
-                style: TextStyle(
-                  color: accentColor,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 2,
-                ),
+            const SizedBox(height: 6),
+            Text(
+              widget.state.isRunning
+                  ? 'Respire no ritmo da luz'
+                  : 'Pronto para focar',
+              style: TextStyle(
+                color: accentColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 2,
               ),
             ),
-
-            // Mandala centralizada verticalmente no espaço restante
             Expanded(
-              child: Center(
+              child: Align(
+                alignment: const Alignment(0, -0.45),
                 child: SizedBox(
                   width: 290,
                   height: 290,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
-                      // Aura
                       Container(
                         width: 270 * breathScale,
                         height: 270 * breathScale,
@@ -110,7 +105,6 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
                           ],
                         ),
                       ),
-
                       CustomPaint(
                         size: const Size(290, 290),
                         painter: _MandalaPainter(
@@ -120,8 +114,6 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
                           accentColor: accentColor,
                         ),
                       ),
-
-                      // Play/Pause central
                       GestureDetector(
                         onTap: widget.onTogglePlayPause,
                         child: Container(
@@ -149,10 +141,8 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
                 ),
               ),
             ),
-
-            // Botões
             Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: 24),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
