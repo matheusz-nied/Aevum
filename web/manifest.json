@@ -1,11 +1,11 @@
 {
-    "name": "aevum",
-    "short_name": "aevum",
+    "name": "Aevum: Foco e Hábitos",
+    "short_name": "Aevum",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#06100C",
+    "theme_color": "#06100C",
+    "description": "Cultive hábitos e encontre foco com timers visuais, sem pressa ou pressão.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
