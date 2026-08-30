@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
-import 'package:timing/features/timer/domain/timer_state.dart';
-import 'package:timing/features/timer/providers/timer_controller.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/tasks/domain/task_icon.dart';
+import 'package:aevum/features/tasks/domain/timer_visual_mode.dart';
+import 'package:aevum/features/timer/domain/timer_state.dart';
+import 'package:aevum/features/timer/providers/timer_controller.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +18,7 @@ void main() {
         id: 't-test',
         title: 'Meditação Guiada',
         targetMinutes: 10,
-        iconCodePoint: Icons.self_improvement.codePoint,
+        iconKey: TaskIcon.mindfulness,
         colorValue: 0xFF00E5BC,
         defaultVisualMode: TimerVisualMode.sacredMandala,
       );
@@ -39,7 +39,10 @@ void main() {
       expect(controller.state.status, equals(TimerStatus.running));
       expect(controller.state.task?.id, equals(sampleTask.id));
       expect(controller.state.targetSeconds, equals(600));
-      expect(controller.state.visualMode, equals(TimerVisualMode.sacredMandala));
+      expect(
+        controller.state.visualMode,
+        equals(TimerVisualMode.sacredMandala),
+      );
     });
 
     test('pause() and resume() cycle state correctly', () {
@@ -61,8 +64,8 @@ void main() {
 
     test('setVisualMode() updates visual mode seamlessly', () {
       controller.start(sampleTask);
-      controller.setVisualMode(TimerVisualMode.anxietyFree);
-      expect(controller.state.visualMode, equals(TimerVisualMode.anxietyFree));
+      controller.setVisualMode(TimerVisualMode.focusFree);
+      expect(controller.state.visualMode, equals(TimerVisualMode.focusFree));
     });
 
     test('complete() finishes timer and marks status completed', () {

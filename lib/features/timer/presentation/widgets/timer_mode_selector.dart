@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/widgets/glass_container.dart';
-import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/widgets/glass_container.dart';
+import 'package:aevum/features/tasks/domain/timer_visual_mode.dart';
 
 /// Seletor de modo do timer com chips calmos e flutuantes.
 class TimerModeSelector extends StatelessWidget {
@@ -39,6 +39,11 @@ class TimerModeSelector extends StatelessWidget {
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   curve: Curves.easeInOut,
+                  constraints: const BoxConstraints(
+                    minWidth: 48,
+                    minHeight: 48,
+                  ),
+                  alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
                     vertical: 8,

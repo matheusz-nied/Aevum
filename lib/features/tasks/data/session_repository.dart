@@ -1,5 +1,5 @@
 import 'package:hive/hive.dart';
-import 'package:timing/features/tasks/domain/session_record.dart';
+import 'package:aevum/features/tasks/domain/session_record.dart';
 
 class SessionRepository {
   static const String boxName = 'sessions_box';
@@ -49,4 +49,6 @@ class SessionRepository {
     );
     return totalSeconds ~/ 60;
   }
+
+  Future<void> clear() => _box.clear();
 }

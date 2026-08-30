@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/services/haptic_service.dart';
-import 'package:timing/core/widgets/forest_background.dart';
-import 'package:timing/core/widgets/glass_container.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
-import 'package:timing/features/tasks/providers/task_providers.dart';
-import 'package:timing/features/timer/domain/timer_state.dart';
-import 'package:timing/features/timer/presentation/views/anxiety_free_view.dart';
-import 'package:timing/features/timer/presentation/views/inspirational_view.dart';
-import 'package:timing/features/timer/presentation/views/liquid_orb_view.dart';
-import 'package:timing/features/timer/presentation/views/minimal_dial_view.dart';
-import 'package:timing/features/timer/presentation/views/sacred_mandala_view.dart';
-import 'package:timing/features/timer/presentation/widgets/completion_dialog.dart';
-import 'package:timing/features/timer/presentation/widgets/timer_mode_selector.dart';
-import 'package:timing/features/timer/providers/timer_controller.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/services/haptic_service.dart';
+import 'package:aevum/core/services/screen_awake_service.dart';
+import 'package:aevum/core/widgets/forest_background.dart';
+import 'package:aevum/core/widgets/glass_container.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/tasks/domain/timer_visual_mode.dart';
+import 'package:aevum/features/tasks/providers/task_providers.dart';
+import 'package:aevum/features/timer/domain/timer_state.dart';
+import 'package:aevum/features/timer/presentation/views/focus_free_view.dart';
+import 'package:aevum/features/timer/presentation/views/inspirational_view.dart';
+import 'package:aevum/features/timer/presentation/views/liquid_orb_view.dart';
+import 'package:aevum/features/timer/presentation/views/minimal_dial_view.dart';
+import 'package:aevum/features/timer/presentation/views/sacred_mandala_view.dart';
+import 'package:aevum/features/timer/presentation/widgets/completion_dialog.dart';
+import 'package:aevum/features/timer/presentation/widgets/timer_mode_selector.dart';
+import 'package:aevum/features/timer/providers/timer_controller.dart';
 
 class ActiveTimerScreen extends ConsumerStatefulWidget {
   final TaskModel task;
@@ -26,15 +27,79 @@ class ActiveTimerScreen extends ConsumerStatefulWidget {
   ConsumerState<ActiveTimerScreen> createState() => _ActiveTimerScreenState();
 }
 
-class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
+class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
+    with WidgetsBindingObserver {
   bool _dialogShown = false;
+  bool _pausedByLifecycle = false;
+  bool _lifecycleDialogVisible = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       ref.read(timerControllerProvider.notifier).start(widget.task);
+      ScreenAwakeService.setEnabled(true);
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    ScreenAwakeService.setEnabled(false);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    final timer = ref.read(timerControllerProvider);
+    if (state == AppLifecycleState.resumed) {
+      if (_pausedByLifecycle) {
+        _pausedByLifecycle = false;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _explainLifecyclePause();
+        });
+      }
+      return;
+    }
+
+    if (timer.isRunning) {
+      ref.read(timerControllerProvider.notifier).pause();
+      _pausedByLifecycle = true;
+    }
+    ScreenAwakeService.setEnabled(false);
+  }
+
+  Future<void> _explainLifecyclePause() async {
+    if (_lifecycleDialogVisible) return;
+    _lifecycleDialogVisible = true;
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Sessão pausada'),
+        content: const Text(
+          'O Aevum pausou o timer quando o app saiu do primeiro plano. Continue quando estiver presente novamente.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Entendi'),
+          ),
+        ],
+      ),
+    );
+    _lifecycleDialogVisible = false;
+  }
+
+  void _toggleTimer(TimerState state, TimerController notifier) {
+    if (state.isRunning) {
+      notifier.pause();
+      ScreenAwakeService.setEnabled(false);
+    } else {
+      notifier.resume();
+      ScreenAwakeService.setEnabled(true);
+    }
   }
 
   void _showCompletionDialog(BuildContext context, TimerState state) {
@@ -46,11 +111,10 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
       barrierDismissible: false,
       builder: (ctx) => CompletionDialog(
         task: widget.task,
-        durationSeconds: state.elapsedSeconds > 0
-            ? state.elapsedSeconds
-            : widget.task.targetMinutes * 60,
+        durationSeconds: state.elapsedSeconds,
         onConfirm: (session) {
           ref.read(sessionListProvider.notifier).recordSession(session);
+          ScreenAwakeService.setEnabled(false);
           Navigator.of(context).pop(); // Exit timer screen back to home
         },
       ),
@@ -89,6 +153,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
                       isCircle: true,
                       accentColor: accentColor,
                       child: IconButton(
+                        tooltip: 'Voltar',
                         icon: const Icon(
                           Icons.arrow_back_ios_new_rounded,
                           size: 17,
@@ -97,6 +162,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
                         onPressed: () {
                           HapticService.lightImpact();
                           timerNotifier.pause();
+                          ScreenAwakeService.setEnabled(false);
                           Navigator.of(context).pop();
                         },
                       ),
@@ -135,6 +201,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
                         onPressed: () {
                           HapticService.mediumImpact();
                           timerNotifier.complete();
+                          ScreenAwakeService.setEnabled(false);
                         },
                         child: Text(
                           'Concluir',
@@ -195,11 +262,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
           task: widget.task,
           state: state,
           onTogglePlayPause: () {
-            if (state.isRunning) {
-              notifier.pause();
-            } else {
-              notifier.resume();
-            }
+            _toggleTimer(state, notifier);
           },
           onReset: () => notifier.reset(),
           onAddMinutes: (mins) => notifier.addMinutes(mins),
@@ -211,11 +274,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
           task: widget.task,
           state: state,
           onTogglePlayPause: () {
-            if (state.isRunning) {
-              notifier.pause();
-            } else {
-              notifier.resume();
-            }
+            _toggleTimer(state, notifier);
           },
           onReset: () => notifier.reset(),
           onAddMinutes: (mins) => notifier.addMinutes(mins),
@@ -227,27 +286,19 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
           task: widget.task,
           state: state,
           onTogglePlayPause: () {
-            if (state.isRunning) {
-              notifier.pause();
-            } else {
-              notifier.resume();
-            }
+            _toggleTimer(state, notifier);
           },
           onReset: () => notifier.reset(),
           onAddMinutes: (mins) => notifier.addMinutes(mins),
         );
 
-      case TimerVisualMode.anxietyFree:
-        return AnxietyFreeView(
-          key: const ValueKey('anxietyFree'),
+      case TimerVisualMode.focusFree:
+        return FocusFreeView(
+          key: const ValueKey('focusFree'),
           task: widget.task,
           state: state,
           onTogglePlayPause: () {
-            if (state.isRunning) {
-              notifier.pause();
-            } else {
-              notifier.resume();
-            }
+            _toggleTimer(state, notifier);
           },
           onReset: () => notifier.reset(),
         );
@@ -258,11 +309,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen> {
           task: widget.task,
           state: state,
           onTogglePlayPause: () {
-            if (state.isRunning) {
-              notifier.pause();
-            } else {
-              notifier.resume();
-            }
+            _toggleTimer(state, notifier);
           },
           onReset: () => notifier.reset(),
           onAddMinutes: (mins) => notifier.addMinutes(mins),

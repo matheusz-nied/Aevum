@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:timing/features/stats/domain/streak_calculator.dart';
-import 'package:timing/features/tasks/domain/session_record.dart';
+import 'package:aevum/features/stats/domain/streak_calculator.dart';
+import 'package:aevum/features/tasks/domain/session_record.dart';
 
 void main() {
   group('StreakCalculator Tests', () {

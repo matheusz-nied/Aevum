@@ -1,12 +1,7 @@
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/tasks/domain/timer_visual_mode.dart';
 
-enum TimerStatus {
-  idle,
-  running,
-  paused,
-  completed,
-}
+enum TimerStatus { idle, running, paused, completed }
 
 class TimerState {
   final TaskModel? task;

@@ -38,12 +38,17 @@ class InspirationQuotes {
 
   static String getRandomAffirmation({String? taskTitle}) {
     final titleLower = (taskTitle ?? '').toLowerCase();
-    if (titleLower.contains('escr') || titleLower.contains('text') || titleLower.contains('livro')) {
+    if (titleLower.contains('escr') ||
+        titleLower.contains('text') ||
+        titleLower.contains('livro')) {
       final combined = [...focusAffirmations, ...writingAffirmations];
       combined.shuffle();
       return combined.first;
     }
-    if (titleLower.contains('medit') || titleLower.contains('resp') || titleLower.contains('zen') || titleLower.contains('calm')) {
+    if (titleLower.contains('medit') ||
+        titleLower.contains('resp') ||
+        titleLower.contains('zen') ||
+        titleLower.contains('calm')) {
       final combined = [...focusAffirmations, ...meditationAffirmations];
       combined.shuffle();
       return combined.first;

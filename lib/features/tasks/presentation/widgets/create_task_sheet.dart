@@ -1,10 +1,11 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/services/haptic_service.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/services/haptic_service.dart';
+import 'package:aevum/features/tasks/domain/task_icon.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/tasks/domain/timer_visual_mode.dart';
 import 'package:uuid/uuid.dart';
 
 class CreateTaskSheet extends StatefulWidget {
@@ -21,25 +22,10 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
   late TextEditingController _titleController;
   late int _targetMinutes;
   late int _selectedColorValue;
-  late int _selectedIconCode;
+  late TaskIcon _selectedIcon;
   late TimerVisualMode _selectedVisualMode;
 
   static const List<int> _presetDurations = [5, 10, 15, 20, 25, 30, 45, 60];
-
-  static final List<IconData> _iconOptions = [
-    Icons.edit_note_rounded,
-    Icons.self_improvement_rounded,
-    Icons.menu_book_rounded,
-    Icons.spa_rounded,
-    Icons.laptop_chromebook_rounded,
-    Icons.fitness_center_rounded,
-    Icons.music_note_rounded,
-    Icons.coffee_rounded,
-    Icons.brush_rounded,
-    Icons.psychology_rounded,
-    Icons.alarm_rounded,
-    Icons.favorite_rounded,
-  ];
 
   @override
   void initState() {
@@ -48,8 +34,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
     _titleController = TextEditingController(text: task?.title ?? '');
     _targetMinutes = task?.targetMinutes ?? 15;
     _selectedColorValue = task?.colorValue ?? AppColors.emeraldMist.toARGB32();
-    _selectedIconCode =
-        task?.iconCodePoint ?? Icons.edit_note_rounded.codePoint;
+    _selectedIcon = task?.iconKey ?? TaskIcon.writing;
     _selectedVisualMode =
         task?.defaultVisualMode ?? TimerVisualMode.minimalDial;
   }
@@ -68,7 +53,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
       id: widget.existingTask?.id ?? const Uuid().v4(),
       title: title,
       targetMinutes: _targetMinutes,
-      iconCodePoint: _selectedIconCode,
+      iconKey: _selectedIcon,
       colorValue: _selectedColorValue,
       defaultVisualMode: _selectedVisualMode,
       createdAt: widget.existingTask?.createdAt ?? DateTime.now(),
@@ -427,45 +412,54 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                               _selectedColorValue == color.toARGB32();
                           return Padding(
                             padding: const EdgeInsets.only(right: 10),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(
-                                  () => _selectedColorValue = color.toARGB32(),
-                                );
-                                HapticService.selectionClick();
-                              },
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 180),
-                                width: 38,
-                                height: 38,
-                                decoration: BoxDecoration(
-                                  color: color,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Colors.white.withValues(alpha: 0.10),
-                                    width: isSelected ? 2.2 : 1,
-                                  ),
-                                  boxShadow: isSelected
-                                      ? [
-                                          BoxShadow(
-                                            color: color.withValues(
-                                              alpha: 0.26,
+                            child: Semantics(
+                              button: true,
+                              selected: isSelected,
+                              label:
+                                  'Cor ${AppColors.taskColors.indexOf(color) + 1}',
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(
+                                    () =>
+                                        _selectedColorValue = color.toARGB32(),
+                                  );
+                                  HapticService.selectionClick();
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 180),
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(
+                                    color: color,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? Colors.white
+                                          : Colors.white.withValues(
+                                              alpha: 0.10,
                                             ),
-                                            blurRadius: 10,
-                                            spreadRadius: 1,
-                                          ),
-                                        ]
+                                      width: isSelected ? 2.2 : 1,
+                                    ),
+                                    boxShadow: isSelected
+                                        ? [
+                                            BoxShadow(
+                                              color: color.withValues(
+                                                alpha: 0.26,
+                                              ),
+                                              blurRadius: 10,
+                                              spreadRadius: 1,
+                                            ),
+                                          ]
+                                        : null,
+                                  ),
+                                  child: isSelected
+                                      ? const Icon(
+                                          Icons.check_rounded,
+                                          color: Colors.white,
+                                          size: 18,
+                                        )
                                       : null,
                                 ),
-                                child: isSelected
-                                    ? const Icon(
-                                        Icons.check_rounded,
-                                        color: Colors.white,
-                                        size: 18,
-                                      )
-                                    : null,
                               ),
                             ),
                           );
@@ -485,43 +479,48 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
-                          children: _iconOptions.map((icon) {
-                            final isSelected =
-                                _selectedIconCode == icon.codePoint;
+                          children: TaskIcon.values.map((icon) {
+                            final isSelected = _selectedIcon == icon;
                             return Padding(
                               padding: const EdgeInsets.only(right: 10),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 180),
-                                width: 44,
-                                height: 44,
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? _selectedColor.withValues(alpha: 0.14)
-                                      : Colors.white.withValues(alpha: 0.035),
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
+                              child: Semantics(
+                                button: true,
+                                selected: isSelected,
+                                label: 'Ícone ${icon.displayName}',
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 180),
+                                  width: 48,
+                                  height: 48,
+                                  decoration: BoxDecoration(
                                     color: isSelected
-                                        ? _selectedColor.withValues(alpha: 0.72)
-                                        : Colors.white.withValues(alpha: 0.07),
-                                  ),
-                                ),
-                                child: Material(
-                                  color: Colors.transparent,
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(
-                                        () =>
-                                            _selectedIconCode = icon.codePoint,
-                                      );
-                                      HapticService.selectionClick();
-                                    },
+                                        ? _selectedColor.withValues(alpha: 0.14)
+                                        : Colors.white.withValues(alpha: 0.035),
                                     borderRadius: BorderRadius.circular(14),
-                                    child: Icon(
-                                      icon,
+                                    border: Border.all(
                                       color: isSelected
-                                          ? _selectedFill
-                                          : AppColors.textMuted,
-                                      size: 21,
+                                          ? _selectedColor.withValues(
+                                              alpha: 0.72,
+                                            )
+                                          : Colors.white.withValues(
+                                              alpha: 0.07,
+                                            ),
+                                    ),
+                                  ),
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    child: InkWell(
+                                      onTap: () {
+                                        setState(() => _selectedIcon = icon);
+                                        HapticService.selectionClick();
+                                      },
+                                      borderRadius: BorderRadius.circular(14),
+                                      child: Icon(
+                                        icon.iconData,
+                                        color: isSelected
+                                            ? _selectedFill
+                                            : AppColors.textMuted,
+                                        size: 21,
+                                      ),
                                     ),
                                   ),
                                 ),

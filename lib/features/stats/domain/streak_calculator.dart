@@ -1,4 +1,4 @@
-import 'package:timing/features/tasks/domain/session_record.dart';
+import 'package:aevum/features/tasks/domain/session_record.dart';
 
 class DayFocusMetric {
   final DateTime date;
@@ -18,12 +18,18 @@ class StreakCalculator {
     if (sessions.isEmpty) return 0;
 
     // Agrupar datas únicas normalizadas para meia-noite
-    final uniqueDates = sessions
-        .map((s) =>
-            DateTime(s.completedAt.year, s.completedAt.month, s.completedAt.day))
-        .toSet()
-        .toList()
-      ..sort((a, b) => b.compareTo(a));
+    final uniqueDates =
+        sessions
+            .map(
+              (s) => DateTime(
+                s.completedAt.year,
+                s.completedAt.month,
+                s.completedAt.day,
+              ),
+            )
+            .toSet()
+            .toList()
+          ..sort((a, b) => b.compareTo(a));
 
     if (uniqueDates.isEmpty) return 0;
 
@@ -56,7 +62,8 @@ class StreakCalculator {
 
   /// Retorna as métricas dos últimos 7 dias (do 6º dia atrás até hoje)
   static List<DayFocusMetric> getLast7DaysMetrics(
-      List<SessionRecord> sessions) {
+    List<SessionRecord> sessions,
+  ) {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
 
@@ -71,8 +78,10 @@ class StreakCalculator {
             s.completedAt.day == targetDate.day;
       });
 
-      final totalSeconds =
-          daySessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
+      final totalSeconds = daySessions.fold<int>(
+        0,
+        (sum, s) => sum + s.durationSeconds,
+      );
 
       list.add(
         DayFocusMetric(
@@ -88,8 +97,10 @@ class StreakCalculator {
 
   /// Total acumulado em minutos
   static int getTotalMinutes(List<SessionRecord> sessions) {
-    final totalSeconds =
-        sessions.fold<int>(0, (sum, s) => sum + s.durationSeconds);
+    final totalSeconds = sessions.fold<int>(
+      0,
+      (sum, s) => sum + s.durationSeconds,
+    );
     return totalSeconds ~/ 60;
   }
 }

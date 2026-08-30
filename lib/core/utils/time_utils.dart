@@ -6,7 +6,7 @@ class TimeUtils {
     'Quinta-feira',
     'Sexta-feira',
     'Sábado',
-    'Domingo'
+    'Domingo',
   ];
 
   static const List<String> _monthsPt = [
@@ -21,7 +21,7 @@ class TimeUtils {
     'Setembro',
     'Outubro',
     'Novembro',
-    'Dezembro'
+    'Dezembro',
   ];
 
   /// Formata segundos em `MM:SS` ou `HH:MM:SS`

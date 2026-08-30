@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/timer/domain/timer_state.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/timer/domain/timer_state.dart';
 
 class SacredMandalaView extends StatefulWidget {
   final TaskModel task;

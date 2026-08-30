@@ -4,7 +4,7 @@ enum TimerVisualMode {
   minimalDial,
   sacredMandala,
   inspirational,
-  anxietyFree,
+  focusFree,
   liquidOrb;
 
   String get displayName {
@@ -15,8 +15,8 @@ enum TimerVisualMode {
         return 'Mandala Flow';
       case TimerVisualMode.inspirational:
         return 'Inspiracional';
-      case TimerVisualMode.anxietyFree:
-        return 'Anti-Ansiedade';
+      case TimerVisualMode.focusFree:
+        return 'Foco Livre';
       case TimerVisualMode.liquidOrb:
         return 'Orbe Líquido';
     }
@@ -30,8 +30,8 @@ enum TimerVisualMode {
         return 'Geometria sagrada pulsante com ritmo de respiração';
       case TimerVisualMode.inspirational:
         return 'Frases rotativas de apoio, elogios e reforço de foco';
-      case TimerVisualMode.anxietyFree:
-        return 'Sem relógio visível para eliminar a pressa e ansiedade';
+      case TimerVisualMode.focusFree:
+        return 'Sem relógio visível para manter a atenção no momento';
       case TimerVisualMode.liquidOrb:
         return 'Vórtice de vidro interativo com fluxo e refração contínuos';
     }
@@ -45,7 +45,7 @@ enum TimerVisualMode {
         return Icons.spa_outlined;
       case TimerVisualMode.inspirational:
         return Icons.auto_awesome_outlined;
-      case TimerVisualMode.anxietyFree:
+      case TimerVisualMode.focusFree:
         return Icons.self_improvement_rounded;
       case TimerVisualMode.liquidOrb:
         return Icons.water_drop_outlined;
@@ -54,6 +54,7 @@ enum TimerVisualMode {
 
   static TimerVisualMode fromString(String? val) {
     if (val == null) return TimerVisualMode.minimalDial;
+    if (val == 'anxietyFree') return TimerVisualMode.focusFree;
     return TimerVisualMode.values.firstWhere(
       (e) => e.name == val,
       orElse: () => TimerVisualMode.minimalDial,

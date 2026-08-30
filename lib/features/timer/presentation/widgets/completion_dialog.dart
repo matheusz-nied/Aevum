@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/quotes/inspiration_quotes.dart';
-import 'package:timing/features/tasks/domain/session_record.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/quotes/inspiration_quotes.dart';
+import 'package:aevum/features/tasks/domain/session_record.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
 import 'package:uuid/uuid.dart';
 
 class CompletionDialog extends StatelessWidget {
@@ -27,10 +27,7 @@ class CompletionDialog extends StatelessWidget {
       backgroundColor: AppColors.forestSurfaceElevated,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(28),
-        side: BorderSide(
-          color: AppColors.glassBorderDark,
-          width: 1,
-        ),
+        side: BorderSide(color: AppColors.glassBorderDark, width: 1),
       ),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Padding(
@@ -139,10 +136,7 @@ class CompletionDialog extends StatelessWidget {
                 ),
                 child: const Text(
                   'Salvar & Finalizar',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
             ),

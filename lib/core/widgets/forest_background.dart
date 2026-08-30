@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
+import 'package:aevum/core/constants/app_colors.dart';
 
 /// Fundo procedural inspirado em uma floresta encoberta por névoa.
 ///

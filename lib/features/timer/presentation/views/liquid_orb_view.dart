@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/timer/domain/timer_state.dart';
-import 'package:timing/features/timer/presentation/widgets/liquid_glass_sphere.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/timer/domain/timer_state.dart';
+import 'package:aevum/features/timer/presentation/widgets/liquid_glass_sphere.dart';
 
 /// A segunda interpretação do vidro líquido preservada do stash.
 ///
-/// Diferente do modo anti-ansiedade, este orbe é mais energético, responde ao
+/// Diferente do modo anti-pressa, este orbe é mais energético, responde ao
 /// arraste e reduz suavemente sua velocidade quando o timer é pausado.
 class LiquidOrbView extends StatefulWidget {
   final TaskModel task;

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/services/haptic_service.dart';
-import 'package:timing/core/widgets/glass_container.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/services/haptic_service.dart';
+import 'package:aevum/core/widgets/glass_container.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
 
 /// Card de hábito em liquid glass, com a cor da tarefa refratada na borda.
 class TaskCard extends StatelessWidget {
@@ -166,6 +166,7 @@ class TaskCard extends StatelessWidget {
                   accentColor: accentColor,
                   color: accentColor.withValues(alpha: 0.12),
                   child: IconButton(
+                    tooltip: 'Iniciar ${task.title}',
                     onPressed: () {
                       HapticService.lightImpact();
                       onTap();
@@ -180,6 +181,7 @@ class TaskCard extends StatelessWidget {
 
                 // Menu de opções
                 PopupMenuButton<String>(
+                  tooltip: 'Opções de ${task.title}',
                   icon: Icon(
                     Icons.more_vert_rounded,
                     color: AppColors.textMuted,

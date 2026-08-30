@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
+import 'package:aevum/core/constants/app_colors.dart';
 
 /// Superfície de liquid glass compartilhada por cards, cápsulas e botões.
 ///

@@ -1,21 +1,21 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/timer/domain/timer_state.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/timer/domain/timer_state.dart';
 
-/// Um timer sem contagem visível, representado por um orbe de vidro líquido.
+/// Um timer de foco sem contagem visível, representado por um orbe de vidro líquido.
 ///
 /// A animação é deliberadamente lenta: o orbe muda de forma, e reflexos e
 /// caústicas deslizam em velocidades diferentes para evitar um loop mecânico.
-class AnxietyFreeView extends StatefulWidget {
+class FocusFreeView extends StatefulWidget {
   final TaskModel task;
   final TimerState state;
   final VoidCallback onTogglePlayPause;
   final VoidCallback onReset;
 
-  const AnxietyFreeView({
+  const FocusFreeView({
     super.key,
     required this.task,
     required this.state,
@@ -24,10 +24,10 @@ class AnxietyFreeView extends StatefulWidget {
   });
 
   @override
-  State<AnxietyFreeView> createState() => _AnxietyFreeViewState();
+  State<FocusFreeView> createState() => _FocusFreeViewState();
 }
 
-class _AnxietyFreeViewState extends State<AnxietyFreeView>
+class _FocusFreeViewState extends State<FocusFreeView>
     with SingleTickerProviderStateMixin {
   late final AnimationController _liquidController;
 

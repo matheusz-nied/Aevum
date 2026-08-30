@@ -1,6 +1,6 @@
 {
-    "name": "timing",
-    "short_name": "timing",
+    "name": "aevum",
+    "short_name": "aevum",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,0 +1,6 @@
+# Copie para android/key.properties somente depois de criar a upload key.
+# Nunca versione este arquivo preenchido nem o keystore.
+storePassword=SUBSTITUA
+keyPassword=SUBSTITUA
+keyAlias=upload
+storeFile=app/aevum-upload-key.jks

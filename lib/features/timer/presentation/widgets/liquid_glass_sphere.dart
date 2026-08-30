@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:timing/core/services/haptic_service.dart';
+import 'package:aevum/core/services/haptic_service.dart';
 
 /// Esfera do stash: um vórtice de vidro interativo com tempo monotônico.
 ///

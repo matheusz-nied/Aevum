@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
+import 'package:aevum/features/tasks/domain/task_icon.dart';
+import 'package:aevum/features/tasks/domain/timer_visual_mode.dart';
 
 class TaskModel {
   final String id;
   final String title;
   final int targetMinutes;
-  final int iconCodePoint;
+  final TaskIcon iconKey;
   final int colorValue;
   final TimerVisualMode defaultVisualMode;
   final bool isCountUp;
@@ -15,18 +16,14 @@ class TaskModel {
     required this.id,
     required this.title,
     required this.targetMinutes,
-    required this.iconCodePoint,
+    required this.iconKey,
     required this.colorValue,
     this.defaultVisualMode = TimerVisualMode.minimalDial,
     this.isCountUp = false,
     DateTime? createdAt,
   }) : createdAt = createdAt ?? DateTime.now();
 
-  IconData get iconData => IconData(
-        // ignore: non_const_argument_for_const_parameter
-        iconCodePoint,
-        fontFamily: 'MaterialIcons',
-      );
+  IconData get iconData => iconKey.iconData;
 
   Color get color => Color(colorValue);
 
@@ -34,7 +31,7 @@ class TaskModel {
     String? id,
     String? title,
     int? targetMinutes,
-    int? iconCodePoint,
+    TaskIcon? iconKey,
     int? colorValue,
     TimerVisualMode? defaultVisualMode,
     bool? isCountUp,
@@ -44,7 +41,7 @@ class TaskModel {
       id: id ?? this.id,
       title: title ?? this.title,
       targetMinutes: targetMinutes ?? this.targetMinutes,
-      iconCodePoint: iconCodePoint ?? this.iconCodePoint,
+      iconKey: iconKey ?? this.iconKey,
       colorValue: colorValue ?? this.colorValue,
       defaultVisualMode: defaultVisualMode ?? this.defaultVisualMode,
       isCountUp: isCountUp ?? this.isCountUp,
@@ -57,7 +54,7 @@ class TaskModel {
       'id': id,
       'title': title,
       'targetMinutes': targetMinutes,
-      'iconCodePoint': iconCodePoint,
+      'iconKey': iconKey.name,
       'colorValue': colorValue,
       'defaultVisualMode': defaultVisualMode.name,
       'isCountUp': isCountUp,
@@ -70,10 +67,14 @@ class TaskModel {
       id: map['id'] as String,
       title: map['title'] as String,
       targetMinutes: (map['targetMinutes'] as num).toInt(),
-      iconCodePoint: (map['iconCodePoint'] as num).toInt(),
+      iconKey: TaskIcon.fromStorage(
+        key: map['iconKey'] as String?,
+        legacyCodePoint: (map['iconCodePoint'] as num?)?.toInt(),
+      ),
       colorValue: (map['colorValue'] as num).toInt(),
-      defaultVisualMode:
-          TimerVisualMode.fromString(map['defaultVisualMode'] as String?),
+      defaultVisualMode: TimerVisualMode.fromString(
+        map['defaultVisualMode'] as String?,
+      ),
       isCountUp: map['isCountUp'] as bool? ?? false,
       createdAt: map['createdAt'] != null
           ? DateTime.parse(map['createdAt'] as String)

@@ -1,11 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:timing/core/services/audio_service.dart';
-import 'package:timing/core/services/haptic_service.dart';
-import 'package:timing/core/services/notification_service.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
-import 'package:timing/features/timer/domain/timer_state.dart';
+import 'package:aevum/core/services/audio_service.dart';
+import 'package:aevum/core/services/haptic_service.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/tasks/domain/timer_visual_mode.dart';
+import 'package:aevum/features/timer/domain/timer_state.dart';
 
 class TimerController extends StateNotifier<TimerState> {
   Timer? _ticker;
@@ -45,8 +45,9 @@ class TimerController extends StateNotifier<TimerState> {
     _ticker?.cancel();
 
     if (_segmentStartTime != null) {
-      _accumulatedSeconds +=
-          DateTime.now().difference(_segmentStartTime!).inSeconds;
+      _accumulatedSeconds += DateTime.now()
+          .difference(_segmentStartTime!)
+          .inSeconds;
     }
     _segmentStartTime = null;
 
@@ -98,8 +99,9 @@ class TimerController extends StateNotifier<TimerState> {
   void complete() {
     _ticker?.cancel();
     if (_segmentStartTime != null) {
-      _accumulatedSeconds +=
-          DateTime.now().difference(_segmentStartTime!).inSeconds;
+      _accumulatedSeconds += DateTime.now()
+          .difference(_segmentStartTime!)
+          .inSeconds;
     }
     _segmentStartTime = null;
 
@@ -110,13 +112,6 @@ class TimerController extends StateNotifier<TimerState> {
 
     HapticService.success();
     AudioService.playTimerCompleteSound();
-
-    if (state.task != null) {
-      NotificationService.showTimerCompletedNotification(
-        taskTitle: state.task!.title,
-        durationMinutes: state.task!.targetMinutes,
-      );
-    }
   }
 
   void _startTicker() {
@@ -124,11 +119,13 @@ class TimerController extends StateNotifier<TimerState> {
     _ticker = Timer.periodic(const Duration(milliseconds: 250), (_) {
       if (_segmentStartTime == null) return;
 
-      final currentSegmentSeconds =
-          DateTime.now().difference(_segmentStartTime!).inSeconds;
+      final currentSegmentSeconds = DateTime.now()
+          .difference(_segmentStartTime!)
+          .inSeconds;
       final currentTotalElapsed = _accumulatedSeconds + currentSegmentSeconds;
 
-      if (!state.task!.isCountUp && currentTotalElapsed >= state.targetSeconds) {
+      if (!state.task!.isCountUp &&
+          currentTotalElapsed >= state.targetSeconds) {
         _accumulatedSeconds = state.targetSeconds;
         complete();
       } else {
@@ -146,5 +143,5 @@ class TimerController extends StateNotifier<TimerState> {
 
 final timerControllerProvider =
     StateNotifierProvider<TimerController, TimerState>((ref) {
-  return TimerController();
-});
+      return TimerController();
+    });

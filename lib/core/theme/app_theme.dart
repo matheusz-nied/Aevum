@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
+import 'package:aevum/core/constants/app_colors.dart';
 
 /// Tema "Floresta Nebulosa" — somente modo escuro, com verdes profundos
 /// calmantes e componentes premium para complementar o efeito glass.

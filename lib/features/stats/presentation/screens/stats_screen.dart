@@ -2,12 +2,13 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/utils/time_utils.dart';
-import 'package:timing/core/widgets/forest_background.dart';
-import 'package:timing/core/widgets/glass_container.dart';
-import 'package:timing/features/stats/domain/streak_calculator.dart';
-import 'package:timing/features/tasks/providers/task_providers.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/utils/time_utils.dart';
+import 'package:aevum/core/widgets/forest_background.dart';
+import 'package:aevum/core/widgets/glass_container.dart';
+import 'package:aevum/features/stats/domain/streak_calculator.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/tasks/providers/task_providers.dart';
 
 class StatsScreen extends ConsumerWidget {
   const StatsScreen({super.key});
@@ -41,6 +42,7 @@ class StatsScreen extends ConsumerWidget {
                 Row(
                   children: [
                     IconButton(
+                      tooltip: 'Voltar',
                       icon: const Icon(
                         Icons.arrow_back_ios_new_rounded,
                         size: 20,
@@ -260,17 +262,21 @@ class StatsScreen extends ConsumerWidget {
                   )
                 else
                   ...sessions.take(10).map((session) {
-                    final task = tasks.firstWhere(
-                      (t) => t.id == session.taskId,
-                      orElse: () => tasks.first,
-                    );
+                    TaskModel? task;
+                    for (final candidate in tasks) {
+                      if (candidate.id == session.taskId) {
+                        task = candidate;
+                        break;
+                      }
+                    }
+                    final taskColor = task?.color ?? AppColors.textMuted;
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 8),
                       child: GlassContainer(
                         borderRadius: 20,
                         blur: 20,
-                        accentColor: task.color,
+                        accentColor: taskColor,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -286,17 +292,17 @@ class StatsScreen extends ConsumerWidget {
                                   shape: BoxShape.circle,
                                   gradient: RadialGradient(
                                     colors: [
-                                      task.color.withValues(alpha: 0.35),
-                                      task.color.withValues(alpha: 0.08),
+                                      taskColor.withValues(alpha: 0.35),
+                                      taskColor.withValues(alpha: 0.08),
                                     ],
                                   ),
                                   border: Border.all(
-                                    color: task.color.withValues(alpha: 0.35),
+                                    color: taskColor.withValues(alpha: 0.35),
                                   ),
                                 ),
                                 child: Icon(
-                                  task.iconData,
-                                  color: task.color,
+                                  task?.iconData ?? Icons.history_rounded,
+                                  color: taskColor,
                                   size: 20,
                                 ),
                               ),
@@ -306,7 +312,7 @@ class StatsScreen extends ConsumerWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      task.title,
+                                      task?.title ?? 'Hábito removido',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 14,

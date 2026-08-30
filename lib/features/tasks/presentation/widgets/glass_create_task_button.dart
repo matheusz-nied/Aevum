@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/services/haptic_service.dart';
-import 'package:timing/core/widgets/glass_container.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/services/haptic_service.dart';
+import 'package:aevum/core/widgets/glass_container.dart';
 
 /// Ação principal da home em uma cápsula leve de liquid glass.
 class GlassCreateTaskButton extends StatefulWidget {

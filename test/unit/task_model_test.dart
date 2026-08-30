@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:timing/features/tasks/domain/session_record.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/tasks/domain/timer_visual_mode.dart';
+import 'package:aevum/features/tasks/domain/session_record.dart';
+import 'package:aevum/features/tasks/domain/task_icon.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/tasks/domain/timer_visual_mode.dart';
 
 void main() {
   group('TaskModel and SessionRecord Tests', () {
@@ -11,7 +12,7 @@ void main() {
         id: 'test-123',
         title: 'Escrita Criativa',
         targetMinutes: 15,
-        iconCodePoint: Icons.edit.codePoint,
+        iconKey: TaskIcon.writing,
         colorValue: 0xFFFF5722,
         defaultVisualMode: TimerVisualMode.sacredMandala,
       );
@@ -22,7 +23,7 @@ void main() {
       expect(restored.id, equals(original.id));
       expect(restored.title, equals(original.title));
       expect(restored.targetMinutes, equals(original.targetMinutes));
-      expect(restored.iconCodePoint, equals(original.iconCodePoint));
+      expect(restored.iconKey, equals(original.iconKey));
       expect(restored.colorValue, equals(original.colorValue));
       expect(restored.defaultVisualMode, equals(TimerVisualMode.sacredMandala));
     });
@@ -53,8 +54,24 @@ void main() {
         TimerVisualMode.inspirational.displayName,
         equals('Inspiracional'),
       );
-      expect(TimerVisualMode.anxietyFree.displayName, equals('Anti-Ansiedade'));
+      expect(TimerVisualMode.focusFree.displayName, equals('Foco Livre'));
       expect(TimerVisualMode.liquidOrb.displayName, equals('Orbe Líquido'));
+    });
+
+    test('legacy icon code point and visual mode are migrated', () {
+      final restored = TaskModel.fromMap({
+        'id': 'legacy',
+        'title': 'Legado',
+        'targetMinutes': 10,
+        'iconCodePoint': Icons.menu_book_rounded.codePoint,
+        'colorValue': 0xFF123456,
+        'defaultVisualMode': 'anxietyFree',
+      });
+
+      expect(restored.iconKey, TaskIcon.reading);
+      expect(restored.defaultVisualMode, TimerVisualMode.focusFree);
+      expect(restored.toMap().containsKey('iconCodePoint'), isFalse);
+      expect(restored.toMap()['defaultVisualMode'], 'focusFree');
     });
   });
 }

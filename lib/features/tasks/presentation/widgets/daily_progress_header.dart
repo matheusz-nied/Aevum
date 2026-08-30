@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/utils/time_utils.dart';
-import 'package:timing/core/widgets/glass_container.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/utils/time_utils.dart';
+import 'package:aevum/core/widgets/glass_container.dart';
 
 /// Painel principal do dia, inspirado no cartão vertical da referência.
 class DailyProgressHeader extends StatelessWidget {

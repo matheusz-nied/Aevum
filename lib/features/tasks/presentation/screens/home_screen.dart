@@ -1,20 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/services/haptic_service.dart';
-import 'package:timing/core/widgets/forest_background.dart';
-import 'package:timing/core/widgets/glass_container.dart';
-import 'package:timing/features/stats/presentation/screens/stats_screen.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/tasks/presentation/widgets/create_task_sheet.dart';
-import 'package:timing/features/tasks/presentation/widgets/daily_progress_header.dart';
-import 'package:timing/features/tasks/presentation/widgets/glass_create_task_button.dart';
-import 'package:timing/features/tasks/presentation/widgets/task_card.dart';
-import 'package:timing/features/tasks/providers/task_providers.dart';
-import 'package:timing/features/timer/presentation/screens/active_timer_screen.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/services/haptic_service.dart';
+import 'package:aevum/core/widgets/forest_background.dart';
+import 'package:aevum/core/widgets/glass_container.dart';
+import 'package:aevum/features/about/presentation/about_screen.dart';
+import 'package:aevum/features/stats/presentation/screens/stats_screen.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/tasks/presentation/widgets/create_task_sheet.dart';
+import 'package:aevum/features/tasks/presentation/widgets/daily_progress_header.dart';
+import 'package:aevum/features/tasks/presentation/widgets/glass_create_task_button.dart';
+import 'package:aevum/features/tasks/presentation/widgets/task_card.dart';
+import 'package:aevum/features/tasks/providers/task_providers.dart';
+import 'package:aevum/features/timer/presentation/screens/active_timer_screen.dart';
 
-class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key});
+class HomeScreen extends ConsumerStatefulWidget {
+  const HomeScreen({
+    super.key,
+    this.openCreateOnStart = false,
+    this.onInitialCreateOpened,
+  });
+
+  final bool openCreateOnStart;
+  final VoidCallback? onInitialCreateOpened;
+
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  bool _handledInitialCreate = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.openCreateOnStart) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || _handledInitialCreate) return;
+        _handledInitialCreate = true;
+        widget.onInitialCreateOpened?.call();
+        _openCreateTaskSheet(context, ref);
+      });
+    }
+  }
 
   void _openCreateTaskSheet(
     BuildContext context,
@@ -69,7 +97,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final tasks = ref.watch(taskListProvider);
     final sessions = ref.watch(sessionListProvider);
     final totalFocusedMinutes = ref.watch(todayCompletedMinutesProvider);
@@ -104,10 +132,12 @@ class HomeScreen extends ConsumerWidget {
                             isCircle: true,
                             accentColor: AppColors.sage,
                             padding: const EdgeInsets.all(10),
-                            child: const Icon(
-                              Icons.park_outlined,
-                              color: AppColors.sage,
-                              size: 18,
+                            child: ClipOval(
+                              child: Image.asset(
+                                'assets/app/aevum-mark.png',
+                                width: 22,
+                                height: 22,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 11),
@@ -115,7 +145,7 @@ class HomeScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Timing',
+                                'Aevum',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
                                   fontSize: 21,
@@ -124,7 +154,7 @@ class HomeScreen extends ConsumerWidget {
                                 ),
                               ),
                               Text(
-                                'SUA FLORESTA DE FOCO',
+                                'EVOLUA NO SEU TEMPO',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 8,
@@ -136,26 +166,50 @@ class HomeScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
-                      // Botão de stats em vidro
-                      GlassContainer(
-                        isCircle: true,
-                        accentColor: AppColors.sage,
-                        child: IconButton(
-                          onPressed: () {
-                            HapticService.lightImpact();
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (_) => const StatsScreen(),
+                      Row(
+                        children: [
+                          GlassContainer(
+                            isCircle: true,
+                            accentColor: AppColors.sage,
+                            child: IconButton(
+                              onPressed: () {
+                                HapticService.lightImpact();
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const StatsScreen(),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(
+                                Icons.insights_rounded,
+                                size: 20,
+                                color: AppColors.sage,
                               ),
-                            );
-                          },
-                          icon: const Icon(
-                            Icons.insights_rounded,
-                            size: 20,
-                            color: AppColors.sage,
+                              tooltip: 'Estatísticas',
+                            ),
                           ),
-                          tooltip: 'Estatísticas',
-                        ),
+                          const SizedBox(width: 8),
+                          GlassContainer(
+                            isCircle: true,
+                            accentColor: AppColors.sage,
+                            child: IconButton(
+                              onPressed: () {
+                                HapticService.lightImpact();
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => const AboutScreen(),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(
+                                Icons.info_outline_rounded,
+                                size: 20,
+                                color: AppColors.sage,
+                              ),
+                              tooltip: 'Sobre o Aevum',
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -230,7 +284,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 8),
                       const Text(
-                        'Toque no botão abaixo para criar seu primeiro timer!',
+                        'Crie seu primeiro hábito e comece no seu ritmo.',
                         style: TextStyle(
                           fontSize: 13,
                           color: AppColors.textMuted,

@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/core/quotes/inspiration_quotes.dart';
-import 'package:timing/core/utils/time_utils.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/timer/domain/timer_state.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/quotes/inspiration_quotes.dart';
+import 'package:aevum/core/utils/time_utils.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/timer/domain/timer_state.dart';
 
 class InspirationalView extends StatefulWidget {
   final TaskModel task;
@@ -62,8 +63,7 @@ class _InspirationalViewState extends State<InspirationalView> {
   @override
   Widget build(BuildContext context) {
     final accentColor = widget.task.color;
-    final displayTime =
-        TimeUtils.formatSeconds(widget.state.remainingSeconds);
+    final displayTime = TimeUtils.formatSeconds(widget.state.remainingSeconds);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -78,9 +78,7 @@ class _InspirationalViewState extends State<InspirationalView> {
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: accentColor.withValues(alpha: 0.35),
-                ),
+                border: Border.all(color: accentColor.withValues(alpha: 0.35)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -127,18 +125,12 @@ class _InspirationalViewState extends State<InspirationalView> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.format_quote_rounded,
-                  color: accentColor,
-                  size: 32,
-                ),
+                Icon(Icons.format_quote_rounded, color: accentColor, size: 32),
                 const SizedBox(height: 10),
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 700),
-                  transitionBuilder: (child, anim) => FadeTransition(
-                    opacity: anim,
-                    child: child,
-                  ),
+                  transitionBuilder: (child, anim) =>
+                      FadeTransition(opacity: anim, child: child),
                   child: Text(
                     _currentQuote,
                     key: ValueKey(_currentQuote),
@@ -230,20 +222,14 @@ class _GlassIconButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.09),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.12),
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
           ),
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               onTap: onPressed,
               child: Center(
-                child: Icon(
-                  icon,
-                  color: AppColors.textWhite,
-                  size: 20,
-                ),
+                child: Icon(icon, color: AppColors.textWhite, size: 20),
               ),
             ),
           ),

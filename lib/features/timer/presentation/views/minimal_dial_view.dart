@@ -1,9 +1,10 @@
 import 'dart:math';
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:timing/core/constants/app_colors.dart';
-import 'package:timing/features/tasks/domain/task_model.dart';
-import 'package:timing/features/timer/domain/timer_state.dart';
+import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
+import 'package:aevum/features/timer/domain/timer_state.dart';
 
 /// View "Minimal Tátil" — dial analógico circular puro com progresso.
 class MinimalDialView extends StatelessWidget {
@@ -66,8 +67,9 @@ class MinimalDialView extends StatelessWidget {
                         height: 100,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: AppColors.forestSurfaceElevated
-                              .withValues(alpha: 0.5),
+                          color: AppColors.forestSurfaceElevated.withValues(
+                            alpha: 0.5,
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: accentColor.withValues(alpha: 0.3),
@@ -107,9 +109,10 @@ class MinimalDialView extends StatelessWidget {
             _Chip(icon: Icons.add, label: '+5m', onTap: () => onAddMinutes(5)),
             const SizedBox(width: 16),
             _Chip(
-                icon: Icons.refresh_rounded,
-                label: 'Reiniciar',
-                onTap: onReset),
+              icon: Icons.refresh_rounded,
+              label: 'Reiniciar',
+              onTap: onReset,
+            ),
           ],
         ),
       ],
@@ -134,15 +137,16 @@ class _Chip extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.07),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.1),
-          ),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon,
-                size: 16, color: AppColors.textWhite.withValues(alpha: 0.8)),
+            Icon(
+              icon,
+              size: 16,
+              color: AppColors.textWhite.withValues(alpha: 0.8),
+            ),
             const SizedBox(width: 4),
             Text(
               label,
