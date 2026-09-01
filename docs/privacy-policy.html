@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Privacidade — Aevum: Foco e Hábitos</title>
+  <meta name="description" content="Política de Privacidade do aplicativo Aevum. Saiba como seus dados e hábitos permanecem 100% privados e locais no seu aparelho.">
+  <link rel="icon" type="image/png" href="icon-512.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --forest-black: #020806;
+      --forest-deep: #06100C;
+      --forest-mid: #0C1913;
+      --forest-surface: #13211A;
+      --forest-surface-elevated: #1A2B22;
+      --forest-surface-card: rgba(19, 33, 26, 0.75);
+      
+      --sage: #BAC9B5;
+      --emerald-mist: #8FAC95;
+      --moss-calm: #718B70;
+      --fog-silver: #93A199;
+      
+      --text-white: #EFF3F0;
+      --text-muted: #A4B0A9;
+      --text-faint: #74827A;
+      
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-border-subtle: rgba(255, 255, 255, 0.06);
+      --glass-highlight: rgba(186, 201, 181, 0.15);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--forest-black);
+      color: var(--text-white);
+      line-height: 1.7;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient background glowing orbs */
+    .ambient-glow-1 {
+      position: fixed;
+      top: -150px;
+      right: -100px;
+      width: 550px;
+      height: 550px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(143, 172, 149, 0.12) 0%, rgba(6, 16, 12, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ambient-glow-2 {
+      position: fixed;
+      bottom: -200px;
+      left: -150px;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(49, 72, 59, 0.18) 0%, rgba(2, 8, 6, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(6, 16, 12, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border-subtle);
+      z-index: 50;
+      padding: 1.25rem 2rem;
+    }
+
+    .header-container {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      text-decoration: none;
+      color: var(--text-white);
+    }
+
+    .brand img {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-tag {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--emerald-mist);
+      background: rgba(143, 172, 149, 0.12);
+      border: 1px solid rgba(143, 172, 149, 0.25);
+      padding: 0.2rem 0.55rem;
+      border-radius: 20px;
+    }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 3.5rem 1.5rem 5rem 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hero */
+    .hero-section {
+      margin-bottom: 3.5rem;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      border-radius: 9999px;
+      background: var(--forest-surface);
+      border: 1px solid var(--glass-border);
+      color: var(--sage);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+
+    .hero-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--emerald-mist);
+      box-shadow: 0 0 10px var(--emerald-mist);
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #EFF3F0 30%, #BAC9B5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 620px;
+      margin: 0 auto 1.5rem auto;
+    }
+
+    .last-updated {
+      font-size: 0.85rem;
+      color: var(--text-faint);
+    }
+
+    /* Summary Cards Grid */
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .highlight-card {
+      background: var(--forest-surface-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 1.5rem;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .highlight-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(186, 201, 181, 0.35);
+    }
+
+    .highlight-icon {
+      font-size: 1.75rem;
+      margin-bottom: 0.75rem;
+      display: inline-block;
+    }
+
+    .highlight-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-white);
+      margin-bottom: 0.4rem;
+    }
+
+    .highlight-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Policy Content */
+    .content-card {
+      background: var(--forest-surface-card);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      padding: 2.75rem 2.5rem;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    @media (max-width: 640px) {
+      .content-card {
+        padding: 1.75rem 1.25rem;
+      }
+    }
+
+    .section {
+      margin-bottom: 2.5rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid var(--glass-border-subtle);
+    }
+
+    .section:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .section h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--sage);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      letter-spacing: -0.01em;
+    }
+
+    .section p {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      font-size: 0.98rem;
+    }
+
+    .section p:last-child {
+      margin-bottom: 0;
+    }
+
+    .section ul {
+      list-style: none;
+      margin: 1rem 0;
+      padding-left: 0.5rem;
+    }
+
+    .section ul li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 0.65rem;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .section ul li::before {
+      content: "•";
+      color: var(--emerald-mist);
+      font-size: 1.5rem;
+      position: absolute;
+      left: 0;
+      top: -0.3rem;
+    }
+
+    .callout-box {
+      background: rgba(186, 201, 181, 0.06);
+      border-left: 3px solid var(--emerald-mist);
+      border-radius: 0 12px 12px 0;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+    }
+
+    .callout-box p {
+      color: var(--text-white);
+      font-size: 0.92rem;
+      margin: 0;
+    }
+
+    /* Contact Box */
+    .contact-card {
+      background: var(--forest-surface-elevated);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .contact-card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .email-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--sage);
+      font-weight: 600;
+      text-decoration: none;
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(186, 201, 181, 0.1);
+      border: 1px solid rgba(186, 201, 181, 0.2);
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .email-link:hover {
+      background: rgba(186, 201, 181, 0.2);
+      color: var(--text-white);
+      transform: translateX(2px);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--glass-border-subtle);
+      background: var(--forest-deep);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-content {
+      max-width: 900px;
+      margin: 0 auto;
+      color: var(--text-faint);
+      font-size: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--sage);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ambient-glow-1"></div>
+  <div class="ambient-glow-2"></div>
+
+  <header>
+    <div class="header-container">
+      <a href="index.html" class="brand">
+        <img src="icon-512.png" alt="Ícone do Aevum">
+        <span class="brand-title">Aevum</span>
+        <span class="brand-tag">Foco & Hábitos</span>
+      </a>
+      <a href="index.html" style="color: var(--text-muted); text-decoration: none; font-size: 0.9rem; font-weight: 500;">
+        ← Início
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero-section">
+      <div class="hero-badge">Privacidade Absoluta • 100% Offline</div>
+      <h1 class="hero-title">Política de Privacidade</h1>
+      <p class="hero-subtitle">O Aevum foi criado sob a premissa de que seu tempo, hábitos e foco pertencem unicamente a você.</p>
+      <div class="last-updated">Última atualização: 1 de setembro de 2026</div>
+    </div>
+
+    <div class="highlights-grid">
+      <div class="highlight-card">
+        <div class="highlight-icon">🔒</div>
+        <h3>Zero Coleta</h3>
+        <p>Não coletamos, não transmitimos e não vendemos nenhum tipo de dado pessoal ou de uso.</p>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon">📱</div>
+        <h3>100% no Aparelho</h3>
+        <p>Todos os seus hábitos, timers e histórico ficam salvos estritamente no armazenamento local.</p>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-icon">🚫</div>
+        <h3>Sem Anúncios ou Trackers</h3>
+        <p>Zero anúncios, zero SDKs de analytics invasivos e sem qualquer perfilamento de usuário.</p>
+      </div>
+    </div>
+
+    <div class="content-card">
+      
+      <div class="section">
+        <h2>1. Visão Geral e Compromisso</h2>
+        <p>O <strong>Aevum: Foco e Hábitos</strong> foi rigorosamente projetado para operar sem necessidade de criação de conta, login em servidores remotos ou conexões em nuvem. Seus dados nunca saem do seu dispositivo móvel.</p>
+      </div>
+
+      <div class="section">
+        <h2>2. Coleta e Compartilhamento de Dados</h2>
+        <p>O Aevum <strong>não coleta, não armazena em servidores externos, não transmite e não compartilha</strong> informações pessoais, identificadores de dispositivo, localização ou registros de atividade com terceiros.</p>
+        <p>O aplicativo não utiliza SDKs de terceiros para fins de publicidade, análise comportamental (analytics) ou rastreamento entre aplicativos.</p>
+      </div>
+
+      <div class="section">
+        <h2>3. Dados Armazenados Localmente</h2>
+        <p>Para o funcionamento das funcionalidades de temporizador e acompanhamento de rotinas, as seguintes informações são gravadas exclusivamente na memória local do seu aparelho:</p>
+        <ul>
+          <li><strong>Hábitos e Rituais:</strong> Título, cor, duração e preferências visuais configuradas por você;</li>
+          <li><strong>Histórico de Sessões:</strong> Datas, horários e duração das sessões concluídas para exibição dos gráficos e sequências;</li>
+          <li><strong>Configurações do App:</strong> Estado de conclusão do onboarding inicial e preferências de interface.</li>
+        </ul>
+        <div class="callout-box">
+          <p>Esses registros nunca são enviados a servidores ou sincronizados na nuvem por nossa iniciativa.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>4. Permissões de Sistema</h2>
+        <p>O Aevum preza pelo mínimo de privilégios necessários no Android/iOS:</p>
+        <ul>
+          <li><strong>Vibração (Vibrate):</strong> Utilizada unicamente para fornecer feedback tátil suave ao iniciar, pausar ou concluir uma sessão;</li>
+          <li><strong>Sem Notificações Intrusivas:</strong> O app não exige permissões especiais de envio de notificações promocionais;</li>
+          <li><strong>Sem Execução Oculta em Segundo Plano:</strong> O temporizador conta o tempo enquanto o aplicativo estiver aberto. Ao sair, a sessão é pausada para preservar sua bateria e garantir presença real.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>5. Exclusão e Controle dos Seus Dados</h2>
+        <p>Você possui controle absoluto e instantâneo sobre todos os dados salvos:</p>
+        <ul>
+          <li><strong>Dentro do Aplicativo:</strong> Na tela <em>Sobre o Aevum</em>, você pode utilizar a opção <strong>"Apagar todos os dados"</strong> para resetar permanentemente todos os hábitos e históricos.</li>
+          <li><strong>Desinstalação:</strong> Ao desinstalar o Aevum pelo sistema operacional, todos os dados locais são automaticamente e irreversivelmente excluídos pelo próprio sistema.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h2>6. Links Externos Opcionais</h2>
+        <p>O aplicativo pode incluir links opcionais para páginas externas (como repositório no GitHub ou links de apoio voluntário). Esses links são abertos no navegador padrão do seu sistema apenas quando você clica voluntariamente neles, estando sujeitos às políticas de privacidade dos respectivos serviços terceiros.</p>
+      </div>
+
+      <div class="section">
+        <h2>7. Contato e Suporte</h2>
+        <p>Se você tiver qualquer dúvida, sugestão ou solicitação referente a esta política de privacidade ou ao funcionamento do Aevum, entre em contato através do canal de suporte:</p>
+        
+        <div class="contact-card">
+          <p>📧 <strong>E-mail de Suporte / Desenvolvedor:</strong></p>
+          <a href="mailto:contato@aevum.app" class="email-link">
+            contato@aevum.app
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="index.html">Início</a>
+        <a href="privacy-policy.html">Política de Privacidade</a>
+      </div>
+      <p>© 2026 Aevum. Todos os direitos reservados. Evolua no seu tempo.</p>
+    </div>
+  </footer>
+
+</body>
+</html>
