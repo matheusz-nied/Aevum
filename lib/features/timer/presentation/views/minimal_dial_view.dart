@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/widgets/adaptive_backdrop_filter.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
 import 'package:aevum/features/timer/domain/timer_state.dart';
 
@@ -33,7 +34,7 @@ class MinimalDialView extends StatelessWidget {
         // Dial circular em vidro (sem borda quadrada, sem timer digital)
         Center(
           child: ClipOval(
-            child: BackdropFilter(
+            child: AdaptiveBackdropFilter(
               filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
               child: Container(
                 width: 290,

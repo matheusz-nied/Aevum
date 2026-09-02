@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:aevum/core/widgets/adaptive_backdrop_filter.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/services/haptic_service.dart';
 import 'package:aevum/features/tasks/domain/task_icon.dart';
@@ -139,7 +140,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
 
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
-      child: BackdropFilter(
+      child: AdaptiveBackdropFilter(
         filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
         child: Stack(
           children: [

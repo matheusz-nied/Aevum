@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:aevum/core/config/app_performance_policy.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 
 /// Fundo procedural inspirado em uma floresta encoberta por névoa.
@@ -18,54 +19,57 @@ class ForestBackground extends StatefulWidget {
 
 class _ForestBackgroundState extends State<ForestBackground>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _fogController;
+  AnimationController? _fogController;
 
   @override
   void initState() {
     super.initState();
-    _fogController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 24),
-    )..repeat(reverse: true);
+    if (AppPerformancePolicy.animateForestAtmosphere) {
+      _fogController = AnimationController(
+        vsync: this,
+        duration: const Duration(seconds: 24),
+      )..repeat(reverse: true);
+    }
   }
 
   @override
   void dispose() {
-    _fogController.dispose();
+    _fogController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return RepaintBoundary(
-      child: DecoratedBox(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF18251F),
-              AppColors.forestMid,
-              AppColors.forestDeep,
-              AppColors.forestBlack,
-            ],
-            stops: [0, 0.34, 0.72, 1],
-          ),
-        ),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            AnimatedBuilder(
-              animation: _fogController,
-              builder: (context, child) => CustomPaint(
-                painter: _ForestAtmospherePainter(
-                  progress: _fogController.value,
-                ),
-              ),
+    final controller = _fogController;
+    final atmosphere = controller == null
+        ? const CustomPaint(painter: _ForestAtmospherePainter(progress: 0.5))
+        : AnimatedBuilder(
+            animation: controller,
+            builder: (context, child) => CustomPaint(
+              painter: _ForestAtmospherePainter(progress: controller.value),
             ),
-            widget.child,
+          );
+
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF18251F),
+            AppColors.forestMid,
+            AppColors.forestDeep,
+            AppColors.forestBlack,
           ],
+          stops: [0, 0.34, 0.72, 1],
         ),
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          RepaintBoundary(child: atmosphere),
+          widget.child,
+        ],
       ),
     );
   }

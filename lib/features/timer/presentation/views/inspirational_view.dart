@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:aevum/core/widgets/adaptive_backdrop_filter.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/quotes/inspiration_quotes.dart';
 import 'package:aevum/core/utils/time_utils.dart';
@@ -145,7 +146,9 @@ class _InspirationalViewState extends State<InspirationalView> {
                               fontWeight: FontWeight.w200,
                               height: 1,
                               letterSpacing: hasHours ? 2.5 : 5,
-                              color: AppColors.textWhite.withValues(alpha: 0.96),
+                              color: AppColors.textWhite.withValues(
+                                alpha: 0.96,
+                              ),
                               shadows: [
                                 Shadow(
                                   color: accentColor.withValues(alpha: 0.45),
@@ -257,7 +260,7 @@ class _SoftIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipOval(
-      child: BackdropFilter(
+      child: AdaptiveBackdropFilter(
         filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
         child: Material(
           color: Colors.transparent,

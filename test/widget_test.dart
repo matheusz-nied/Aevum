@@ -66,7 +66,7 @@ void main() {
 
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pump();
-    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Sessão pausada'), findsOneWidget);
     expect(find.text('Entendi'), findsOneWidget);
   });

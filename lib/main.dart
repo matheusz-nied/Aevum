@@ -19,14 +19,18 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Disponibiliza os nomes de dias e meses em português em todas as plataformas.
-  await initializeDateFormatting('pt_BR');
+  final localeInitialization = initializeDateFormatting('pt_BR');
 
   // Inicializar Hive para armazenamento local NoSQL
   await Hive.initFlutter();
-  final taskRepo = await TaskRepository.init();
-  final sessionRepo = await SessionRepository.init();
+  final taskRepositoryInitialization = TaskRepository.init();
+  final sessionRepositoryInitialization = SessionRepository.init();
+  final preferencesInitialization = SharedPreferences.getInstance();
 
-  final preferences = AppPreferences(await SharedPreferences.getInstance());
+  await localeInitialization;
+  final taskRepo = await taskRepositoryInitialization;
+  final sessionRepo = await sessionRepositoryInitialization;
+  final preferences = AppPreferences(await preferencesInitialization);
 
   const screenshotMode = bool.fromEnvironment('AEVUM_SCREENSHOT_MODE');
   if (kDebugMode && screenshotMode) {

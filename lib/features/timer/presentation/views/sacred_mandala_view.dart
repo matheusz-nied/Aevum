@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:aevum/core/config/app_performance_policy.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
 import 'package:aevum/features/timer/domain/timer_state.dart';
@@ -35,7 +36,10 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
     _breathingController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
-    )..repeat(reverse: true);
+    );
+    if (widget.state.isRunning) {
+      _breathingController.repeat(reverse: true);
+    }
   }
 
   @override
@@ -63,8 +67,12 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
     return AnimatedBuilder(
       animation: _breathingController,
       builder: (context, child) {
-        final breathScale = 0.94 + (_breathingController.value * 0.12);
-        final rotation = _breathingController.value * 0.15;
+        final animationValue = AppPerformancePolicy.animationValue(
+          _breathingController.value,
+          steps: 120,
+        );
+        final breathScale = 0.94 + (animationValue * 0.12);
+        final rotation = animationValue * 0.15;
 
         return Column(
           children: [

@@ -60,6 +60,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) _explainLifecyclePause();
         });
+        WidgetsBinding.instance.scheduleFrame();
       }
       return;
     }

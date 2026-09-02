@@ -129,6 +129,7 @@ class TimerController extends StateNotifier<TimerState> {
         _accumulatedSeconds = state.targetSeconds;
         complete();
       } else {
+        if (currentTotalElapsed == state.elapsedSeconds) return;
         state = state.copyWith(elapsedSeconds: currentTotalElapsed);
       }
     });

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aevum/core/config/app_performance_policy.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
 import 'package:aevum/features/timer/domain/timer_state.dart';
@@ -38,7 +39,18 @@ class _LiquidOrbViewState extends State<LiquidOrbView>
     _textFadeController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 5),
-    )..repeat(reverse: true);
+    );
+    if (widget.state.isRunning) _textFadeController.repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(covariant LiquidOrbView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.state.isRunning && !_textFadeController.isAnimating) {
+      _textFadeController.repeat(reverse: true);
+    } else if (!widget.state.isRunning && _textFadeController.isAnimating) {
+      _textFadeController.stop();
+    }
   }
 
   @override
@@ -59,6 +71,10 @@ class _LiquidOrbViewState extends State<LiquidOrbView>
             AnimatedBuilder(
               animation: _textFadeController,
               builder: (context, child) {
+                final fadeValue = AppPerformancePolicy.animationValue(
+                  _textFadeController.value,
+                  steps: 150,
+                );
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -81,7 +97,7 @@ class _LiquidOrbViewState extends State<LiquidOrbView>
                           : 'PRONTO PARA INICIAR',
                       style: TextStyle(
                         color: AppColors.textMuted.withValues(
-                          alpha: 0.70 + (_textFadeController.value * 0.30),
+                          alpha: 0.70 + (fadeValue * 0.30),
                         ),
                         fontSize: 12,
                         fontWeight: FontWeight.w600,

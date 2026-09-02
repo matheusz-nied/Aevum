@@ -1,13 +1,14 @@
 import 'dart:math' as math;
 
+import 'package:aevum/core/config/app_performance_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:aevum/core/services/haptic_service.dart';
 
 /// Esfera do stash: um vórtice de vidro interativo com tempo monotônico.
 ///
-/// O tempo não é reiniciado em ciclos. Em pausa, o movimento desacelera em vez
-/// de congelar, preservando a sensação de um material ainda vivo.
+/// O tempo não é reiniciado em ciclos. O movimento para durante pausas para não
+/// manter o rasterizador ativo sem necessidade.
 class LiquidGlassSphere extends StatefulWidget {
   final bool isRunning;
   final double progress;
@@ -32,7 +33,6 @@ class _LiquidGlassSphereState extends State<LiquidGlassSphere>
   late final AnimationController _springController;
 
   double _continuousTime = 0;
-  double _currentSpeed = 1;
   Duration _lastElapsed = Duration.zero;
   Offset _dragOffset = Offset.zero;
   Offset _springStartOffset = Offset.zero;
@@ -44,7 +44,20 @@ class _LiquidGlassSphereState extends State<LiquidGlassSphere>
       vsync: this,
       duration: const Duration(milliseconds: 850),
     )..addListener(_onSpringTick);
-    _ticker = createTicker(_onTick)..start();
+    _ticker = createTicker(_onTick);
+    if (widget.isRunning) _ticker.start();
+  }
+
+  @override
+  void didUpdateWidget(covariant LiquidGlassSphere oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isRunning && !_ticker.isActive) {
+      _lastElapsed = Duration.zero;
+      _ticker.start();
+    } else if (!widget.isRunning && _ticker.isActive) {
+      _ticker.stop();
+      _lastElapsed = Duration.zero;
+    }
   }
 
   void _onTick(Duration elapsed) {
@@ -53,16 +66,17 @@ class _LiquidGlassSphereState extends State<LiquidGlassSphere>
       return;
     }
 
+    if (AppPerformancePolicy.isAndroid &&
+        elapsed - _lastElapsed < const Duration(milliseconds: 33)) {
+      return;
+    }
+
     final deltaSeconds =
         (elapsed - _lastElapsed).inMicroseconds /
         Duration.microsecondsPerSecond;
     _lastElapsed = elapsed;
     final clampedDelta = deltaSeconds.clamp(0.0, 0.05);
-    final targetSpeed = widget.isRunning ? 1.0 : 0.28;
-    final speedBlend = 1 - math.exp(-4 * clampedDelta);
-
-    _currentSpeed += (targetSpeed - _currentSpeed) * speedBlend;
-    _continuousTime += clampedDelta * _currentSpeed;
+    _continuousTime += clampedDelta;
 
     if (mounted) setState(() {});
   }
@@ -361,7 +375,9 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
         ..style = PaintingStyle.stroke
         ..strokeCap = StrokeCap.round
         ..strokeWidth = 8.5
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5.5)
+        ..maskFilter = AppPerformancePolicy.usePainterBlur
+            ? const MaskFilter.blur(BlurStyle.normal, 5.5)
+            : null
         ..blendMode = BlendMode.screen,
     );
     canvas.drawPath(
@@ -411,7 +427,9 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
         ).createShader(orbitRect)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.8
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.2)
+        ..maskFilter = AppPerformancePolicy.usePainterBlur
+            ? const MaskFilter.blur(BlurStyle.normal, 2.2)
+            : null
         ..blendMode = BlendMode.screen,
     );
     canvas.restore();
@@ -438,7 +456,9 @@ class _ContinuousLiquidGlassPainter extends CustomPainter {
         ).createShader(rimRect)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 5.5
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.2)
+        ..maskFilter = AppPerformancePolicy.usePainterBlur
+            ? const MaskFilter.blur(BlurStyle.normal, 3.2)
+            : null
         ..blendMode = BlendMode.screen,
     );
   }

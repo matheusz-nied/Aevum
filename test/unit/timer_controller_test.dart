@@ -73,5 +73,19 @@ void main() {
       controller.complete();
       expect(controller.state.status, equals(TimerStatus.completed));
     });
+
+    test('never emits the same elapsed second twice in sequence', () async {
+      controller.start(sampleTask);
+      final elapsedValues = <int>[];
+      controller.addListener(
+        (state) => elapsedValues.add(state.elapsedSeconds),
+      );
+
+      await Future<void>.delayed(const Duration(milliseconds: 1100));
+
+      for (var index = 1; index < elapsedValues.length; index++) {
+        expect(elapsedValues[index], isNot(elapsedValues[index - 1]));
+      }
+    });
   });
 }

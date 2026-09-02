@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:aevum/core/config/app_performance_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
@@ -37,7 +38,18 @@ class _FocusFreeViewState extends State<FocusFreeView>
     _liquidController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 16),
-    )..repeat();
+    );
+    if (widget.state.isRunning) _liquidController.repeat();
+  }
+
+  @override
+  void didUpdateWidget(covariant FocusFreeView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.state.isRunning && !_liquidController.isAnimating) {
+      _liquidController.repeat();
+    } else if (!widget.state.isRunning && _liquidController.isAnimating) {
+      _liquidController.stop();
+    }
   }
 
   @override
@@ -74,11 +86,15 @@ class _FocusFreeViewState extends State<FocusFreeView>
                   child: AnimatedBuilder(
                     animation: _liquidController,
                     builder: (context, child) {
+                      final phase = AppPerformancePolicy.animationValue(
+                        _liquidController.value,
+                        steps: 480,
+                      );
                       return CustomPaint(
                         key: const ValueKey('liquidGlassOrb'),
                         size: Size.square(orbSize),
                         painter: _LiquidGlassPainter(
-                          phase: _liquidController.value,
+                          phase: phase,
                           accentColor: widget.task.color,
                           isPaused: widget.state.isPaused,
                         ),
@@ -276,7 +292,9 @@ class _LiquidGlassPainter extends CustomPainter {
           ],
           stops: const [0, 0.48, 1],
         ).createShader(glowRect)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.13),
+        ..maskFilter = AppPerformancePolicy.usePainterBlur
+            ? MaskFilter.blur(BlurStyle.normal, radius * 0.13)
+            : null,
     );
   }
 
@@ -287,7 +305,9 @@ class _LiquidGlassPainter extends CustomPainter {
       orbPath,
       Paint()
         ..color = Colors.black.withValues(alpha: 0.68)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.16),
+        ..maskFilter = AppPerformancePolicy.usePainterBlur
+            ? MaskFilter.blur(BlurStyle.normal, radius * 0.16)
+            : null,
     );
     canvas.restore();
 
@@ -298,7 +318,9 @@ class _LiquidGlassPainter extends CustomPainter {
             .withValues(alpha: isPaused ? 0.07 : 0.12)
         ..style = PaintingStyle.stroke
         ..strokeWidth = radius * 0.055
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.09),
+        ..maskFilter = AppPerformancePolicy.usePainterBlur
+            ? MaskFilter.blur(BlurStyle.normal, radius * 0.09)
+            : null,
     );
   }
 
@@ -456,7 +478,9 @@ class _LiquidGlassPainter extends CustomPainter {
           stops: const [0, 0.2, 0.53, 0.78, 1],
         ).createShader(bounds)
         ..blendMode = BlendMode.screen
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.018),
+        ..maskFilter = AppPerformancePolicy.usePainterBlur
+            ? MaskFilter.blur(BlurStyle.normal, radius * 0.018)
+            : null,
     );
 
     final lowerFold = Path()
@@ -501,7 +525,9 @@ class _LiquidGlassPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeWidth = math.max(1.0, radius * 0.014)
       ..color = cyan.withValues(alpha: isPaused ? 0.22 : 0.48)
-      ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.009)
+      ..maskFilter = AppPerformancePolicy.usePainterBlur
+          ? MaskFilter.blur(BlurStyle.normal, radius * 0.009)
+          : null
       ..blendMode = BlendMode.screen;
 
     final sweep = math.sin(_time * 2 + 1.1);
@@ -594,7 +620,9 @@ class _LiquidGlassPainter extends CustomPainter {
           ],
         ).createShader(bounds)
         ..blendMode = BlendMode.screen
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.025),
+        ..maskFilter = AppPerformancePolicy.usePainterBlur
+            ? MaskFilter.blur(BlurStyle.normal, radius * 0.025)
+            : null,
     );
 
     final sharpHighlight = Path()

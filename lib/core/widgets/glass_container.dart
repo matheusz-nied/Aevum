@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/config/app_performance_policy.dart';
+import 'package:aevum/core/widgets/adaptive_backdrop_filter.dart';
 
 /// Superfície de liquid glass compartilhada por cards, cápsulas e botões.
 ///
@@ -45,6 +47,7 @@ class GlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAndroid = AppPerformancePolicy.isAndroid;
     final radius = isCircle ? 999.0 : (borderRadius ?? 24);
     final borderRadiusValue = BorderRadius.circular(radius);
     final tint = accentColor ?? AppColors.emeraldMist;
@@ -61,13 +64,13 @@ class GlassContainer extends StatelessWidget {
             color: AppColors.forestBlack.withValues(
               alpha: strong ? 0.48 : 0.34,
             ),
-            blurRadius: strong ? 34 : 24,
+            blurRadius: isAndroid ? (strong ? 18 : 14) : (strong ? 34 : 24),
             spreadRadius: -7,
             offset: Offset(0, strong ? 18 : 13),
           ),
           BoxShadow(
             color: tint.withValues(alpha: strong ? 0.09 : 0.055),
-            blurRadius: strong ? 26 : 18,
+            blurRadius: isAndroid ? (strong ? 14 : 10) : (strong ? 26 : 18),
             spreadRadius: -9,
             offset: const Offset(5, 7),
           ),
@@ -75,7 +78,7 @@ class GlassContainer extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: borderRadiusValue,
-        child: BackdropFilter(
+        child: AdaptiveBackdropFilter(
           filter: ImageFilter.blur(
             sigmaX: strong ? blur + 5 : blur,
             sigmaY: strong ? blur + 5 : blur,
