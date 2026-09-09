@@ -300,18 +300,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   final task = tasks[index];
                   final isDone = todaySessions.any((s) => s.taskId == task.id);
 
-                  return TaskCard(
-                    task: task,
-                    isCompletedToday: isDone,
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => ActiveTimerScreen(task: task),
-                        ),
-                      );
-                    },
-                    onEdit: () => _openCreateTaskSheet(context, ref, task),
-                    onDelete: () => _confirmDelete(context, ref, task),
+                  // Cada card tem 2 CustomPaints + 2 BoxShadows: isola o
+                  // raster para o scroll não repintar cards parados.
+                  return RepaintBoundary(
+                    child: TaskCard(
+                      task: task,
+                      isCompletedToday: isDone,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => ActiveTimerScreen(task: task),
+                          ),
+                        );
+                      },
+                      onEdit: () => _openCreateTaskSheet(context, ref, task),
+                      onDelete: () => _confirmDelete(context, ref, task),
+                    ),
                   );
                 }, childCount: tasks.length),
               ),

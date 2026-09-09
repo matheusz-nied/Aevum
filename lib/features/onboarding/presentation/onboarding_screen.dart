@@ -206,6 +206,9 @@ class _PageShell extends StatelessWidget {
                             'assets/app/aevum-mark.png',
                             width: 80,
                             height: 80,
+                            // Decodifica já em 80px em vez de 256px.
+                            cacheWidth: 80,
+                            cacheHeight: 80,
                           ),
                         )
                       : Icon(icon, size: 72, color: AppColors.sage),

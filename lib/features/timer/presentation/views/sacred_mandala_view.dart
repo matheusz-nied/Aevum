@@ -63,114 +63,125 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
     final accentColor = widget.task.color == AppColors.sage
         ? AppColors.emeraldMist
         : widget.task.color;
+    final glowColor = accentColor.withValues(
+      alpha: widget.state.isRunning ? 0.28 : 0.12,
+    );
 
-    return AnimatedBuilder(
-      animation: _breathingController,
-      builder: (context, child) {
-        final animationValue = AppPerformancePolicy.animationValue(
-          _breathingController.value,
-          steps: 120,
-        );
-        final breathScale = 0.94 + (animationValue * 0.12);
-        final rotation = animationValue * 0.15;
-
-        return Column(
-          children: [
-            const SizedBox(height: 6),
-            Text(
-              widget.state.isRunning
-                  ? 'Respire no ritmo da luz'
-                  : 'Pronto para focar',
-              style: TextStyle(
-                color: accentColor,
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 2,
-              ),
-            ),
-            Expanded(
-              child: Align(
-                alignment: const Alignment(0, -0.45),
-                child: SizedBox(
-                  width: 290,
-                  height: 290,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Container(
-                        width: 270 * breathScale,
-                        height: 270 * breathScale,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: accentColor.withValues(
-                                alpha: widget.state.isRunning ? 0.28 : 0.12,
-                              ),
-                              blurRadius: 36,
-                              spreadRadius: 8,
-                            ),
-                          ],
-                        ),
-                      ),
-                      CustomPaint(
-                        size: const Size(290, 290),
-                        painter: _MandalaPainter(
-                          breathScale: breathScale,
-                          rotation: rotation,
-                          progress: widget.state.progress,
-                          accentColor: accentColor,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: widget.onTogglePlayPause,
-                        child: Container(
-                          width: 72,
-                          height: 72,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withValues(alpha: 0.10),
-                            border: Border.all(
-                              color: accentColor.withValues(alpha: 0.5),
-                              width: 1.5,
-                            ),
-                          ),
-                          child: Icon(
-                            widget.state.isRunning
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
-                            color: accentColor,
-                            size: 36,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 24),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      children: [
+        const SizedBox(height: 6),
+        Text(
+          widget.state.isRunning
+              ? 'Respire no ritmo da luz'
+              : 'Pronto para focar',
+          style: TextStyle(
+            color: accentColor,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 2,
+          ),
+        ),
+        Expanded(
+          child: Align(
+            alignment: const Alignment(0, -0.45),
+            child: SizedBox(
+              width: 290,
+              height: 290,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  _MandalaButton(
-                    label: '+1 min',
-                    accentColor: accentColor,
-                    onTap: () => widget.onAddMinutes(1),
+                  AnimatedBuilder(
+                    animation: _breathingController,
+                    builder: (context, child) {
+                      final animationValue =
+                          AppPerformancePolicy.animationValue(
+                            _breathingController.value,
+                            steps: 120,
+                          );
+                      final breathScale = 0.94 + (animationValue * 0.12);
+                      final rotation = animationValue * 0.15;
+                      // Transform.scale evita relayout + re-raster da sombra
+                      // a cada frame; visual idêntico ao width/height animado.
+                      return Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Transform.scale(
+                            scale: breathScale,
+                            child: Container(
+                              width: 270,
+                              height: 270,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: glowColor,
+                                    blurRadius: 36,
+                                    spreadRadius: 8,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          CustomPaint(
+                            size: const Size(290, 290),
+                            painter: _MandalaPainter(
+                              breathScale: breathScale,
+                              rotation: rotation,
+                              progress: widget.state.progress,
+                              accentColor: accentColor,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
-                  const SizedBox(width: 20),
-                  _MandalaButton(
-                    label: 'Reiniciar',
-                    accentColor: accentColor,
-                    onTap: widget.onReset,
+                  GestureDetector(
+                    onTap: widget.onTogglePlayPause,
+                    child: Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withValues(alpha: 0.10),
+                        border: Border.all(
+                          color: accentColor.withValues(alpha: 0.5),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Icon(
+                        widget.state.isRunning
+                            ? Icons.pause_rounded
+                            : Icons.play_arrow_rounded,
+                        color: accentColor,
+                        size: 36,
+                      ),
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
-        );
-      },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 24),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _MandalaButton(
+                label: '+1 min',
+                accentColor: accentColor,
+                onTap: () => widget.onAddMinutes(1),
+              ),
+              const SizedBox(width: 20),
+              _MandalaButton(
+                label: 'Reiniciar',
+                accentColor: accentColor,
+                onTap: widget.onReset,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

@@ -25,6 +25,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
   late int _selectedColorValue;
   late TaskIcon _selectedIcon;
   late TimerVisualMode _selectedVisualMode;
+  bool _canSubmit = false;
 
   static const List<int> _presetDurations = [5, 10, 15, 20, 25, 30, 45, 60];
 
@@ -38,10 +39,20 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
     _selectedIcon = task?.iconKey ?? TaskIcon.writing;
     _selectedVisualMode =
         task?.defaultVisualMode ?? TimerVisualMode.minimalDial;
+    _canSubmit = _titleController.text.trim().isNotEmpty;
+    _titleController.addListener(_onTitleChanged);
+  }
+
+  void _onTitleChanged() {
+    final canSubmit = _titleController.text.trim().isNotEmpty;
+    if (canSubmit != _canSubmit) {
+      setState(() => _canSubmit = canSubmit);
+    }
   }
 
   @override
   void dispose() {
+    _titleController.removeListener(_onTitleChanged);
     _titleController.dispose();
     super.dispose();
   }
@@ -137,6 +148,9 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.existingTask != null;
+    final mediaQuery = MediaQuery.of(context);
+    final keyboardInset = mediaQuery.viewInsets.bottom;
+    final safeBottom = mediaQuery.padding.bottom;
 
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
@@ -202,377 +216,401 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                 ),
               ),
             ),
+            // Altura máxima limitada para o sheet nunca estourar a tela.
+            // O botão fica fora do scroll, sempre visível acima do teclado.
             ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight: MediaQuery.sizeOf(context).height * 0.80,
+                maxHeight: MediaQuery.sizeOf(context).height * 0.92,
               ),
               child: Padding(
                 padding: EdgeInsets.only(
                   left: 16,
                   right: 16,
                   top: 18,
-                  bottom: MediaQuery.of(context).viewInsets.bottom + 36,
+                  bottom: keyboardInset + (keyboardInset > 0 ? 12 : safeBottom + 20),
                 ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Center(
-                        child: Container(
-                          width: 36,
-                          height: 4,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.white.withValues(alpha: 0.18),
-                                Colors.white.withValues(alpha: 0.38),
-                                Colors.white.withValues(alpha: 0.18),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(99),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.white.withValues(alpha: 0.08),
-                                blurRadius: 5,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 19),
-                      Text(
-                        isEditing ? 'Editar Hábito' : 'Novo Hábito',
-                        style: const TextStyle(
-                          fontSize: 21,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textWhite,
-                          letterSpacing: -0.35,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Campo com uma única camada de vidro, sem relevo pesado.
-                      Container(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 36,
+                        height: 4,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(17),
                           gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
                             colors: [
-                              Colors.white.withValues(alpha: 0.10),
-                              Colors.white.withValues(alpha: 0.035),
+                              Colors.white.withValues(alpha: 0.18),
+                              Colors.white.withValues(alpha: 0.38),
+                              Colors.white.withValues(alpha: 0.18),
                             ],
                           ),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.14),
-                          ),
+                          borderRadius: BorderRadius.circular(99),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.forestBlack.withValues(
-                                alpha: 0.16,
-                              ),
-                              blurRadius: 18,
-                              spreadRadius: -8,
-                              offset: const Offset(0, 8),
+                              color: Colors.white.withValues(alpha: 0.08),
+                              blurRadius: 5,
                             ),
                           ],
                         ),
-                        child: TextField(
-                          controller: _titleController,
-                          autofocus: !isEditing,
-                          style: const TextStyle(
-                            color: AppColors.textWhite,
-                            fontSize: 16,
-                          ),
-                          decoration: InputDecoration(
-                            hintText: 'Ex: Escrita do dia, Meditação...',
-                            hintStyle: const TextStyle(
-                              color: AppColors.textMuted,
-                            ),
-                            filled: false,
-                            border: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            prefixIcon: const Icon(
-                              Icons.edit_note_rounded,
-                              color: AppColors.textMuted,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 2,
-                              vertical: 16,
-                            ),
-                          ),
-                        ),
                       ),
-                      const SizedBox(height: 20),
+                    ),
+                    const SizedBox(height: 19),
+                    Text(
+                      isEditing ? 'Editar Hábito' : 'Novo Hábito',
+                      style: const TextStyle(
+                        fontSize: 21,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textWhite,
+                        letterSpacing: -0.35,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
 
-                      const Text(
-                        'Meta',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textMuted,
+                    // Campo fixo: continua visível enquanto digita.
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(17),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Colors.white.withValues(alpha: 0.10),
+                            Colors.white.withValues(alpha: 0.035),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: _presetDurations
-                                .take(4)
-                                .map(
-                                  (duration) => Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: _buildDurationChip(duration),
-                                  ),
-                                )
-                                .toList(),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: _presetDurations
-                                .skip(4)
-                                .map(
-                                  (duration) => Padding(
-                                    padding: const EdgeInsets.only(right: 8),
-                                    child: _buildDurationChip(duration),
-                                  ),
-                                )
-                                .toList(),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.14),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.forestBlack.withValues(
+                              alpha: 0.16,
+                            ),
+                            blurRadius: 18,
+                            spreadRadius: -8,
+                            offset: const Offset(0, 8),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      child: TextField(
+                        controller: _titleController,
+                        autofocus: !isEditing,
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (_) => _submit(),
+                        style: const TextStyle(
+                          color: AppColors.textWhite,
+                          fontSize: 16,
+                        ),
+                        decoration: const InputDecoration(
+                          hintText: 'Ex: Escrita do dia, Meditação...',
+                          hintStyle: TextStyle(
+                            color: AppColors.textMuted,
+                          ),
+                          filled: false,
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          prefixIcon: Icon(
+                            Icons.edit_note_rounded,
+                            color: AppColors.textMuted,
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 2,
+                            vertical: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
 
-                      const Text(
-                        'Estilo do Timer',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: TimerVisualMode.values.map((mode) {
-                            final isSelected = _selectedVisualMode == mode;
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: _buildChoiceChip(
-                                showCheckmark: false,
-                                avatar: Icon(
-                                  mode.icon,
-                                  size: 16,
-                                  color: isSelected
-                                      ? AppColors.forestDeep
-                                      : AppColors.textMuted,
-                                ),
-                                label: Text(
-                                  mode.displayName,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? AppColors.forestDeep
-                                        : AppColors.textWhite,
-                                    fontWeight: isSelected
-                                        ? FontWeight.bold
-                                        : FontWeight.w500,
-                                  ),
-                                ),
-                                selected: isSelected,
-                                onSelected: (selected) {
-                                  if (selected) {
-                                    setState(() => _selectedVisualMode = mode);
-                                    HapticService.selectionClick();
-                                  }
-                                },
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      const Text(
-                        'Cor de destaque',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: AppColors.taskColors.map((color) {
-                          final isSelected =
-                              _selectedColorValue == color.toARGB32();
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 10),
-                            child: Semantics(
-                              button: true,
-                              selected: isSelected,
-                              label:
-                                  'Cor ${AppColors.taskColors.indexOf(color) + 1}',
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(
-                                    () =>
-                                        _selectedColorValue = color.toARGB32(),
-                                  );
-                                  HapticService.selectionClick();
-                                },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 180),
-                                  width: 48,
-                                  height: 48,
-                                  decoration: BoxDecoration(
-                                    color: color,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: isSelected
-                                          ? Colors.white
-                                          : Colors.white.withValues(
-                                              alpha: 0.10,
-                                            ),
-                                      width: isSelected ? 2.2 : 1,
-                                    ),
-                                    boxShadow: isSelected
-                                        ? [
-                                            BoxShadow(
-                                              color: color.withValues(
-                                                alpha: 0.26,
-                                              ),
-                                              blurRadius: 10,
-                                              spreadRadius: 1,
-                                            ),
-                                          ]
-                                        : null,
-                                  ),
-                                  child: isSelected
-                                      ? const Icon(
-                                          Icons.check_rounded,
-                                          color: Colors.white,
-                                          size: 18,
-                                        )
-                                      : null,
-                                ),
+                    // Opções rolam; CTA fica fixo abaixo.
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Meta',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textMuted,
                               ),
                             ),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 20),
+                            const SizedBox(height: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: _presetDurations
+                                      .take(4)
+                                      .map(
+                                        (duration) => Padding(
+                                          padding: const EdgeInsets.only(right: 8),
+                                          child: _buildDurationChip(duration),
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: _presetDurations
+                                      .skip(4)
+                                      .map(
+                                        (duration) => Padding(
+                                          padding: const EdgeInsets.only(right: 8),
+                                          child: _buildDurationChip(duration),
+                                        ),
+                                      )
+                                      .toList(),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
 
-                      const Text(
-                        'Ícone',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: TaskIcon.values.map((icon) {
-                            final isSelected = _selectedIcon == icon;
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Semantics(
-                                button: true,
-                                selected: isSelected,
-                                label: 'Ícone ${icon.displayName}',
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 180),
-                                  width: 48,
-                                  height: 48,
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? _selectedColor.withValues(alpha: 0.14)
-                                        : Colors.white.withValues(alpha: 0.035),
-                                    borderRadius: BorderRadius.circular(14),
-                                    border: Border.all(
-                                      color: isSelected
-                                          ? _selectedColor.withValues(
-                                              alpha: 0.72,
-                                            )
-                                          : Colors.white.withValues(
-                                              alpha: 0.07,
-                                            ),
+                            const Text(
+                              'Estilo do Timer',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: TimerVisualMode.values.map((mode) {
+                                  final isSelected = _selectedVisualMode == mode;
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 8),
+                                    child: _buildChoiceChip(
+                                      showCheckmark: false,
+                                      avatar: Icon(
+                                        mode.icon,
+                                        size: 16,
+                                        color: isSelected
+                                            ? AppColors.forestDeep
+                                            : AppColors.textMuted,
+                                      ),
+                                      label: Text(
+                                        mode.displayName,
+                                        style: TextStyle(
+                                          color: isSelected
+                                              ? AppColors.forestDeep
+                                              : AppColors.textWhite,
+                                          fontWeight: isSelected
+                                              ? FontWeight.bold
+                                              : FontWeight.w500,
+                                        ),
+                                      ),
+                                      selected: isSelected,
+                                      onSelected: (selected) {
+                                        if (selected) {
+                                          setState(() => _selectedVisualMode = mode);
+                                          HapticService.selectionClick();
+                                        }
+                                      },
                                     ),
-                                  ),
-                                  child: Material(
-                                    color: Colors.transparent,
-                                    child: InkWell(
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+
+                            const Text(
+                              'Cor de destaque',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              children: AppColors.taskColors.map((color) {
+                                final isSelected =
+                                    _selectedColorValue == color.toARGB32();
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Semantics(
+                                    button: true,
+                                    selected: isSelected,
+                                    label:
+                                        'Cor ${AppColors.taskColors.indexOf(color) + 1}',
+                                    child: GestureDetector(
                                       onTap: () {
-                                        setState(() => _selectedIcon = icon);
+                                        setState(
+                                          () =>
+                                              _selectedColorValue = color.toARGB32(),
+                                        );
                                         HapticService.selectionClick();
                                       },
-                                      borderRadius: BorderRadius.circular(14),
-                                      child: Icon(
-                                        icon.iconData,
-                                        color: isSelected
-                                            ? _selectedFill
-                                            : AppColors.textMuted,
-                                        size: 21,
+                                      child: AnimatedContainer(
+                                        duration: const Duration(milliseconds: 180),
+                                        width: 48,
+                                        height: 48,
+                                        decoration: BoxDecoration(
+                                          color: color,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? Colors.white
+                                                : Colors.white.withValues(
+                                                    alpha: 0.10,
+                                                  ),
+                                            width: isSelected ? 2.2 : 1,
+                                          ),
+                                          boxShadow: isSelected
+                                              ? [
+                                                  BoxShadow(
+                                                    color: color.withValues(
+                                                      alpha: 0.26,
+                                                    ),
+                                                    blurRadius: 10,
+                                                    spreadRadius: 1,
+                                                  ),
+                                                ]
+                                              : null,
+                                        ),
+                                        child: isSelected
+                                            ? const Icon(
+                                                Icons.check_rounded,
+                                                color: Colors.white,
+                                                size: 18,
+                                              )
+                                            : null,
                                       ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                      const SizedBox(height: 28),
-
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(17),
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Color(0xFFD3DDD0), AppColors.sage],
-                          ),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.28),
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.forestBlack.withValues(
-                                alpha: 0.24,
-                              ),
-                              blurRadius: 18,
-                              spreadRadius: -6,
-                              offset: const Offset(0, 9),
+                                );
+                              }).toList(),
                             ),
+                            const SizedBox(height: 20),
+
+                            const Text(
+                              'Ícone',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: TaskIcon.values.map((icon) {
+                                  final isSelected = _selectedIcon == icon;
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Semantics(
+                                      button: true,
+                                      selected: isSelected,
+                                      label: 'Ícone ${icon.displayName}',
+                                      child: AnimatedContainer(
+                                        duration: const Duration(milliseconds: 180),
+                                        width: 48,
+                                        height: 48,
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? _selectedColor.withValues(alpha: 0.14)
+                                              : Colors.white.withValues(alpha: 0.035),
+                                          borderRadius: BorderRadius.circular(14),
+                                          border: Border.all(
+                                            color: isSelected
+                                                ? _selectedColor.withValues(
+                                                    alpha: 0.72,
+                                                  )
+                                                : Colors.white.withValues(
+                                                    alpha: 0.07,
+                                                  ),
+                                          ),
+                                        ),
+                                        child: Material(
+                                          color: Colors.transparent,
+                                          child: InkWell(
+                                            onTap: () {
+                                              setState(() => _selectedIcon = icon);
+                                              HapticService.selectionClick();
+                                            },
+                                            borderRadius: BorderRadius.circular(14),
+                                            child: Icon(
+                                              icon.iconData,
+                                              color: isSelected
+                                                  ? _selectedFill
+                                                  : AppColors.textMuted,
+                                              size: 21,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                            // Respiro para o conteúdo não colar no CTA.
+                            const SizedBox(height: 12),
                           ],
                         ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: _submit,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    Semantics(
+                      button: true,
+                      enabled: _canSubmit,
+                      label: isEditing ? 'Salvar Alterações' : 'Criar Hábito',
+                      child: Opacity(
+                        opacity: _canSubmit ? 1.0 : 0.55,
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(17),
-                            splashColor: Colors.white.withValues(alpha: 0.18),
-                            child: SizedBox(
-                              height: 52,
-                              child: Center(
-                                child: Text(
-                                  isEditing
-                                      ? 'Salvar Alterações'
-                                      : 'Criar Hábito',
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.forestDeep,
-                                    letterSpacing: -0.15,
+                            gradient: const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Color(0xFFD3DDD0), AppColors.sage],
+                            ),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.28),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.forestBlack.withValues(
+                                  alpha: 0.24,
+                                ),
+                                blurRadius: 18,
+                                spreadRadius: -6,
+                                offset: const Offset(0, 9),
+                              ),
+                            ],
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: _canSubmit ? _submit : null,
+                              borderRadius: BorderRadius.circular(17),
+                              splashColor: Colors.white.withValues(alpha: 0.18),
+                              child: SizedBox(
+                                height: 52,
+                                child: Center(
+                                  child: Text(
+                                    isEditing
+                                        ? 'Salvar Alterações'
+                                        : 'Criar Hábito',
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.forestDeep,
+                                      letterSpacing: -0.15,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -580,8 +618,8 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),

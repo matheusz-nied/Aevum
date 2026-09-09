@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:aevum/core/config/app_performance_policy.dart';
 import 'package:aevum/core/widgets/adaptive_backdrop_filter.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/quotes/inspiration_quotes.dart';
@@ -141,6 +142,9 @@ class _InspirationalViewState extends State<InspirationalView> {
                           const SizedBox(height: 16),
                           Text(
                             displayTime,
+                            // No Android mantém 1 sombra (vs 2 no iOS):
+                            // mesmo glow percebido, metade do custo de
+                            // re-raster do texto grande a cada segundo.
                             style: TextStyle(
                               fontSize: hasHours ? 34 : 46,
                               fontWeight: FontWeight.w200,
@@ -149,16 +153,29 @@ class _InspirationalViewState extends State<InspirationalView> {
                               color: AppColors.textWhite.withValues(
                                 alpha: 0.96,
                               ),
-                              shadows: [
-                                Shadow(
-                                  color: accentColor.withValues(alpha: 0.45),
-                                  blurRadius: 22,
-                                ),
-                                Shadow(
-                                  color: accentColor.withValues(alpha: 0.18),
-                                  blurRadius: 40,
-                                ),
-                              ],
+                              shadows: AppPerformancePolicy.usePainterBlur
+                                  ? [
+                                      Shadow(
+                                        color: accentColor.withValues(
+                                          alpha: 0.45,
+                                        ),
+                                        blurRadius: 22,
+                                      ),
+                                      Shadow(
+                                        color: accentColor.withValues(
+                                          alpha: 0.18,
+                                        ),
+                                        blurRadius: 40,
+                                      ),
+                                    ]
+                                  : [
+                                      Shadow(
+                                        color: accentColor.withValues(
+                                          alpha: 0.45,
+                                        ),
+                                        blurRadius: 12,
+                                      ),
+                                    ],
                             ),
                           ),
                           const SizedBox(height: 8),
@@ -310,7 +327,11 @@ class _SoftProgressRingPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 2.6
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 0.4);
+      // Único MaskFilter ativo no Android — desligado sem perda visível
+      // (anel de 2.6px; blur 0.4 é imperceptível, mas custa saveLayer).
+      ..maskFilter = AppPerformancePolicy.usePainterBlur
+          ? const MaskFilter.blur(BlurStyle.normal, 0.4)
+          : null;
 
     canvas.drawCircle(center, radius, track);
     canvas.drawArc(

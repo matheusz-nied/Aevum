@@ -26,6 +26,22 @@ class StatsScreen extends ConsumerWidget {
       30,
       (max, item) => item.totalMinutes > max ? item.totalMinutes : max,
     );
+    // Calculados uma vez por build: evita DateTime.now()/DateFormat e
+    // lookup O(N*M) dentro dos builders do gráfico e do histórico.
+    final today = DateTime.now();
+    final chartMaxY = (maxMinutes * 1.2).toDouble();
+    final tasksById = <String, TaskModel>{
+      for (final task in tasks) task.id: task,
+    };
+    final weekdayLabels = List<String>.generate(last7Days.length, (i) {
+      final date = last7Days[i].date;
+      if (TimeUtils.isSameDay(date, today)) return 'Hoje';
+      return DateFormat('E', 'pt_BR').format(date).replaceAll('.', '');
+    });
+    final tooltipDates = List<String>.generate(
+      last7Days.length,
+      (i) => DateFormat('dd/MM').format(last7Days[i].date),
+    );
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -125,109 +141,107 @@ class StatsScreen extends ConsumerWidget {
                     ),
                     child: SizedBox(
                       height: 220,
-                      child: BarChart(
-                        BarChartData(
-                          alignment: BarChartAlignment.spaceAround,
-                          maxY: (maxMinutes * 1.2).toDouble(),
-                          barTouchData: BarTouchData(
-                            touchTooltipData: BarTouchTooltipData(
-                              getTooltipColor: (group) =>
-                                  AppColors.forestSurfaceElevated,
-                              getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                                final metric = last7Days[group.x.toInt()];
-                                return BarTooltipItem(
-                                  '${metric.totalMinutes} min\n${DateFormat('dd/MM').format(metric.date)}',
-                                  const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                          titlesData: FlTitlesData(
-                            show: true,
-                            topTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            rightTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            leftTitles: const AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget: (val, meta) {
-                                  final index = val.toInt();
-                                  if (index < 0 || index >= last7Days.length) {
-                                    return const SizedBox.shrink();
-                                  }
-                                  final date = last7Days[index].date;
-                                  final isToday = TimeUtils.isSameDay(
-                                    date,
-                                    DateTime.now(),
-                                  );
-                                  final label = isToday
-                                      ? 'Hoje'
-                                      : DateFormat(
-                                          'E',
-                                          'pt_BR',
-                                        ).format(date).replaceAll('.', '');
-
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 6),
-                                    child: Text(
-                                      label,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        fontWeight: isToday
-                                            ? FontWeight.bold
-                                            : FontWeight.normal,
-                                        color: isToday
-                                            ? AppColors.sage
-                                            : AppColors.textMuted,
-                                      ),
+                      // Isola o raster do gráfico do scroll da tela.
+                      child: RepaintBoundary(
+                        child: BarChart(
+                          BarChartData(
+                            alignment: BarChartAlignment.spaceAround,
+                            maxY: chartMaxY,
+                            barTouchData: BarTouchData(
+                              touchTooltipData: BarTouchTooltipData(
+                                getTooltipColor: (group) =>
+                                    AppColors.forestSurfaceElevated,
+                                getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                                  final index = group.x.toInt();
+                                  final metric = last7Days[index];
+                                  return BarTooltipItem(
+                                    '${metric.totalMinutes} min\n${tooltipDates[index]}',
+                                    const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
                                     ),
                                   );
                                 },
                               ),
                             ),
-                          ),
-                          gridData: const FlGridData(show: false),
-                          borderData: FlBorderData(show: false),
-                          barGroups: List.generate(last7Days.length, (i) {
-                            final metric = last7Days[i];
-                            final isToday = TimeUtils.isSameDay(
-                              metric.date,
-                              DateTime.now(),
-                            );
+                            titlesData: FlTitlesData(
+                              show: true,
+                              topTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              rightTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              leftTitles: const AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  getTitlesWidget: (val, meta) {
+                                    final index = val.toInt();
+                                    if (index < 0 ||
+                                        index >= last7Days.length) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    final label = weekdayLabels[index];
+                                    final isToday = label == 'Hoje';
 
-                            return BarChartGroupData(
-                              x: i,
-                              barRods: [
-                                BarChartRodData(
-                                  toY: metric.totalMinutes.toDouble(),
-                                  color: isToday
-                                      ? AppColors.sage
-                                      : (metric.totalMinutes > 0
-                                            ? AppColors.emeraldMist
-                                            : Colors.white.withValues(
-                                                alpha: 0.08,
-                                              )),
-                                  width: 18,
-                                  borderRadius: BorderRadius.circular(6),
-                                  backDrawRodData: BackgroundBarChartRodData(
-                                    show: true,
-                                    toY: (maxMinutes * 1.2).toDouble(),
-                                    color: Colors.white.withValues(alpha: 0.03),
-                                  ),
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 6),
+                                      child: Text(
+                                        label,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: isToday
+                                              ? FontWeight.bold
+                                              : FontWeight.normal,
+                                          color: isToday
+                                              ? AppColors.sage
+                                              : AppColors.textMuted,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ],
-                            );
-                          }),
+                              ),
+                            ),
+                            gridData: const FlGridData(show: false),
+                            borderData: FlBorderData(show: false),
+                            barGroups: List.generate(last7Days.length, (i) {
+                              final metric = last7Days[i];
+                              final isToday = TimeUtils.isSameDay(
+                                metric.date,
+                                today,
+                              );
+
+                              return BarChartGroupData(
+                                x: i,
+                                barRods: [
+                                  BarChartRodData(
+                                    toY: metric.totalMinutes.toDouble(),
+                                    color: isToday
+                                        ? AppColors.sage
+                                        : (metric.totalMinutes > 0
+                                              ? AppColors.emeraldMist
+                                              : Colors.white.withValues(
+                                                  alpha: 0.08,
+                                                )),
+                                    width: 18,
+                                    borderRadius: BorderRadius.circular(6),
+                                    backDrawRodData: BackgroundBarChartRodData(
+                                      show: true,
+                                      toY: chartMaxY,
+                                      color: Colors.white.withValues(
+                                        alpha: 0.03,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
+                          ),
                         ),
                       ),
                     ),
@@ -262,13 +276,7 @@ class StatsScreen extends ConsumerWidget {
                   )
                 else
                   ...sessions.take(10).map((session) {
-                    TaskModel? task;
-                    for (final candidate in tasks) {
-                      if (candidate.id == session.taskId) {
-                        task = candidate;
-                        break;
-                      }
-                    }
+                    final task = tasksById[session.taskId];
                     final taskColor = task?.color ?? AppColors.textMuted;
 
                     return Container(

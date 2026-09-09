@@ -37,6 +37,12 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    // Listener registrado uma única vez (fora do build) para o diálogo de conclusão.
+    ref.listenManual<TimerState>(timerControllerProvider, (prev, next) {
+      if (next.status == TimerStatus.completed && !_dialogShown && mounted) {
+        _showCompletionDialog(context, next);
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       ref.read(timerControllerProvider.notifier).start(widget.task);
@@ -126,16 +132,13 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
 
   @override
   Widget build(BuildContext context) {
-    final timerState = ref.watch(timerControllerProvider);
+    // Apenas o modo visual rebuilda a shell (appbar + seletor).
+    // O tick de 1s rebuilda somente a view ativa dentro do Consumer abaixo.
+    final visualMode = ref.watch(
+      timerControllerProvider.select((s) => s.visualMode),
+    );
     final timerNotifier = ref.read(timerControllerProvider.notifier);
     final accentColor = widget.task.color;
-
-    // Listen for timer auto-completion
-    ref.listen<TimerState>(timerControllerProvider, (prev, next) {
-      if (next.status == TimerStatus.completed && !_dialogShown) {
-        _showCompletionDialog(context, next);
-      }
-    });
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -223,7 +226,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
               // Mode Selector
               Center(
                 child: TimerModeSelector(
-                  currentMode: timerState.visualMode,
+                  currentMode: visualMode,
                   accentColor: accentColor,
                   onModeChanged: (newMode) {
                     timerNotifier.setVisualMode(newMode);
@@ -233,15 +236,21 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
 
               const SizedBox(height: 12),
 
-              // Visual Mode View
+              // Visual Mode View — único trecho que rebuilda a cada segundo.
               Expanded(
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 400),
-                  child: _buildVisualModeView(
-                    timerState.visualMode,
-                    timerState,
-                    timerNotifier,
-                  ),
+                child: Consumer(
+                  builder: (context, ref, _) {
+                    final viewState = ref.watch(timerControllerProvider);
+                    final notifier = ref.read(timerControllerProvider.notifier);
+                    return AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 400),
+                      child: _buildVisualModeView(
+                        viewState.visualMode,
+                        viewState,
+                        notifier,
+                      ),
+                    );
+                  },
                 ),
               ),
             ],

@@ -93,6 +93,9 @@ class _FocusFreeViewState extends State<FocusFreeView>
                       return CustomPaint(
                         key: const ValueKey('liquidGlassOrb'),
                         size: Size.square(orbSize),
+                        // Dica ao raster cache: camada cara e animada.
+                        isComplex: true,
+                        willChange: true,
                         painter: _LiquidGlassPainter(
                           phase: phase,
                           accentColor: widget.task.color,
@@ -669,21 +672,24 @@ class _LiquidGlassPainter extends CustomPainter {
         ..blendMode = BlendMode.screen,
     );
 
-    final metrics = orbPath.computeMetrics().toList(growable: false);
-    if (metrics.isEmpty) return;
-    final metric = metrics.first;
+    // Antes: computeMetrics()+extractPath x2 por frame (alocação + medida
+    // de path, o trecho mais caro do frame). O orbe deforma no máximo ~5%,
+    // então arcos sobre o círculo base são visualmente idênticos e O(1).
+    final rimRect = Rect.fromCircle(center: bounds.center, radius: radius);
     final brightRim = Paint()
       ..color = Colors.white.withValues(alpha: 0.58)
       ..style = PaintingStyle.stroke
       ..strokeWidth = math.max(1.1, radius * 0.012)
       ..strokeCap = StrokeCap.round
       ..blendMode = BlendMode.screen;
-    canvas.drawPath(
-      metric.extractPath(metric.length * 0.01, metric.length * 0.18),
-      brightRim,
-    );
-    canvas.drawPath(
-      metric.extractPath(metric.length * 0.47, metric.length * 0.57),
+    // 1%–18% do perímetro a partir do topo, sentido horário.
+    canvas.drawArc(rimRect, -math.pi / 2 + 0.06, 1.07, false, brightRim);
+    // 47%–57% do perímetro (lado oposto).
+    canvas.drawArc(
+      rimRect,
+      -math.pi / 2 + 2.95,
+      0.63,
+      false,
       brightRim..color = const Color(0xFFB7D2B7).withValues(alpha: 0.42),
     );
   }

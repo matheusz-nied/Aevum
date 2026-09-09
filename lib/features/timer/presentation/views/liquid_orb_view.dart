@@ -68,6 +68,8 @@ class _LiquidOrbViewState extends State<LiquidOrbView>
         return Column(
           children: [
             const SizedBox(height: 6),
+            // Texto estático em `child`: o ticker só anima a opacidade,
+            // sem relayout do Text a 60fps.
             AnimatedBuilder(
               animation: _textFadeController,
               builder: (context, child) {
@@ -75,38 +77,40 @@ class _LiquidOrbViewState extends State<LiquidOrbView>
                   _textFadeController.value,
                   steps: 150,
                 );
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: widget.state.isRunning
-                            ? AppColors.sage
-                            : AppColors.textMuted.withValues(alpha: 0.5),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      widget.state.isRunning
-                          ? 'FLUXO ATIVO'
-                          : widget.state.isPaused
-                          ? 'EM PAUSA'
-                          : 'PRONTO PARA INICIAR',
-                      style: TextStyle(
-                        color: AppColors.textMuted.withValues(
-                          alpha: 0.70 + (fadeValue * 0.30),
-                        ),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 2.2,
-                      ),
-                    ),
-                  ],
+                return Opacity(
+                  opacity: 0.70 + (fadeValue * 0.30),
+                  child: child,
                 );
               },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: widget.state.isRunning
+                          ? AppColors.sage
+                          : AppColors.textMuted.withValues(alpha: 0.5),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    widget.state.isRunning
+                        ? 'FLUXO ATIVO'
+                        : widget.state.isPaused
+                        ? 'EM PAUSA'
+                        : 'PRONTO PARA INICIAR',
+                    style: const TextStyle(
+                      color: AppColors.textMuted,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 2.2,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: Center(

@@ -116,7 +116,8 @@ class TimerController extends StateNotifier<TimerState> {
 
   void _startTicker() {
     _ticker?.cancel();
-    _ticker = Timer.periodic(const Duration(milliseconds: 250), (_) {
+    // 500ms: mesma resolução visual de 1s com metade dos wakeups no Android.
+    _ticker = Timer.periodic(const Duration(milliseconds: 500), (_) {
       if (_segmentStartTime == null) return;
 
       final currentSegmentSeconds = DateTime.now()

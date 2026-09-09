@@ -122,17 +122,22 @@ class _LiquidGlassSphereState extends State<LiquidGlassSphere>
       onPanStart: _onPanStart,
       onPanUpdate: _onPanUpdate,
       onPanEnd: _onPanEnd,
-      child: SizedBox(
-        width: widget.size,
-        height: widget.size + 36,
-        child: CustomPaint(
-          size: Size(widget.size, widget.size + 36),
-          painter: _ContinuousLiquidGlassPainter(
-            time: _continuousTime,
-            isRunning: widget.isRunning,
-            progress: widget.progress,
-            accentColor: widget.accentColor,
-            dragOffset: _dragOffset,
+      // Isola o raster do orbe dos rebuilds do pai (drag/spring/tick).
+      child: RepaintBoundary(
+        child: SizedBox(
+          width: widget.size,
+          height: widget.size + 36,
+          child: CustomPaint(
+            size: Size(widget.size, widget.size + 36),
+            isComplex: true,
+            willChange: widget.isRunning,
+            painter: _ContinuousLiquidGlassPainter(
+              time: _continuousTime,
+              isRunning: widget.isRunning,
+              progress: widget.progress,
+              accentColor: widget.accentColor,
+              dragOffset: _dragOffset,
+            ),
           ),
         ),
       ),
