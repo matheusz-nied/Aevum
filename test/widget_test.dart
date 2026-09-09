@@ -5,6 +5,7 @@ import 'package:aevum/features/tasks/domain/task_model.dart';
 import 'package:aevum/features/tasks/domain/task_icon.dart';
 import 'package:aevum/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:aevum/features/tasks/domain/timer_visual_mode.dart';
+import 'package:aevum/features/tasks/presentation/widgets/create_task_sheet.dart';
 import 'package:aevum/features/tasks/presentation/widgets/daily_progress_header.dart';
 import 'package:aevum/features/tasks/presentation/widgets/glass_create_task_button.dart';
 import 'package:aevum/features/tasks/presentation/widgets/task_card.dart';
@@ -295,5 +296,115 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(tapped, isTrue);
+  });
+
+  testWidgets('CreateTaskSheet renders live preview and allows customization', (
+    WidgetTester tester,
+  ) async {
+    TaskModel? savedTask;
+
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CreateTaskSheet(
+            onSave: (task) {
+              savedTask = task;
+            },
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Novo Hábito'), findsOneWidget);
+    expect(find.text('TEMPO DE FOCO'), findsOneWidget);
+    expect(find.text('EXPERIÊNCIA DO TIMER'), findsOneWidget);
+    expect(find.text('COR DE DESTAQUE'), findsOneWidget);
+    expect(find.text('ÍCONE DO HÁBITO'), findsOneWidget);
+
+    // Initial placeholder in preview
+    expect(find.text('Nome do seu hábito'), findsOneWidget);
+
+    // Type a title
+    await tester.enterText(find.byType(TextField), 'Leitura Noturna');
+    await tester.pump();
+
+    // Preview should reflect typed text
+    expect(find.text('Leitura Noturna'), findsNWidgets(2)); // TextField & Preview
+
+    // Select duration: 25m
+    await tester.tap(find.text('25m'));
+    await tester.pumpAndSettle();
+    expect(find.text('25 min'), findsOneWidget);
+
+    // Select visual mode: Mandala Flow
+    await tester.tap(find.text('Mandala Flow'));
+    await tester.pumpAndSettle();
+    expect(find.text('Geometria sagrada pulsante com ritmo de respiração'), findsOneWidget);
+
+    // Drag main scroll view to reveal icon selector and tap Natureza
+    await tester.drag(
+      find.byType(SingleChildScrollView).first,
+      const Offset(0, -250),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Natureza'));
+    await tester.pumpAndSettle();
+
+    // Tap submit
+    await tester.tap(find.text('Criar Hábito'));
+    await tester.pumpAndSettle();
+
+    expect(savedTask, isNotNull);
+    expect(savedTask!.title, 'Leitura Noturna');
+    expect(savedTask!.targetMinutes, 25);
+    expect(savedTask!.defaultVisualMode, TimerVisualMode.sacredMandala);
+    expect(savedTask!.iconKey, TaskIcon.nature);
+  });
+
+  testWidgets('CreateTaskSheet populates existing task for editing', (
+    WidgetTester tester,
+  ) async {
+    TaskModel? updatedTask;
+    final existing = TaskModel(
+      id: 'existing-123',
+      title: 'Caminhada Matinal',
+      targetMinutes: 30,
+      iconKey: TaskIcon.exercise,
+      colorValue: AppColors.mossCalm.toARGB32(),
+      defaultVisualMode: TimerVisualMode.focusFree,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CreateTaskSheet(
+            existingTask: existing,
+            onSave: (task) {
+              updatedTask = task;
+            },
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Editar Hábito'), findsOneWidget);
+    expect(find.text('Caminhada Matinal'), findsNWidgets(2)); // Input & Preview
+    expect(find.text('Salvar Alterações'), findsOneWidget);
+
+    // Submit edit
+    await tester.tap(find.text('Salvar Alterações'));
+    await tester.pumpAndSettle();
+
+    expect(updatedTask, isNotNull);
+    expect(updatedTask!.id, 'existing-123');
+    expect(updatedTask!.title, 'Caminhada Matinal');
+    expect(updatedTask!.targetMinutes, 30);
   });
 }

@@ -48,8 +48,9 @@ class _GlassCreateTaskButtonState extends State<GlassCreateTaskButton> {
           child: GlassContainer(
             borderRadius: 30,
             blur: 24,
+            strong: true,
             accentColor: AppColors.sage,
-            color: AppColors.sage.withValues(alpha: 0.14),
+            color: AppColors.forestSurfaceElevated.withValues(alpha: 0.75),
             child: Material(
               color: Colors.transparent,
               child: InkWell(
@@ -66,34 +67,31 @@ class _GlassCreateTaskButtonState extends State<GlassCreateTaskButton> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Container(
-                        width: 40,
-                        height: 40,
+                        width: 38,
+                        height: 38,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          gradient: LinearGradient(
+                          gradient: const LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                             colors: [
-                              Colors.white.withValues(alpha: 0.78),
-                              AppColors.sage.withValues(alpha: 0.88),
+                              AppColors.sage,
+                              Color(0xFFA5B89F),
                             ],
-                          ),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.46),
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.sage.withValues(alpha: 0.18),
-                              blurRadius: 12,
-                              spreadRadius: -3,
-                              offset: const Offset(0, 4),
+                              color: AppColors.sage.withValues(alpha: 0.28),
+                              blurRadius: 10,
+                              spreadRadius: -1,
+                              offset: const Offset(0, 2),
                             ),
                           ],
                         ),
                         child: Icon(
                           widget.icon,
                           color: AppColors.forestDeep,
-                          size: 21,
+                          size: 20,
                         ),
                       ),
                       const SizedBox(width: 11),

@@ -41,32 +41,23 @@ class TaskCard extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(14, 13, 8, 13),
             child: Row(
               children: [
-                // Ícone da tarefa em orb de vidro
+                // Ícone da tarefa em orb tonal suave
                 Container(
-                  width: 50,
-                  height: 50,
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: RadialGradient(
-                      colors: [
-                        accentColor.withValues(alpha: 0.22),
-                        AppColors.forestDeep.withValues(alpha: 0.10),
-                      ],
-                    ),
+                    color: accentColor.withValues(alpha: 0.12),
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.22),
+                      color: accentColor.withValues(alpha: 0.24),
                       width: 1,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: accentColor.withValues(alpha: 0.14),
-                        blurRadius: 14,
-                        spreadRadius: -4,
-                      ),
-                      BoxShadow(
-                        color: Colors.white.withValues(alpha: 0.12),
-                        blurRadius: 2,
-                        offset: const Offset(-1, -1),
+                        color: accentColor.withValues(alpha: 0.10),
+                        blurRadius: 12,
+                        spreadRadius: -2,
+                        offset: const Offset(0, 3),
                       ),
                     ],
                   ),
@@ -117,10 +108,10 @@ class TaskCard extends StatelessWidget {
                               vertical: 3,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.glassLightOnly,
+                              color: Colors.white.withValues(alpha: 0.05),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: AppColors.glassBorderSoft,
+                                color: Colors.white.withValues(alpha: 0.08),
                               ),
                             ),
                             child: Text(
@@ -129,7 +120,7 @@ class TaskCard extends StatelessWidget {
                                 fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 color: AppColors.textWhite.withValues(
-                                  alpha: 0.8,
+                                  alpha: 0.85,
                                 ),
                               ),
                             ),
@@ -159,12 +150,12 @@ class TaskCard extends StatelessWidget {
                   ),
                 ),
 
-                // Botão de play rápido em vidro tonal.
+                // Botão de play rápido em vidro tonal suave
                 GlassContainer(
                   isCircle: true,
-                  blur: 12,
+                  blur: 14,
                   accentColor: accentColor,
-                  color: accentColor.withValues(alpha: 0.12),
+                  color: accentColor.withValues(alpha: 0.10),
                   child: IconButton(
                     tooltip: 'Iniciar ${task.title}',
                     onPressed: () {

@@ -77,27 +77,28 @@ class DailyProgressHeader extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 20),
                   const Text(
                     'foco',
                     style: TextStyle(
                       color: AppColors.textMuted,
-                      fontSize: 13,
+                      fontSize: 12,
                       fontWeight: FontWeight.w400,
+                      letterSpacing: 0.5,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 4),
                   Text(
                     '$totalFocusedMinutes min',
                     style: const TextStyle(
                       color: AppColors.textWhite,
-                      fontSize: 46,
-                      height: 1,
-                      fontWeight: FontWeight.w300,
-                      letterSpacing: -2.5,
+                      fontSize: 44,
+                      height: 1.05,
+                      fontWeight: FontWeight.w400,
+                      letterSpacing: -1.5,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 4),
                   const Text(
                     'registrados hoje',
                     style: TextStyle(

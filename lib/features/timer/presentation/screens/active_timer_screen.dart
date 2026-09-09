@@ -4,7 +4,6 @@ import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/services/haptic_service.dart';
 import 'package:aevum/core/services/screen_awake_service.dart';
 import 'package:aevum/core/widgets/forest_background.dart';
-import 'package:aevum/core/widgets/glass_container.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
 import 'package:aevum/features/tasks/domain/timer_visual_mode.dart';
 import 'package:aevum/features/tasks/providers/task_providers.dart';
@@ -150,36 +149,21 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
 
               // App bar inline (transparente)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Row(
-                  children: [
-                    GlassContainer(
-                      isCircle: true,
-                      accentColor: accentColor,
-                      child: IconButton(
-                        tooltip: 'Voltar',
-                        icon: const Icon(
-                          Icons.arrow_back_ios_new_rounded,
-                          size: 17,
-                          color: AppColors.textWhite,
-                        ),
-                        onPressed: () {
-                          HapticService.lightImpact();
-                          timerNotifier.pause();
-                          ScreenAwakeService.setEnabled(false);
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: SizedBox(
+                  height: 40,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Text(
                             widget.task.title,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.center,
                             style: const TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.w600,
@@ -197,27 +181,54 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
                           ),
                         ],
                       ),
-                    ),
-                    GlassContainer(
-                      borderRadius: 18,
-                      accentColor: accentColor,
-                      child: TextButton(
-                        onPressed: () {
-                          HapticService.mediumImpact();
-                          timerNotifier.complete();
-                          ScreenAwakeService.setEnabled(false);
-                        },
-                        child: Text(
-                          'Concluir',
-                          style: TextStyle(
-                            color: accentColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          tooltip: 'Voltar',
+                          icon: const Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 17,
+                            color: AppColors.textWhite,
+                          ),
+                          style: IconButton.styleFrom(
+                            foregroundColor: AppColors.textWhite,
+                            padding: EdgeInsets.zero,
+                            minimumSize: const Size(36, 36),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          onPressed: () {
+                            HapticService.lightImpact();
+                            timerNotifier.pause();
+                            ScreenAwakeService.setEnabled(false);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            HapticService.mediumImpact();
+                            timerNotifier.complete();
+                            ScreenAwakeService.setEnabled(false);
+                          },
+                          style: TextButton.styleFrom(
+                            foregroundColor: accentColor,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          child: const Text(
+                            'Concluir',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
 

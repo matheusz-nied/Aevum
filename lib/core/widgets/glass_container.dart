@@ -2,14 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:aevum/core/constants/app_colors.dart';
-import 'package:aevum/core/config/app_performance_policy.dart';
 import 'package:aevum/core/widgets/adaptive_backdrop_filter.dart';
 
-/// Superfície de liquid glass compartilhada por cards, cápsulas e botões.
+/// Superfície moderna de vidro fosco (glassmorphism) compartilhada por cards, cápsulas e botões.
 ///
-/// O efeito combina o conteúdo desfocado atrás do widget com uma camada de
-/// vidro translúcida, reflexos direcionais e duas bordas finas. Assim o vidro
-/// continua legível em fundos claros ou escuros sem parecer uma placa opaca.
+/// Apresenta acabamento translúcido equilibrado, alta legibilidade de texto,
+/// sombra ambiente difusa e borda contínua com gradiente de luz sutil.
 class GlassContainer extends StatelessWidget {
   final Widget child;
 
@@ -24,13 +22,13 @@ class GlassContainer extends StatelessWidget {
   /// Tint opcional misturado ao vidro.
   final Color? color;
 
-  /// Cor usada nos reflexos da borda, sem tingir todo o conteúdo.
+  /// Cor usada nos reflexos sutis da borda.
   final Color? accentColor;
 
   /// Padding interno da cápsula.
   final EdgeInsetsGeometry? padding;
 
-  /// Usa um vidro ligeiramente mais denso para painéis de maior hierarquia.
+  /// Usa um vidro ligeiramente mais denso e estruturado para painéis de maior hierarquia.
   final bool strong;
 
   const GlassContainer({
@@ -47,8 +45,7 @@ class GlassContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isAndroid = AppPerformancePolicy.isAndroid;
-    final radius = isCircle ? 999.0 : (borderRadius ?? 24);
+    final radius = isCircle ? 999.0 : (borderRadius ?? 24.0);
     final borderRadiusValue = BorderRadius.circular(radius);
     final tint = accentColor ?? AppColors.emeraldMist;
     final baseColor =
@@ -60,19 +57,21 @@ class GlassContainer extends StatelessWidget {
         shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
         borderRadius: isCircle ? null : borderRadiusValue,
         boxShadow: [
+          // Sombra ambiente suave e profunda
           BoxShadow(
-            color: AppColors.forestBlack.withValues(
-              alpha: strong ? 0.48 : 0.34,
+            color: Colors.black.withValues(
+              alpha: strong ? 0.36 : 0.24,
             ),
-            blurRadius: isAndroid ? (strong ? 18 : 14) : (strong ? 34 : 24),
-            spreadRadius: -7,
-            offset: Offset(0, strong ? 18 : 13),
+            blurRadius: strong ? 28 : 18,
+            spreadRadius: -4,
+            offset: Offset(0, strong ? 10 : 6),
           ),
+          // Aura cromática muito sutil no tom da cor de destaque
           BoxShadow(
-            color: tint.withValues(alpha: strong ? 0.09 : 0.055),
-            blurRadius: isAndroid ? (strong ? 14 : 10) : (strong ? 26 : 18),
-            spreadRadius: -9,
-            offset: const Offset(5, 7),
+            color: tint.withValues(alpha: strong ? 0.05 : 0.025),
+            blurRadius: 18,
+            spreadRadius: -3,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -80,11 +79,12 @@ class GlassContainer extends StatelessWidget {
         borderRadius: borderRadiusValue,
         child: AdaptiveBackdropFilter(
           filter: ImageFilter.blur(
-            sigmaX: strong ? blur + 5 : blur,
-            sigmaY: strong ? blur + 5 : blur,
+            sigmaX: strong ? blur + 4 : blur,
+            sigmaY: strong ? blur + 4 : blur,
           ),
           child: Stack(
             children: [
+              // Fundo com textura e gradiente de vidro translúcido suave
               Positioned.fill(
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -93,20 +93,20 @@ class GlassContainer extends StatelessWidget {
                     gradient: LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
-                      stops: const [0, 0.27, 0.62, 1],
+                      stops: const [0.0, 0.35, 0.70, 1.0],
                       colors: [
                         Color.alphaBlend(
-                          Colors.white.withValues(alpha: strong ? 0.12 : 0.16),
-                          baseColor,
-                        ),
-                        Color.alphaBlend(
-                          tint.withValues(alpha: strong ? 0.045 : 0.03),
+                          Colors.white.withValues(alpha: strong ? 0.08 : 0.045),
                           baseColor,
                         ),
                         baseColor,
                         Color.alphaBlend(
-                          AppColors.forestDeep.withValues(
-                            alpha: strong ? 0.18 : 0.08,
+                          tint.withValues(alpha: strong ? 0.03 : 0.015),
+                          baseColor,
+                        ),
+                        Color.alphaBlend(
+                          AppColors.forestBlack.withValues(
+                            alpha: strong ? 0.14 : 0.08,
                           ),
                           baseColor,
                         ),
@@ -115,21 +115,35 @@ class GlassContainer extends StatelessWidget {
                   ),
                 ),
               ),
+
+              // Sheen suave de topo em gradiente contínuo (sem cortes artificiais)
               Positioned.fill(
-                child: CustomPaint(
-                  painter: _LiquidGlassGlowPainter(
-                    radius: radius,
-                    isCircle: isCircle,
-                    accentColor: tint,
-                    strong: strong,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
+                    borderRadius: isCircle ? null : borderRadiusValue,
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: const [0.0, 0.38, 1.0],
+                      colors: [
+                        Colors.white.withValues(alpha: strong ? 0.035 : 0.02),
+                        Colors.white.withValues(alpha: 0.005),
+                        Colors.transparent,
+                      ],
+                    ),
                   ),
                 ),
               ),
+
+              // Conteúdo do componente
               Padding(padding: padding ?? EdgeInsets.zero, child: child),
+
+              // Borda refinada contínua de 1px com gradiente de luz
               Positioned.fill(
                 child: IgnorePointer(
                   child: CustomPaint(
-                    painter: _LiquidGlassEdgePainter(
+                    painter: _ModernGlassBorderPainter(
                       radius: radius,
                       isCircle: isCircle,
                       accentColor: tint,
@@ -146,13 +160,14 @@ class GlassContainer extends StatelessWidget {
   }
 }
 
-class _LiquidGlassGlowPainter extends CustomPainter {
+/// Pinta uma borda única, fina (1px) e contínua com gradiente luminoso suave.
+class _ModernGlassBorderPainter extends CustomPainter {
   final double radius;
   final bool isCircle;
   final Color accentColor;
   final bool strong;
 
-  const _LiquidGlassGlowPainter({
+  const _ModernGlassBorderPainter({
     required this.radius,
     required this.isCircle,
     required this.accentColor,
@@ -161,151 +176,41 @@ class _LiquidGlassGlowPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (size.isEmpty) return;
+
+    const strokeWidth = 1.0;
     final rect = Offset.zero & size;
-    final shape = RRect.fromRectAndRadius(rect, Radius.circular(radius));
-    canvas.save();
-    canvas.clipRRect(shape);
+    final insetRect = rect.deflate(strokeWidth / 2);
 
-    final topGlow = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(-0.82, -1.05),
-        radius: 1.02,
-        colors: [
-          Colors.white.withValues(alpha: strong ? 0.18 : 0.22),
-          Colors.white.withValues(alpha: 0.045),
-          Colors.transparent,
-        ],
-        stops: const [0, 0.36, 1],
-      ).createShader(rect);
-    canvas.drawRect(rect, topGlow);
-
-    final colorRefraction = Paint()
-      ..shader = RadialGradient(
-        center: const Alignment(1.12, 0.92),
-        radius: 0.92,
-        colors: [
-          accentColor.withValues(alpha: strong ? 0.12 : 0.09),
-          accentColor.withValues(alpha: 0.025),
-          Colors.transparent,
-        ],
-        stops: const [0, 0.44, 1],
-      ).createShader(rect);
-    canvas.drawRect(rect, colorRefraction);
-
-    final lowerShade = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Colors.transparent,
-          AppColors.forestBlack.withValues(alpha: strong ? 0.10 : 0.055),
-        ],
-        stops: const [0.46, 1],
-      ).createShader(rect);
-    canvas.drawRect(rect, lowerShade);
-    canvas.restore();
-  }
-
-  @override
-  bool shouldRepaint(covariant _LiquidGlassGlowPainter oldDelegate) =>
-      oldDelegate.radius != radius ||
-      oldDelegate.isCircle != isCircle ||
-      oldDelegate.accentColor != accentColor ||
-      oldDelegate.strong != strong;
-}
-
-class _LiquidGlassEdgePainter extends CustomPainter {
-  final double radius;
-  final bool isCircle;
-  final Color accentColor;
-  final bool strong;
-
-  const _LiquidGlassEdgePainter({
-    required this.radius,
-    required this.isCircle,
-    required this.accentColor,
-    required this.strong,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final rect = Offset.zero & size;
-    final outerRect = rect.deflate(0.7);
-    final innerRect = rect.deflate(2.25);
-
-    final outer = Paint()
+    final borderPaint = Paint()
       ..style = PaintingStyle.stroke
-      ..strokeWidth = strong ? 1.45 : 1.2
+      ..strokeWidth = strokeWidth
       ..shader = LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
+        stops: const [0.0, 0.35, 0.70, 1.0],
         colors: [
-          Colors.white.withValues(alpha: strong ? 0.62 : 0.52),
-          Colors.white.withValues(alpha: 0.16),
-          accentColor.withValues(alpha: strong ? 0.24 : 0.16),
-          Colors.white.withValues(alpha: 0.25),
+          Colors.white.withValues(alpha: strong ? 0.22 : 0.15),
+          Colors.white.withValues(alpha: strong ? 0.08 : 0.05),
+          accentColor.withValues(alpha: strong ? 0.12 : 0.07),
+          Colors.white.withValues(alpha: strong ? 0.05 : 0.03),
         ],
-        stops: const [0, 0.31, 0.72, 1],
       ).createShader(rect);
 
-    final inner = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.7
-      ..color = Colors.white.withValues(alpha: strong ? 0.12 : 0.09);
-
     if (isCircle) {
-      canvas.drawOval(outerRect, outer);
-      canvas.drawOval(innerRect, inner);
-      canvas.drawArc(
-        innerRect,
-        3.65,
-        1.55,
-        false,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeCap = StrokeCap.round
-          ..strokeWidth = 1.7
-          ..color = Colors.white.withValues(alpha: 0.34),
-      );
-      return;
-    }
-
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(outerRect, Radius.circular(radius - 0.7)),
-      outer,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        innerRect,
-        Radius.circular((radius - 2.25).clamp(0, radius)),
-      ),
-      inner,
-    );
-
-    if (size.width > radius * 2.4) {
-      final highlight = Path()
-        ..moveTo(3, radius)
-        ..quadraticBezierTo(3, 4, radius, 3)
-        ..lineTo(size.width * 0.42, 3);
-      canvas.drawPath(
-        highlight,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeCap = StrokeCap.round
-          ..strokeWidth = strong ? 1.5 : 1.25
-          ..shader = LinearGradient(
-            colors: [
-              Colors.white.withValues(alpha: 0.08),
-              Colors.white.withValues(alpha: strong ? 0.40 : 0.32),
-              Colors.transparent,
-            ],
-          ).createShader(rect),
+      canvas.drawOval(insetRect, borderPaint);
+    } else {
+      final cornerRadius =
+          (radius - strokeWidth / 2).clamp(0.0, double.infinity);
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(insetRect, Radius.circular(cornerRadius)),
+        borderPaint,
       );
     }
   }
 
   @override
-  bool shouldRepaint(covariant _LiquidGlassEdgePainter oldDelegate) =>
+  bool shouldRepaint(covariant _ModernGlassBorderPainter oldDelegate) =>
       oldDelegate.radius != radius ||
       oldDelegate.isCircle != isCircle ||
       oldDelegate.accentColor != accentColor ||

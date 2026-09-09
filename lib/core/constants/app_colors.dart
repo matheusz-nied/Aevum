@@ -37,14 +37,15 @@ class AppColors {
     lichen,
   ];
 
-  // Liquid glass: a superfície preserva o cenário atrás do componente.
-  static Color get liquidGlassSurface => forestSurface.withValues(alpha: 0.26);
-  static Color get liquidGlassStrong => forestSurface.withValues(alpha: 0.36);
-  static Color get glassDark => forestSurface.withValues(alpha: 0.46);
-  static Color get glassBorderDark => Colors.white.withValues(alpha: 0.24);
-  static Color get glassBorderSoft => Colors.white.withValues(alpha: 0.11);
-  static Color get glassLightOnly => Colors.white.withValues(alpha: 0.075);
-  static Color get glassHighlight => Colors.white.withValues(alpha: 0.18);
+  // Superfície de vidro moderna: translúcida, suave e de alta legibilidade.
+  static Color get liquidGlassSurface => forestSurface.withValues(alpha: 0.64);
+  static Color get liquidGlassStrong =>
+      forestSurfaceElevated.withValues(alpha: 0.78);
+  static Color get glassDark => forestSurface.withValues(alpha: 0.85);
+  static Color get glassBorderDark => Colors.white.withValues(alpha: 0.16);
+  static Color get glassBorderSoft => Colors.white.withValues(alpha: 0.08);
+  static Color get glassLightOnly => Colors.white.withValues(alpha: 0.06);
+  static Color get glassHighlight => Colors.white.withValues(alpha: 0.10);
 
   // Texto
   static const Color textWhite = Color(0xFFEFF3F0);
