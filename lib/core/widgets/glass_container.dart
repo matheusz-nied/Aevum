@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/widgets/adaptive_backdrop_filter.dart';
 
-/// Superfície moderna de vidro fosco (glassmorphism) compartilhada por cards, cápsulas e botões.
+/// Superfície de vidro fosco compartilhada por cards, cápsulas e botões.
 ///
-/// Apresenta acabamento translúcido equilibrado, alta legibilidade de texto,
-/// sombra ambiente difusa e borda contínua com gradiente de luz sutil.
+/// Acabamento leve: preenchimento translúcido com um véu de luz no topo,
+/// borda de 1px que só brilha onde a luz bate e uma sombra ambiente difusa.
 class GlassContainer extends StatelessWidget {
   final Widget child;
 
@@ -28,7 +28,7 @@ class GlassContainer extends StatelessWidget {
   /// Padding interno da cápsula.
   final EdgeInsetsGeometry? padding;
 
-  /// Usa um vidro ligeiramente mais denso e estruturado para painéis de maior hierarquia.
+  /// Usa um vidro ligeiramente mais denso para painéis de maior hierarquia.
   final bool strong;
 
   const GlassContainer({
@@ -51,25 +51,18 @@ class GlassContainer extends StatelessWidget {
     final baseColor =
         color ??
         (strong ? AppColors.liquidGlassStrong : AppColors.liquidGlassSurface);
+    final shape = isCircle ? BoxShape.circle : BoxShape.rectangle;
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
+        shape: shape,
         borderRadius: isCircle ? null : borderRadiusValue,
         boxShadow: [
-          // Sombra ambiente suave e profunda
           BoxShadow(
-            color: Colors.black.withValues(alpha: strong ? 0.36 : 0.24),
-            blurRadius: strong ? 28 : 18,
-            spreadRadius: -4,
-            offset: Offset(0, strong ? 10 : 6),
-          ),
-          // Aura cromática muito sutil no tom da cor de destaque
-          BoxShadow(
-            color: tint.withValues(alpha: strong ? 0.05 : 0.025),
-            blurRadius: 18,
-            spreadRadius: -3,
-            offset: const Offset(0, 3),
+            color: AppColors.forestBlack.withValues(alpha: strong ? 0.32 : 0.2),
+            blurRadius: strong ? 32 : 20,
+            spreadRadius: -8,
+            offset: Offset(0, strong ? 14 : 8),
           ),
         ],
       ),
@@ -80,77 +73,32 @@ class GlassContainer extends StatelessWidget {
             sigmaX: strong ? blur + 4 : blur,
             sigmaY: strong ? blur + 4 : blur,
           ),
-          child: Stack(
-            children: [
-              // Fundo com textura e gradiente de vidro translúcido suave
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
-                    borderRadius: isCircle ? null : borderRadiusValue,
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      stops: const [0.0, 0.35, 0.70, 1.0],
-                      colors: [
-                        Color.alphaBlend(
-                          Colors.white.withValues(alpha: strong ? 0.08 : 0.045),
-                          baseColor,
-                        ),
-                        baseColor,
-                        Color.alphaBlend(
-                          tint.withValues(alpha: strong ? 0.03 : 0.015),
-                          baseColor,
-                        ),
-                        Color.alphaBlend(
-                          AppColors.forestBlack.withValues(
-                            alpha: strong ? 0.14 : 0.08,
-                          ),
-                          baseColor,
-                        ),
-                      ],
-                    ),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              shape: shape,
+              borderRadius: isCircle ? null : borderRadiusValue,
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color.alphaBlend(
+                    Colors.white.withValues(alpha: strong ? 0.06 : 0.04),
+                    baseColor,
                   ),
-                ),
+                  Color.alphaBlend(tint.withValues(alpha: 0.02), baseColor),
+                ],
               ),
-
-              // Sheen suave de topo em gradiente contínuo (sem cortes artificiais)
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    shape: isCircle ? BoxShape.circle : BoxShape.rectangle,
-                    borderRadius: isCircle ? null : borderRadiusValue,
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0.0, 0.38, 1.0],
-                      colors: [
-                        Colors.white.withValues(alpha: strong ? 0.035 : 0.02),
-                        Colors.white.withValues(alpha: 0.005),
-                        Colors.transparent,
-                      ],
-                    ),
-                  ),
-                ),
+            ),
+            position: DecorationPosition.background,
+            child: CustomPaint(
+              foregroundPainter: _GlassBorderPainter(
+                radius: radius,
+                isCircle: isCircle,
+                accentColor: tint,
+                strong: strong,
               ),
-
-              // Conteúdo do componente
-              Padding(padding: padding ?? EdgeInsets.zero, child: child),
-
-              // Borda refinada contínua de 1px com gradiente de luz
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: CustomPaint(
-                    painter: _ModernGlassBorderPainter(
-                      radius: radius,
-                      isCircle: isCircle,
-                      accentColor: tint,
-                      strong: strong,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              child: Padding(padding: padding ?? EdgeInsets.zero, child: child),
+            ),
           ),
         ),
       ),
@@ -158,14 +106,14 @@ class GlassContainer extends StatelessWidget {
   }
 }
 
-/// Pinta uma borda única, fina (1px) e contínua com gradiente luminoso suave.
-class _ModernGlassBorderPainter extends CustomPainter {
+/// Borda de 1px: mais clara no topo (onde a luz bate) e quase invisível embaixo.
+class _GlassBorderPainter extends CustomPainter {
   final double radius;
   final bool isCircle;
   final Color accentColor;
   final bool strong;
 
-  const _ModernGlassBorderPainter({
+  const _GlassBorderPainter({
     required this.radius,
     required this.isCircle,
     required this.accentColor,
@@ -184,15 +132,17 @@ class _ModernGlassBorderPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
       ..shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        stops: const [0.0, 0.35, 0.70, 1.0],
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
         colors: [
-          Colors.white.withValues(alpha: strong ? 0.22 : 0.15),
-          Colors.white.withValues(alpha: strong ? 0.08 : 0.05),
-          accentColor.withValues(alpha: strong ? 0.12 : 0.07),
-          Colors.white.withValues(alpha: strong ? 0.05 : 0.03),
+          Colors.white.withValues(alpha: strong ? 0.17 : 0.13),
+          Color.alphaBlend(
+            accentColor.withValues(alpha: 0.05),
+            Colors.white.withValues(alpha: 0.05),
+          ),
+          Colors.white.withValues(alpha: 0.03),
         ],
+        stops: const [0, 0.45, 1],
       ).createShader(rect);
 
     if (isCircle) {
@@ -210,7 +160,7 @@ class _ModernGlassBorderPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _ModernGlassBorderPainter oldDelegate) =>
+  bool shouldRepaint(covariant _GlassBorderPainter oldDelegate) =>
       oldDelegate.radius != radius ||
       oldDelegate.isCircle != isCircle ||
       oldDelegate.accentColor != accentColor ||

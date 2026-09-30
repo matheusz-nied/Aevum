@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/providers/app_state_provider.dart';
 import 'package:aevum/core/widgets/forest_background.dart';
-import 'package:aevum/core/widgets/glass_container.dart';
+import 'package:aevum/core/theme/app_typography.dart';
 import 'package:aevum/features/tasks/domain/timer_visual_mode.dart';
 
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -71,14 +71,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                         children: List.generate(3, (index) {
                           final selected = index == _page;
                           return AnimatedContainer(
-                            duration: const Duration(milliseconds: 220),
+                            duration: const Duration(milliseconds: 320),
+                            curve: Curves.easeOutCubic,
                             margin: const EdgeInsets.symmetric(horizontal: 4),
-                            width: selected ? 28 : 8,
-                            height: 8,
+                            width: selected ? 26 : 7,
+                            height: 7,
                             decoration: BoxDecoration(
                               color: selected
-                                  ? AppColors.sage
-                                  : AppColors.textFaint,
+                                  ? AppColors.dawn
+                                  : Colors.white.withValues(alpha: 0.18),
                               borderRadius: BorderRadius.circular(99),
                             ),
                           );
@@ -88,7 +89,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
-                      height: 54,
+                      height: 56,
                       child: ElevatedButton(
                         onPressed: _finishing ? null : _advance,
                         child: Text(
@@ -142,7 +143,7 @@ class _ModesPage extends StatelessWidget {
         children: TimerVisualMode.values
             .map(
               (mode) => Chip(
-                avatar: Icon(mode.icon, size: 18, color: AppColors.sage),
+                avatar: Icon(mode.icon, size: 17, color: AppColors.sage),
                 label: Text(mode.displayName),
               ),
             )
@@ -187,62 +188,91 @@ class _PageShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-        child: GlassContainer(
-          strong: true,
-          borderRadius: 32,
-          accentColor: AppColors.sage,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 38),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Semantics(
-                  label: eyebrow,
-                  child: brandMark
-                      ? ClipRRect(
-                          borderRadius: BorderRadius.circular(22),
-                          child: Image.asset(
-                            'assets/app/aevum-mark.png',
-                            width: 80,
-                            height: 80,
-                            // Decodifica já em 80px em vez de 256px.
-                            cacheWidth: 80,
-                            cacheHeight: 80,
-                          ),
-                        )
-                      : Icon(icon, size: 72, color: AppColors.sage),
-                ),
-                const SizedBox(height: 26),
-                Text(
-                  eyebrow,
-                  style: const TextStyle(
-                    color: AppColors.textMuted,
-                    fontSize: 11,
-                    letterSpacing: 2.6,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineLarge,
-                ),
-                const SizedBox(height: 18),
-                Text(
-                  body,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: AppColors.textMuted,
-                    fontSize: 16,
-                    height: 1.55,
-                  ),
-                ),
-                if (child != null) ...[const SizedBox(height: 24), child!],
-              ],
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Semantics(
+              label: eyebrow,
+              child: _GlowOrb(
+                child: brandMark
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: Image.asset(
+                          'assets/app/aevum-mark.png',
+                          width: 84,
+                          height: 84,
+                          // Decodifica já no tamanho exibido em vez de 256px.
+                          cacheWidth: 252,
+                        ),
+                      )
+                    : Icon(icon, size: 52, color: AppColors.sage),
+              ),
             ),
+            const SizedBox(height: 36),
+            Text(
+              eyebrow,
+              style: AppTypography.eyebrow.copyWith(
+                color: AppColors.dawn,
+                letterSpacing: 2.6,
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: AppTypography.serif(size: 38, height: 1.1),
+            ),
+            const SizedBox(height: 18),
+            Text(
+              body,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                color: AppColors.textMuted,
+                fontSize: 16,
+                height: 1.6,
+              ),
+            ),
+            if (child != null) ...[const SizedBox(height: 28), child!],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Halo de luz suave atrás do ícone de cada etapa.
+class _GlowOrb extends StatelessWidget {
+  const _GlowOrb({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 148,
+      height: 148,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [
+            AppColors.sage.withValues(alpha: 0.16),
+            AppColors.sage.withValues(alpha: 0.04),
+            Colors.transparent,
+          ],
+          stops: const [0, 0.6, 1],
+        ),
+      ),
+      child: Center(
+        child: Container(
+          width: 112,
+          height: 112,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white.withValues(alpha: 0.03),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
           ),
+          child: Center(child: child),
         ),
       ),
     );

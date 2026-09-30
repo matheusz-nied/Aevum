@@ -71,6 +71,19 @@ flutter:
   assets:
     - assets/app/aevum-mark.png
     - assets/audio/timer_complete.wav
+    - assets/fonts/OFL-Fraunces.txt
+    - assets/fonts/OFL-Manrope.txt
+
+  # Fontes empacotadas (SIL Open Font License): nada é baixado em runtime.
+  fonts:
+    - family: Fraunces
+      fonts:
+        - asset: assets/fonts/Fraunces.ttf
+        - asset: assets/fonts/Fraunces-Italic.ttf
+          style: italic
+    - family: Manrope
+      fonts:
+        - asset: assets/fonts/Manrope.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

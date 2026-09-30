@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:aevum/core/widgets/adaptive_backdrop_filter.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/services/haptic_service.dart';
+import 'package:aevum/core/theme/app_typography.dart';
 import 'package:aevum/core/utils/time_utils.dart';
 import 'package:aevum/core/widgets/glass_container.dart';
 import 'package:aevum/features/tasks/domain/task_icon.dart';
@@ -30,6 +31,8 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
   late TimerVisualMode _selectedVisualMode;
   late Set<int> _weekdays;
   bool _canSubmit = false;
+  Animation<double>? _routeAnimation;
+  bool _focusScheduled = false;
 
   static const List<int> _presetDurations = [5, 10, 15, 20, 25, 30, 45, 60];
 
@@ -39,7 +42,6 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
     final task = widget.existingTask;
     _titleController = TextEditingController(text: task?.title ?? '');
     _titleFocusNode = FocusNode();
-    _titleFocusNode.addListener(() => setState(() {}));
     _targetMinutes = task?.targetMinutes ?? 15;
     _selectedColorValue = task?.colorValue ?? AppColors.emeraldMist.toARGB32();
     _selectedIcon = task?.iconKey ?? TaskIcon.writing;
@@ -50,15 +52,39 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
     _titleController.addListener(_onTitleChanged);
   }
 
+  // Só reconstrói o sheet inteiro quando o estado do botão muda; a prévia e o
+  // campo de nome se atualizam sozinhos via ListenableBuilder.
   void _onTitleChanged() {
     final canSubmit = _titleController.text.trim().isNotEmpty;
-    setState(() {
-      _canSubmit = canSubmit;
-    });
+    if (canSubmit == _canSubmit) return;
+    setState(() => _canSubmit = canSubmit);
+  }
+
+  // O teclado só abre depois que a animação de entrada termina. Abrir junto
+  // com o slide do sheet faz cada frame da animação competir com o resize.
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_focusScheduled || widget.existingTask != null) return;
+    _focusScheduled = true;
+    final animation = ModalRoute.of(context)?.animation;
+    if (animation == null || animation.isCompleted) {
+      _titleFocusNode.requestFocus();
+      return;
+    }
+    _routeAnimation = animation..addStatusListener(_onRouteAnimationStatus);
+  }
+
+  void _onRouteAnimationStatus(AnimationStatus status) {
+    if (status != AnimationStatus.completed) return;
+    _routeAnimation?.removeStatusListener(_onRouteAnimationStatus);
+    _routeAnimation = null;
+    if (mounted) _titleFocusNode.requestFocus();
   }
 
   @override
   void dispose() {
+    _routeAnimation?.removeStatusListener(_onRouteAnimationStatus);
     _titleController.removeListener(_onTitleChanged);
     _titleController.dispose();
     _titleFocusNode.dispose();
@@ -166,12 +192,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
             const SizedBox(height: 3),
             Text(
               isEditing ? 'Editar Hábito' : 'Novo Hábito',
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textWhite,
-                letterSpacing: -0.4,
-              ),
+              style: AppTypography.serif(size: 28, weight: FontWeight.w500),
             ),
           ],
         ),
@@ -197,6 +218,13 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
   }
 
   Widget _buildLivePreview() {
+    return ListenableBuilder(
+      listenable: _titleController,
+      builder: (context, _) => _buildLivePreviewCard(),
+    );
+  }
+
+  Widget _buildLivePreviewCard() {
     final title = _titleController.text.trim();
     final displayTitle = title.isEmpty ? 'Nome do seu hábito' : title;
     final isPlaceholder = title.isEmpty;
@@ -341,7 +369,15 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
   }
 
   Widget _buildTitleInput() {
+    return ListenableBuilder(
+      listenable: Listenable.merge([_titleFocusNode, _titleController]),
+      builder: (context, _) => _buildTitleField(),
+    );
+  }
+
+  Widget _buildTitleField() {
     final isFocused = _titleFocusNode.hasFocus;
+    final hasText = _titleController.text.trim().isNotEmpty;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -351,7 +387,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
         border: Border.all(
           color: isFocused
               ? _selectedColor.withValues(alpha: 0.55)
-              : _canSubmit
+              : hasText
               ? _selectedColor.withValues(alpha: 0.28)
               : Colors.white.withValues(alpha: 0.10),
           width: isFocused ? 1.4 : 1.0,
@@ -370,7 +406,6 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
       child: TextField(
         controller: _titleController,
         focusNode: _titleFocusNode,
-        autofocus: widget.existingTask == null,
         textInputAction: TextInputAction.done,
         onSubmitted: (_) => _submit(),
         style: const TextStyle(
@@ -836,7 +871,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(99),
             gradient: _canSubmit
                 ? const LinearGradient(
                     begin: Alignment.topLeft,
@@ -870,10 +905,10 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
             color: Colors.transparent,
             child: InkWell(
               onTap: _canSubmit ? _submit : null,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(99),
               splashColor: Colors.white.withValues(alpha: 0.20),
               child: SizedBox(
-                height: 52,
+                height: 56,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -919,10 +954,6 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.existingTask != null;
-    final mediaQuery = MediaQuery.of(context);
-    final keyboardInset = mediaQuery.viewInsets.bottom;
-    final safeBottom = mediaQuery.padding.bottom;
-
     return ClipRRect(
       borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
       child: AdaptiveBackdropFilter(
@@ -998,15 +1029,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.sizeOf(context).height * 0.92,
               ),
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 18,
-                  right: 18,
-                  top: 14,
-                  bottom:
-                      keyboardInset +
-                      (keyboardInset > 0 ? 12 : safeBottom + 20),
-                ),
+              child: _KeyboardAwarePadding(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1109,6 +1132,31 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Aplica o inset do teclado isoladamente: a cada frame da animação do
+/// teclado só este Padding é reconstruído, o [child] (o formulário inteiro)
+/// é a mesma instância e não é refeito.
+class _KeyboardAwarePadding extends StatelessWidget {
+  final Widget child;
+
+  const _KeyboardAwarePadding({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final keyboardInset = MediaQuery.viewInsetsOf(context).bottom;
+    final safeBottom = MediaQuery.paddingOf(context).bottom;
+
+    return Padding(
+      padding: EdgeInsets.only(
+        left: 18,
+        right: 18,
+        top: 14,
+        bottom: keyboardInset + (keyboardInset > 0 ? 12 : safeBottom + 20),
+      ),
+      child: child,
     );
   }
 }

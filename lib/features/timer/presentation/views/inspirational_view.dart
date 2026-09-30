@@ -11,6 +11,7 @@ import 'package:aevum/core/utils/time_utils.dart';
 import 'package:aevum/core/widgets/glass_container.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
 import 'package:aevum/features/timer/domain/timer_state.dart';
+import 'package:aevum/core/theme/app_typography.dart';
 
 class InspirationalView extends StatefulWidget {
   final TaskModel task;
@@ -113,13 +114,13 @@ class _InspirationalViewState extends State<InspirationalView> {
                               textAlign: TextAlign.center,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.w400,
+                              style: AppTypography.serif(
+                                size: 15.5,
                                 height: 1.45,
+                                letterSpacing: 0,
                                 fontStyle: FontStyle.italic,
                                 color: AppColors.textWhite.withValues(
-                                  alpha: 0.72,
+                                  alpha: 0.78,
                                 ),
                               ),
                             ),
@@ -145,38 +146,41 @@ class _InspirationalViewState extends State<InspirationalView> {
                             // No Android mantém 1 sombra (vs 2 no iOS):
                             // mesmo glow percebido, metade do custo de
                             // re-raster do texto grande a cada segundo.
-                            style: TextStyle(
-                              fontSize: hasHours ? 34 : 46,
-                              fontWeight: FontWeight.w200,
-                              height: 1,
-                              letterSpacing: hasHours ? 2.5 : 5,
-                              color: AppColors.textWhite.withValues(
-                                alpha: 0.96,
-                              ),
-                              shadows: AppPerformancePolicy.usePainterBlur
-                                  ? [
-                                      Shadow(
-                                        color: accentColor.withValues(
-                                          alpha: 0.45,
-                                        ),
-                                        blurRadius: 22,
-                                      ),
-                                      Shadow(
-                                        color: accentColor.withValues(
-                                          alpha: 0.18,
-                                        ),
-                                        blurRadius: 40,
-                                      ),
-                                    ]
-                                  : [
-                                      Shadow(
-                                        color: accentColor.withValues(
-                                          alpha: 0.45,
-                                        ),
-                                        blurRadius: 12,
-                                      ),
-                                    ],
-                            ),
+                            style:
+                                AppTypography.serif(
+                                  size: hasHours ? 40 : 54,
+                                  weight: FontWeight.w300,
+                                  height: 1,
+                                  letterSpacing: hasHours ? 0.5 : 1,
+                                  color: AppColors.textWhite.withValues(
+                                    alpha: 0.96,
+                                  ),
+                                ).copyWith(
+                                  fontFeatures: AppTypography.tabular,
+                                  shadows: AppPerformancePolicy.usePainterBlur
+                                      ? [
+                                          Shadow(
+                                            color: accentColor.withValues(
+                                              alpha: 0.45,
+                                            ),
+                                            blurRadius: 22,
+                                          ),
+                                          Shadow(
+                                            color: accentColor.withValues(
+                                              alpha: 0.18,
+                                            ),
+                                            blurRadius: 40,
+                                          ),
+                                        ]
+                                      : [
+                                          Shadow(
+                                            color: accentColor.withValues(
+                                              alpha: 0.45,
+                                            ),
+                                            blurRadius: 12,
+                                          ),
+                                        ],
+                                ),
                           ),
                           const SizedBox(height: 8),
                           Text(

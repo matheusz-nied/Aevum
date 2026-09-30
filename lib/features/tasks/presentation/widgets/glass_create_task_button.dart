@@ -3,7 +3,8 @@ import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/services/haptic_service.dart';
 import 'package:aevum/core/widgets/glass_container.dart';
 
-/// Ação principal da home em uma cápsula leve de liquid glass.
+/// Criar hábito é uma ação secundária: uma cápsula de vidro discreta, para
+/// não convidar o usuário a acumular hábitos em vez de cuidar dos que tem.
 class GlassCreateTaskButton extends StatefulWidget {
   final VoidCallback onPressed;
   final String label;
@@ -38,72 +39,53 @@ class _GlassCreateTaskButtonState extends State<GlassCreateTaskButton> {
     return Semantics(
       button: true,
       label: widget.label,
-      child: AnimatedScale(
-        scale: _isPressed ? 0.975 : 1,
-        duration: const Duration(milliseconds: 160),
-        curve: Curves.easeOutCubic,
-        child: AnimatedOpacity(
-          opacity: _isPressed ? 0.92 : 1,
-          duration: const Duration(milliseconds: 120),
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: _handleTap,
+        onTapDown: (_) => _setPressed(true),
+        onTapUp: (_) => _setPressed(false),
+        onTapCancel: () => _setPressed(false),
+        child: AnimatedScale(
+          scale: _isPressed ? 0.96 : 1,
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
           child: GlassContainer(
-            borderRadius: 30,
+            borderRadius: 99,
             blur: 24,
-            strong: true,
             accentColor: AppColors.sage,
-            color: AppColors.forestSurfaceElevated.withValues(alpha: 0.75),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: _handleTap,
-                onTapDown: (_) => _setPressed(true),
-                onTapUp: (_) => _setPressed(false),
-                onTapCancel: () => _setPressed(false),
-                borderRadius: BorderRadius.circular(30),
-                splashColor: AppColors.sage.withValues(alpha: 0.12),
-                highlightColor: Colors.white.withValues(alpha: 0.035),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 7, 18, 7),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 38,
-                        height: 38,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [AppColors.sage, Color(0xFFA5B89F)],
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.sage.withValues(alpha: 0.28),
-                              blurRadius: 10,
-                              spreadRadius: -1,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Icon(
-                          widget.icon,
-                          color: AppColors.forestDeep,
-                          size: 20,
-                        ),
+            color: AppColors.forestSurface.withValues(alpha: 0.38),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(6, 6, 18, 6),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white.withValues(alpha: 0.06),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.08),
                       ),
-                      const SizedBox(width: 11),
-                      Text(
-                        widget.label,
-                        style: const TextStyle(
-                          color: AppColors.textWhite,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.1,
-                        ),
-                      ),
-                    ],
+                    ),
+                    child: Icon(
+                      widget.icon,
+                      color: AppColors.sage.withValues(alpha: 0.9),
+                      size: 19,
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 9),
+                  Text(
+                    widget.label,
+                    style: TextStyle(
+                      color: AppColors.textWhite.withValues(alpha: 0.82),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.1,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

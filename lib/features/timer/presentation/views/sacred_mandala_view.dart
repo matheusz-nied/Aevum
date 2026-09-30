@@ -5,6 +5,7 @@ import 'package:aevum/core/config/app_performance_policy.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
 import 'package:aevum/features/timer/domain/timer_state.dart';
+import 'package:aevum/features/timer/presentation/widgets/timer_pill_button.dart';
 
 class SacredMandalaView extends StatefulWidget {
   final TaskModel task;
@@ -167,60 +168,21 @@ class _SacredMandalaViewState extends State<SacredMandalaView>
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _MandalaButton(
-                label: '+1 min',
-                accentColor: accentColor,
+              TimerPillButton(
+                icon: Icons.add_rounded,
+                label: '1 min',
                 onTap: () => widget.onAddMinutes(1),
               ),
-              const SizedBox(width: 20),
-              _MandalaButton(
+              const SizedBox(width: 10),
+              TimerPillButton(
+                icon: Icons.refresh_rounded,
                 label: 'Reiniciar',
-                accentColor: accentColor,
                 onTap: widget.onReset,
               ),
             ],
           ),
         ),
       ],
-    );
-  }
-}
-
-class _MandalaButton extends StatelessWidget {
-  final String label;
-  final Color accentColor;
-  final VoidCallback onTap;
-
-  const _MandalaButton({
-    required this.label,
-    required this.accentColor,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.07),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: accentColor.withValues(alpha: 0.3),
-            width: 1,
-          ),
-        ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            color: AppColors.textWhite,
-            fontSize: 13,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ),
     );
   }
 }
