@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:aevum/core/constants/app_colors.dart';
-import 'package:aevum/core/services/haptic_service.dart';
 import 'package:aevum/core/services/screen_awake_service.dart';
 import 'package:aevum/core/services/timer_session_store.dart';
 import 'package:aevum/core/theme/app_typography.dart';
@@ -21,6 +20,7 @@ import 'package:aevum/features/timer/presentation/views/minimal_dial_view.dart';
 import 'package:aevum/features/timer/presentation/views/sacred_mandala_view.dart';
 import 'package:aevum/features/timer/presentation/widgets/completion_dialog.dart';
 import 'package:aevum/features/timer/presentation/widgets/timer_mode_selector.dart';
+import 'package:aevum/features/timer/presentation/widgets/timer_pill_button.dart';
 import 'package:aevum/features/timer/providers/timer_controller.dart';
 
 class ActiveTimerScreen extends ConsumerStatefulWidget {
@@ -257,10 +257,8 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
 
                 _SessionTopBar(
                   title: widget.task.title,
-                  accentColor: accentColor,
                   onBack: _requestExit,
                   onComplete: () {
-                    HapticService.mediumImpact();
                     timerNotifier.complete();
                     ScreenAwakeService.setEnabled(false);
                   },
@@ -396,13 +394,11 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
 /// Topo da sessão: voltar, nome do hábito com o estado ao vivo e "Concluir".
 class _SessionTopBar extends ConsumerWidget {
   final String title;
-  final Color accentColor;
   final VoidCallback onBack;
   final VoidCallback onComplete;
 
   const _SessionTopBar({
     required this.title,
-    required this.accentColor,
     required this.onBack,
     required this.onComplete,
   });
@@ -466,36 +462,12 @@ class _SessionTopBar extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 12),
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: onComplete,
-              borderRadius: BorderRadius.circular(99),
-              child: Ink(
-                height: 44,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(99),
-                  color: accentColor.withValues(alpha: 0.14),
-                  border: Border.all(color: accentColor.withValues(alpha: 0.3)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.check_rounded, size: 17, color: accentColor),
-                    const SizedBox(width: 5),
-                    Text(
-                      'Concluir',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: accentColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          // Concluir é uma saída tranquila, não uma meta: mesma pílula neutra
+          // de "+1 min" e "Reiniciar", sem cor de destaque chamando atenção.
+          TimerPillButton(
+            label: 'Concluir',
+            icon: Icons.check_rounded,
+            onTap: onComplete,
           ),
         ],
       ),
