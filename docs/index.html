@@ -1807,10 +1807,761 @@
         animation: none;
       }
     }
+    /* =====================================================================
+       CAMADA IMERSIVA — v2
+       Sobrescreve/estende as regras acima. Mantém a paleta "Floresta Nebulosa".
+       ===================================================================== */
+
+    html { overflow-x: clip; }
+
+    body {
+      background-image: radial-gradient(130% 70% at 50% -12%, #0f2118 0%, rgba(2, 8, 6, 0) 62%);
+      background-repeat: no-repeat;
+      background-size: 100% 100vh;
+    }
+
+    /* ---------- Barra de progresso de leitura ---------- */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      transform-origin: left;
+      transform: scaleX(var(--p, 0));
+      background: linear-gradient(90deg, var(--moss-calm), var(--sage-light));
+      box-shadow: 0 0 14px rgba(186, 201, 181, 0.65);
+      z-index: 300;
+      pointer-events: none;
+    }
+
+    /* ---------- Vaga-lumes (canvas) + luz do cursor ---------- */
+    #fireflies {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .cursor-light {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 560px;
+      height: 560px;
+      margin: -280px 0 0 -280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(186, 201, 181, 0.11), transparent 62%);
+      transform: translate3d(var(--cx, 50vw), var(--cy, 40vh), 0);
+      opacity: 0;
+      transition: opacity 0.8s ease;
+      pointer-events: none;
+      z-index: 0;
+      will-change: transform;
+    }
+
+    .cursor-light.on { opacity: 1; }
+
+    /* ---------- Header: pílula de vidro flutuante ---------- */
+    header,
+    header.scrolled {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: transparent;
+      border: 0;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      padding: 1rem 1.25rem;
+    }
+
+    header.scrolled { padding-top: 0.6rem; }
+
+    .header-container {
+      max-width: 1000px;
+      padding: 0.5rem 0.55rem 0.5rem 1.1rem;
+      border-radius: 9999px;
+      background: rgba(10, 22, 16, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(22px) saturate(1.5);
+      -webkit-backdrop-filter: blur(22px) saturate(1.5);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.09);
+      transition: background 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    header.scrolled .header-container {
+      background: rgba(6, 14, 10, 0.78);
+    }
+
+    .brand img { width: 34px; height: 34px; border-radius: 10px; }
+    .brand-title { font-size: 1.2rem; }
+    .nav-menu { gap: 1.6rem; }
+    .nav-link.active { color: var(--sage-light); }
+    .nav-link.active::after { transform: scaleX(1); transform-origin: left; }
+
+    /* ---------- Tipografia de impacto ---------- */
+    .section-title {
+      font-size: clamp(2.2rem, 4.8vw, 3.7rem);
+      line-height: 1.06;
+      letter-spacing: -0.042em;
+    }
+
+    .section-desc { font-size: 1.1rem; max-width: 560px; margin: 0 auto; }
+    .section-title-wrap { max-width: 760px; margin-bottom: 4.25rem; }
+    .section-block { margin-bottom: 9rem; }
+
+    /* ---------- Vidro líquido nos cartões ---------- */
+    .step-card,
+    .pillar-card,
+    .faq-item,
+    .stats-grid,
+    .modes-container {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.012) 42%, rgba(19, 33, 26, 0.5)),
+        rgba(10, 20, 15, 0.55);
+      border-color: rgba(255, 255, 255, 0.09);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 24px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    /* Borda que acende sob o cursor */
+    .spotlight::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), rgba(213, 226, 209, 0.6), transparent 62%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      pointer-events: none;
+    }
+
+    .spotlight:hover::after { opacity: 1; }
+
+    /* ---------- HERO cinematográfico ---------- */
+    .hero {
+      min-height: 100svh;
+      padding-top: 7.5rem;
+      padding-bottom: 10rem;
+      gap: 2rem;
+      grid-template-columns: 1.1fr 0.9fr;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.9rem, 5vw, 4.7rem);
+      line-height: 1.02;
+      letter-spacing: -0.05em;
+      margin-bottom: 1.6rem;
+    }
+
+    .hero h1 .accent { padding-right: 0.06em; }
+    .hero-desc { font-size: 1.17rem; max-width: 520px; }
+
+    .hero-badge {
+      background: rgba(255, 255, 255, 0.045);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 6px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Entrada escalonada (somente com JS) */
+    .js .split .w {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(0.55em);
+      filter: blur(10px);
+      animation: word-in 1.1s var(--ease-out) forwards;
+      animation-delay: calc(0.2s + var(--i) * 0.1s);
+    }
+
+    @keyframes word-in {
+      to { opacity: 1; transform: none; filter: blur(0); }
+    }
+
+    .js .hero-badge,
+    .js .hero-desc,
+    .js .hero-actions,
+    .js .hero-features-list {
+      animation: rise-in 1.1s var(--ease-out) both;
+    }
+
+    .js .hero-badge { animation-delay: 0.05s; }
+    .js .hero-desc { animation-delay: 0.75s; }
+    .js .hero-actions { animation-delay: 0.9s; }
+    .js .hero-features-list { animation-delay: 1.05s; }
+    .js .hero-visual { animation: rise-in 1.4s var(--ease-out) 0.35s backwards; }
+
+    @keyframes rise-in {
+      from { opacity: 0; transform: translateY(26px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    /* Raios de luz atravessando a névoa */
+    .hero-rays {
+      position: absolute;
+      left: calc(50% - 50vw);
+      top: -9rem;
+      width: 100vw;
+      height: 118%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 82%);
+      mask-image: linear-gradient(to bottom, #000 0%, transparent 82%);
+    }
+
+    .hero-rays i {
+      position: absolute;
+      top: -12%;
+      left: var(--x);
+      width: var(--w, 170px);
+      height: 140%;
+      background: linear-gradient(180deg, rgba(213, 226, 209, 0.2), rgba(213, 226, 209, 0) 78%);
+      filter: blur(16px);
+      transform-origin: top center;
+      transform: rotate(var(--r));
+      animation: ray-sway 10s ease-in-out infinite alternate var(--dl, 0s);
+    }
+
+    @keyframes ray-sway {
+      from { opacity: 0.25; transform: rotate(var(--r)) scaleX(0.85); }
+      to { opacity: 0.85; transform: rotate(calc(var(--r) + 5deg)) scaleX(1.2); }
+    }
+
+    /* Topo da floresta transparente: sem emenda contra o brilho do fundo */
+    .forest-fade {
+      background: linear-gradient(to bottom,
+        rgba(2, 8, 6, 0) 0%,
+        rgba(2, 8, 6, 0) 62%,
+        var(--forest-black) 98%);
+    }
+
+    /* Telefone com profundidade 3D */
+    .hero-visual {
+      perspective: 1400px;
+      transform-style: preserve-3d;
+      z-index: 1;
+      transition: transform 0.4s var(--ease-out);
+      will-change: transform;
+    }
+
+    .halo-ring-1 { width: 600px; height: 600px; }
+    .halo-ring-2 { width: 480px; height: 480px; }
+    .halo-circle { width: 540px; height: 540px; }
+
+    .phone-wrapper {
+      width: 316px;
+      height: 556px;
+      transform-style: preserve-3d;
+      box-shadow:
+        0 40px 90px rgba(0, 0, 0, 0.75),
+        0 0 70px rgba(143, 172, 149, 0.2),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 0 12px rgba(255, 255, 255, 0.08);
+    }
+
+    /* Reflexo de vidro varrendo a tela */
+    .phone-wrapper::after {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background: linear-gradient(112deg, transparent 38%, rgba(255, 255, 255, 0.13) 50%, transparent 62%);
+      transform: translateX(-70%);
+      animation: sheen 8s ease-in-out infinite 2s;
+      pointer-events: none;
+      z-index: 11;
+    }
+
+    @keyframes sheen {
+      0%, 55% { transform: translateX(-70%); }
+      100% { transform: translateX(70%); }
+    }
+
+    .floating-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02)), rgba(12, 25, 19, 0.6);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 18px 44px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(20px) saturate(1.4);
+      -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    }
+
+    .card-top-right { animation-name: float-z; }
+    .card-bottom-left { animation-name: float-z; }
+
+    @keyframes float-z {
+      0%, 100% { transform: translate3d(0, 0, 70px); }
+      50% { transform: translate3d(0, -10px, 70px); }
+    }
+
+    /* Indicador de rolagem */
+    .scroll-hint {
+      position: absolute;
+      left: 50%;
+      bottom: 2.2rem;
+      transform: translateX(-50%);
+      width: 26px;
+      height: 42px;
+      border: 1.5px solid rgba(186, 201, 181, 0.4);
+      border-radius: 14px;
+      z-index: 3;
+      transition: border-color 0.25s ease;
+    }
+
+    .scroll-hint:hover { border-color: var(--sage); }
+
+    .scroll-hint span {
+      position: absolute;
+      left: 50%;
+      top: 8px;
+      width: 3px;
+      height: 8px;
+      margin-left: -1.5px;
+      border-radius: 3px;
+      background: var(--sage);
+      animation: scroll-dot 2.2s var(--ease-out) infinite;
+    }
+
+    @keyframes scroll-dot {
+      0% { opacity: 0; transform: translateY(0); }
+      25% { opacity: 1; }
+      80% { opacity: 0; transform: translateY(14px); }
+      100% { opacity: 0; }
+    }
+
+    /* ---------- Marquee com bordas esmaecidas ---------- */
+    .marquee-section {
+      background: rgba(255, 255, 255, 0.015);
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    }
+
+    /* ---------- Estatísticas ---------- */
+    .stat-value { font-size: clamp(3rem, 5.4vw, 4.4rem); }
+
+    /* ---------- Passos ---------- */
+    .steps-grid { position: relative; }
+
+    .steps-grid::before {
+      content: "";
+      position: absolute;
+      left: 12%;
+      right: 12%;
+      top: calc(2.1rem + 23px);
+      border-top: 1px dashed rgba(186, 201, 181, 0.28);
+    }
+
+    .step-card { padding: 2.4rem 2rem 2.2rem; }
+    .step-number { font-size: 2.6rem; }
+
+    /* ---------- Modos: imersão total ---------- */
+    .modes-container {
+      --accent: #BAC9B5;
+      padding: 3.5rem;
+      border-radius: 40px;
+      transition: border-color 0.6s ease;
+    }
+
+    .mode-backdrop {
+      position: absolute;
+      inset: -12%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .mode-backdrop img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: blur(70px) saturate(1.5);
+      opacity: 0.55;
+      transform: scale(1.3);
+      transition: opacity 0.6s ease;
+    }
+
+    .mode-backdrop::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(90% 90% at 70% 50%, transparent 0%, rgba(4, 10, 7, 0.75) 100%);
+    }
+
+    .modes-container::before {
+      background: radial-gradient(circle, color-mix(in srgb, var(--accent) 22%, transparent) 0%, transparent 70%);
+      transition: background 0.6s ease;
+      z-index: 0;
+    }
+
+    .mode-tab.active {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .mode-tab.active .mode-tab-icon {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 55%, transparent);
+    }
+
+    .tab-progress { background: var(--accent); }
+    .mode-caption-current { color: var(--accent); transition: color 0.4s ease; }
+
+    .mode-frame-wrap { perspective: 1000px; }
+
+    /* Anel orbital atrás do telefone */
+    .mode-frame-wrap::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 440px;
+      height: 440px;
+      margin: -220px 0 0 -220px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, transparent 0 58%, color-mix(in srgb, var(--accent) 70%, transparent) 84%, transparent 100%);
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
+      mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 1px));
+      animation: halo-spin 14s linear infinite;
+      pointer-events: none;
+    }
+
+    .mode-frame-glow {
+      inset: -70px;
+      background: radial-gradient(circle, color-mix(in srgb, var(--accent) 28%, transparent) 0%, transparent 65%);
+      transition: background 0.6s ease;
+    }
+
+    .mode-screen-frame {
+      width: 290px;
+      aspect-ratio: 9 / 16;
+      border-radius: 34px;
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.6),
+        0 0 0 7px rgba(10, 20, 15, 0.7),
+        0 0 0 8px rgba(255, 255, 255, 0.08);
+      transition: transform 0.35s var(--ease-out);
+      will-change: transform;
+    }
+
+    /* ---------- Citação: acende palavra por palavra ---------- */
+    .quote-section { padding: 4rem 1rem; margin-bottom: 9rem; }
+
+    .quote-text {
+      font-size: clamp(2rem, 5vw, 3.9rem);
+      line-height: 1.22;
+      letter-spacing: -0.025em;
+      max-width: 980px;
+    }
+
+    .quote-text .qw {
+      opacity: 0.16;
+      transition: opacity 0.5s ease;
+    }
+
+    .quote-text .qw.on { opacity: 1; }
+
+    /* ---------- Princípios: bento ---------- */
+    .pillars-grid {
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    .pillar-card {
+      display: flex;
+      flex-direction: column;
+      min-height: 270px;
+      padding: 2.25rem 2.1rem;
+    }
+
+    .pillar-card:nth-child(1) { grid-column: span 4; }
+    .pillar-card:nth-child(2) { grid-column: span 2; }
+    .pillar-card:nth-child(3) { grid-column: span 2; }
+    .pillar-card:nth-child(4) { grid-column: span 4; }
+
+    .pillar-card:nth-child(1) {
+      background:
+        repeating-radial-gradient(circle at 100% 0%, transparent 0 46px, rgba(186, 201, 181, 0.055) 47px 48px),
+        radial-gradient(520px circle at 100% 0%, rgba(143, 172, 149, 0.18), transparent 60%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.012) 42%, rgba(19, 33, 26, 0.5)),
+        rgba(10, 20, 15, 0.55);
+    }
+
+    .pillar-card:nth-child(4) {
+      background:
+        repeating-radial-gradient(circle at 0% 100%, transparent 0 46px, rgba(186, 201, 181, 0.055) 47px 48px),
+        radial-gradient(520px circle at 0% 100%, rgba(143, 172, 149, 0.16), transparent 60%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.012) 42%, rgba(19, 33, 26, 0.5)),
+        rgba(10, 20, 15, 0.55);
+    }
+
+    .pillar-icon-box { margin-bottom: auto; }
+
+    .pillar-card h3 {
+      margin-top: 2.2rem;
+      font-size: 1.3rem;
+    }
+
+    .pillar-card:nth-child(1) h3,
+    .pillar-card:nth-child(4) h3 { font-size: 1.75rem; letter-spacing: -0.025em; }
+
+    .pillar-card:nth-child(1) p,
+    .pillar-card:nth-child(4) p { font-size: 1.02rem; max-width: 46ch; }
+
+    /* ---------- Galeria: tela cheia com foco central ---------- */
+    .carousel-wrap {
+      width: 100vw;
+      margin-left: calc(50% - 50vw);
+      --shot-w: clamp(215px, 24vw, 285px);
+    }
+
+    .carousel {
+      padding: 1.5rem calc(50% - var(--shot-w) / 2) 2.5rem;
+      gap: 1.75rem;
+      cursor: grab;
+      perspective: 1200px;
+    }
+
+    .carousel.dragging {
+      cursor: grabbing;
+      scroll-snap-type: none;
+      scroll-behavior: auto;
+    }
+
+    .carousel.dragging .shot { pointer-events: none; }
+
+    .shot {
+      flex: 0 0 var(--shot-w);
+      scroll-snap-align: center;
+      border-radius: 28px;
+      transform: scale(var(--s, 1)) rotateY(var(--ry, 0deg));
+      opacity: var(--o, 1);
+      transition: border-color 0.35s ease, box-shadow 0.35s ease;
+      will-change: transform, opacity;
+      -webkit-user-drag: none;
+    }
+
+    .shot img { -webkit-user-drag: none; user-select: none; }
+
+    .shot:hover {
+      transform: scale(var(--s, 1)) rotateY(var(--ry, 0deg));
+      border-color: rgba(186, 201, 181, 0.4);
+    }
+
+    .shot.is-center {
+      border-color: rgba(186, 201, 181, 0.35);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 60px rgba(143, 172, 149, 0.18);
+    }
+
+    /* Bordas esmaecidas por máscara (sem camadas opacas sobre o brilho do fundo) */
+    .carousel-wrap::before,
+    .carousel-wrap::after { display: none; }
+
+    .carousel {
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+    }
+
+    .car-prev { left: max(1rem, calc(50% - 560px)); }
+    .car-next { right: max(1rem, calc(50% - 560px)); }
+
+    /* ---------- CTA final ---------- */
+    @property --ang {
+      syntax: '<angle>';
+      initial-value: 0deg;
+      inherits: false;
+    }
+
+    .cta-banner {
+      border: 0;
+      isolation: isolate;
+      padding-top: 6rem;
+      background:
+        radial-gradient(70% 55% at 50% 0%, rgba(143, 172, 149, 0.22), transparent 70%),
+        linear-gradient(180deg, rgba(26, 43, 34, 0.9) 0%, rgba(6, 14, 10, 0.98) 100%);
+    }
+
+    .cta-banner::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1.5px;
+      background: conic-gradient(from var(--ang), rgba(186, 201, 181, 0.12) 0 50%, rgba(213, 226, 209, 0.95) 74%, rgba(186, 201, 181, 0.12) 92%);
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+      animation: spin-angle 9s linear infinite;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    @keyframes spin-angle {
+      to { --ang: 360deg; }
+    }
+
+    .cta-banner h2 {
+      font-size: clamp(2.4rem, 5.2vw, 4rem);
+      line-height: 1.05;
+      letter-spacing: -0.045em;
+    }
+
+    /* ---------- Rodapé ---------- */
+    footer { background: rgba(6, 16, 12, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+
+    /* ---------- Responsivo (camada imersiva) ---------- */
+    @media (max-width: 980px) {
+      .hero {
+        min-height: auto;
+        grid-template-columns: 1fr;
+        padding-top: 7.5rem;
+        padding-bottom: 11rem;
+        gap: 4rem;
+      }
+
+      .hero h1 { font-size: clamp(2.9rem, 10vw, 4.6rem); }
+      .scroll-hint { display: none; }
+
+      .modes-container { padding: 2.25rem 1.5rem; border-radius: 30px; }
+
+      .pillars-grid { grid-template-columns: repeat(2, 1fr); }
+      .pillar-card:nth-child(n) { grid-column: span 1; }
+      .pillar-card:nth-child(1),
+      .pillar-card:nth-child(4) { grid-column: span 2; }
+
+      .steps-grid::before { display: none; }
+    }
+
+    @media (max-width: 640px) {
+      header, header.scrolled { padding: 0.65rem 0.75rem; }
+      .header-container { padding: 0.4rem 0.45rem 0.4rem 0.85rem; }
+
+      .hero { padding-top: 6.5rem; padding-bottom: 9rem; }
+      .phone-wrapper { width: 252px; height: 446px; }
+      .halo-ring-1 { width: 430px; height: 430px; }
+      .halo-ring-2 { width: 350px; height: 350px; }
+
+      .section-block { margin-bottom: 6rem; }
+      .section-title-wrap { margin-bottom: 3rem; }
+
+      .mode-screen-frame { width: 240px; }
+      .mode-frame-wrap::before { width: 340px; height: 340px; margin: -170px 0 0 -170px; }
+
+      .pillars-grid { grid-template-columns: 1fr; }
+      .pillar-card:nth-child(n) { grid-column: span 1; }
+      .pillar-card { min-height: 0; }
+      .pillar-card h3 { margin-top: 1.4rem; }
+      .pillar-icon-box { margin-bottom: 0; }
+
+      .quote-section { padding: 2rem 0.5rem; margin-bottom: 6rem; }
+      .cta-banner { padding-top: 3.5rem; }
+    }
+
+
+    /* =====================================================================
+       PERFORMANCE
+       - backdrop-filter só no header (era o maior custo de GPU)
+       - sem filter:blur animado/fixo (substituído por gradientes)
+       - animações infinitas pausadas fora da tela (.offscreen)
+       ===================================================================== */
+    .step-card, .pillar-card, .faq-item, .stats-grid, .modes-container,
+    .floating-card, .hero-badge, .btn-secondary, .car-btn, .to-top,
+    .mode-tab.active, footer {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+
+    .step-card, .pillar-card, .faq-item, .stats-grid, .modes-container {
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.012) 42%, rgba(19, 33, 26, 0.5)),
+        rgba(9, 18, 14, 0.78);
+    }
+
+    .floating-card {
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02)), rgba(12, 25, 19, 0.88);
+    }
+
+    .hero-badge { background: rgba(16, 30, 23, 0.8); }
+    .btn-secondary { background: rgba(19, 33, 26, 0.85); }
+    footer { background: var(--forest-deep); }
+
+    /* Header fixo: sem backdrop-filter (forçava releitura de tudo por baixo a cada frame) */
+    .header-container {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: linear-gradient(180deg, rgba(20, 36, 28, 0.97), rgba(9, 19, 14, 0.98));
+    }
+
+    header.scrolled .header-container { background: rgba(6, 14, 10, 0.94); }
+
+    /* Grão estático (antes: camada de 300% da tela animada) */
+    .grain { inset: 0; width: 100%; height: 100%; animation: none; }
+
+    /* Névoa e brilhos: gradiente em vez de filter:blur */
+    .mist { filter: none; border-radius: 50%; }
+    .mist-1 { background: radial-gradient(closest-side, rgba(147, 161, 153, 0.11), transparent); }
+    .mist-2 { background: radial-gradient(closest-side, rgba(113, 139, 112, 0.12), transparent); }
+    .phone-glow, .mode-frame-glow { filter: none; }
+
+    /* Raios de luz: gradiente + máscara estáticos, animação só de transform/opacity */
+    .hero-rays i {
+      filter: none;
+      background: linear-gradient(90deg, transparent, rgba(213, 226, 209, 0.2) 50%, transparent);
+      -webkit-mask-image: linear-gradient(to bottom, #000, transparent 78%);
+      mask-image: linear-gradient(to bottom, #000, transparent 78%);
+      will-change: transform, opacity;
+    }
+
+    /* Fundo dos modos: camada própria (resultado do blur fica em cache) */
+    .mode-backdrop img { will-change: opacity; }
+    .offscreen .mode-backdrop { visibility: hidden; }
+
+    /* Pausa animações infinitas quando a seção não está visível */
+    .offscreen *,
+    .offscreen *::before,
+    .offscreen *::after,
+    .offscreen::before,
+    .offscreen::after {
+      animation-play-state: paused !important;
+    }
+
+    /* ---------- Movimento reduzido (camada imersiva) ---------- */
+    @media (prefers-reduced-motion: reduce) {
+      .js .split .w,
+      .js .hero-badge,
+      .js .hero-desc,
+      .js .hero-actions,
+      .js .hero-features-list,
+      .js .hero-visual {
+        animation: none;
+        opacity: 1;
+        transform: none;
+        filter: none;
+      }
+
+      .hero-rays i,
+      .phone-wrapper::after,
+      .scroll-hint span,
+      .cta-banner::after,
+      .mode-frame-wrap::before { animation: none; }
+
+      .quote-text .qw { opacity: 1; }
+      .cursor-light, #fireflies { display: none; }
+    }
   </style>
 </head>
 <body id="top">
 
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+  <canvas id="fireflies" aria-hidden="true"></canvas>
+  <div class="cursor-light" id="cursorLight" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="ambient-glow ambient-glow-1" aria-hidden="true"></div>
   <div class="ambient-glow ambient-glow-2" aria-hidden="true"></div>
@@ -1855,6 +2606,15 @@
   <main>
     <!-- ============ HERO ============ -->
     <section class="hero">
+      <!-- Raios de luz atravessando a névoa -->
+      <div class="hero-rays" aria-hidden="true">
+        <i style="--x:52%; --r:-16deg; --w:150px; --dl:0s"></i>
+        <i style="--x:62%; --r:-22deg; --w:230px; --dl:-3s"></i>
+        <i style="--x:72%; --r:-14deg; --w:120px; --dl:-6s"></i>
+        <i style="--x:82%; --r:-26deg; --w:200px; --dl:-2s"></i>
+        <i style="--x:92%; --r:-18deg; --w:140px; --dl:-8s"></i>
+      </div>
+
       <div class="hero-content">
         <div class="hero-badge">
           <span class="hero-badge-dot"></span>
@@ -1980,6 +2740,8 @@
         </svg>
         <div class="forest-fade"></div>
       </div>
+
+      <a href="#como-funciona" class="scroll-hint" aria-label="Rolar para continuar"><span></span></a>
     </section>
   </main>
 
@@ -2085,8 +2847,9 @@
       </div>
 
       <div class="modes-container reveal" id="modesContainer">
+        <div class="mode-backdrop" aria-hidden="true"><img id="modeBackdrop" src="screenshots/raw/03-timer-modes.png" alt="" loading="lazy" decoding="async"></div>
         <div class="modes-nav" role="tablist" aria-label="Modos visuais do Aevum">
-          <button class="mode-tab active" role="tab" aria-selected="true" data-img="screenshots/raw/03-timer-modes.png" data-name="Minimal Tátil">
+          <button class="mode-tab active" role="tab" aria-selected="true" data-img="screenshots/raw/03-timer-modes.png" data-accent="#BAC9B5" data-name="Minimal Tátil">
             <span class="mode-tab-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2h4"/><circle cx="12" cy="14" r="8"/><path d="M12 10v4l2.5 2.5"/></svg>
             </span>
@@ -2097,7 +2860,7 @@
             <span class="tab-progress" aria-hidden="true"></span>
           </button>
 
-          <button class="mode-tab" role="tab" aria-selected="false" data-img="screenshots/raw/03-mandala-flow.png" data-name="Mandala Flow">
+          <button class="mode-tab" role="tab" aria-selected="false" data-img="screenshots/raw/03-mandala-flow.png" data-accent="#8FC2A2" data-name="Mandala Flow">
             <span class="mode-tab-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><ellipse cx="12" cy="5.2" rx="2.4" ry="3.2"/><ellipse cx="12" cy="18.8" rx="2.4" ry="3.2"/><ellipse cx="5.2" cy="12" rx="3.2" ry="2.4"/><ellipse cx="18.8" cy="12" rx="3.2" ry="2.4"/></svg>
             </span>
@@ -2108,7 +2871,7 @@
             <span class="tab-progress" aria-hidden="true"></span>
           </button>
 
-          <button class="mode-tab" role="tab" aria-selected="false" data-img="screenshots/raw/03-inspirational.png" data-name="Inspiracional">
+          <button class="mode-tab" role="tab" aria-selected="false" data-img="screenshots/raw/03-inspirational.png" data-accent="#CFDDB0" data-name="Inspiracional">
             <span class="mode-tab-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9L12 3z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15z"/></svg>
             </span>
@@ -2119,7 +2882,7 @@
             <span class="tab-progress" aria-hidden="true"></span>
           </button>
 
-          <button class="mode-tab" role="tab" aria-selected="false" data-img="screenshots/raw/04-focus-free.png" data-name="Foco Livre">
+          <button class="mode-tab" role="tab" aria-selected="false" data-img="screenshots/raw/04-focus-free.png" data-accent="#8EB9B0" data-name="Foco Livre">
             <span class="mode-tab-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M18.2 8c5 0 5 8 0 8-5.1 0-7.1-8-12.7-8-4.6 0-4.6 8 0 8 5.6 0 7.6-8 12.7-8z"/></svg>
             </span>
@@ -2130,7 +2893,7 @@
             <span class="tab-progress" aria-hidden="true"></span>
           </button>
 
-          <button class="mode-tab" role="tab" aria-selected="false" data-img="screenshots/raw/05-liquid-orb.png" data-name="Orbe Líquido">
+          <button class="mode-tab" role="tab" aria-selected="false" data-img="screenshots/raw/05-liquid-orb.png" data-accent="#3FD9A0" data-name="Orbe Líquido">
             <span class="mode-tab-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.7s6.5 7 6.5 11.3a6.5 6.5 0 1 1-13 0C5.5 9.7 12 2.7 12 2.7z"/></svg>
             </span>
@@ -2478,7 +3241,7 @@
             const rect = hero.getBoundingClientRect();
             const nx = (e.clientX - rect.left) / rect.width - 0.5;
             const ny = (e.clientY - rect.top) / rect.height - 0.5;
-            heroVisual.style.transform = 'translate3d(' + (nx * 14) + 'px,' + (ny * 10) + 'px,0)';
+            heroVisual.style.transform = 'rotateY(' + (nx * 12) + 'deg) rotateX(' + (-ny * 9) + 'deg)';
           });
           hero.addEventListener('mouseleave', function () {
             heroVisual.style.transform = '';
@@ -2503,6 +3266,7 @@
       const captionIndex = document.getElementById('modeCaptionIndex');
       const captionName = document.getElementById('modeCaptionName');
       const modesContainer = document.getElementById('modesContainer');
+      const backdropImg = document.getElementById('modeBackdrop');
       let currentMode = 0;
       let autoTimer = null;
 
@@ -2532,9 +3296,13 @@
           }
         });
 
+        modesContainer.style.setProperty('--accent', tabs[index].dataset.accent || '#BAC9B5');
+        backdropImg.style.opacity = '0';
         previewImg.style.opacity = '0';
         previewImg.style.transform = 'scale(0.985)';
         setTimeout(function () {
+          backdropImg.src = tabs[index].dataset.img;
+          backdropImg.style.opacity = '';
           previewImg.src = tabs[index].dataset.img;
           previewImg.alt = 'Prévia do modo ' + tabs[index].dataset.name + ' do Aevum';
           previewImg.style.opacity = '1';
@@ -2631,6 +3399,323 @@
       nextBtn.addEventListener('click', function () {
         track.scrollBy({ left: scrollStep(), behavior: reducedMotion ? 'auto' : 'smooth' });
       });
+    })();
+  </script>
+
+  <!-- ============ CAMADA IMERSIVA (JS) ============ -->
+  <script>
+    (function () {
+      'use strict';
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const canHover = window.matchMedia('(hover: hover)').matches;
+      const root = document.documentElement;
+      const clamp = function (v, a, b) { return Math.min(b, Math.max(a, v)); };
+
+      /* ---------- Título do hero: palavra por palavra ---------- */
+      (function splitHeroTitle() {
+        const h1 = document.querySelector('.hero h1');
+        if (!h1 || reducedMotion) return;
+        let i = 0;
+        const frag = document.createDocumentFragment();
+        h1.childNodes.forEach(function (node) {
+          if (node.nodeType === 3) {
+            node.textContent.split(/(\s+)/).forEach(function (part) {
+              if (!part) return;
+              if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+              const w = document.createElement('span');
+              w.className = 'w';
+              w.style.setProperty('--i', i++);
+              w.textContent = part;
+              frag.appendChild(w);
+            });
+          } else if (node.nodeName === 'BR') {
+            frag.appendChild(node.cloneNode());
+          } else {
+            const w = document.createElement('span');
+            w.className = 'w';
+            w.style.setProperty('--i', i++);
+            w.appendChild(node.cloneNode(true));
+            frag.appendChild(w);
+          }
+        });
+        h1.textContent = '';
+        h1.appendChild(frag);
+        h1.classList.add('split');
+      })();
+
+      /* ---------- Progresso de leitura + scrollspy (posições em cache) ---------- */
+      const progress = document.getElementById('scrollProgress');
+      const navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav-menu .nav-link[href^="#"]'));
+      const spyTargets = navLinks.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+      const quoteEl = document.querySelector('.quote-text');
+      let spyTops = [];
+      let quoteTop = 0, quoteH = 0;
+      let lastActive = -2;
+      let scrollTick = false;
+      const scrollHooks = [];
+
+      function measure() {
+        const sy = window.scrollY;
+        spyTops = spyTargets.map(function (el) { return el ? el.getBoundingClientRect().top + sy : Infinity; });
+        if (quoteEl) {
+          const r = quoteEl.getBoundingClientRect();
+          quoteTop = r.top + sy; quoteH = r.height;
+        }
+      }
+
+      function onScrollUI() {
+        const sy = window.scrollY;
+        const vh = window.innerHeight;
+        const max = root.scrollHeight - vh;
+        progress.style.setProperty('--p', max > 0 ? clamp(sy / max, 0, 1) : 0);
+        let active = -1;
+        for (let i = 0; i < spyTops.length; i++) {
+          if (spyTops[i] - sy < vh * 0.4) active = i;
+        }
+        if (active !== lastActive) {
+          lastActive = active;
+          navLinks.forEach(function (a, idx) { a.classList.toggle('active', idx === active); });
+        }
+        for (let i = 0; i < scrollHooks.length; i++) scrollHooks[i](sy, vh);
+        scrollTick = false;
+      }
+      window.addEventListener('scroll', function () {
+        if (!scrollTick) { scrollTick = true; requestAnimationFrame(onScrollUI); }
+      }, { passive: true });
+
+      /* Recalcula posições quando o layout muda (imagens lazy, fontes, resize) */
+      let measureTimer = 0;
+      function scheduleMeasure() {
+        clearTimeout(measureTimer);
+        measureTimer = setTimeout(function () { measure(); onScrollUI(); }, 120);
+      }
+      if ('ResizeObserver' in window) new ResizeObserver(scheduleMeasure).observe(document.body);
+      window.addEventListener('resize', scheduleMeasure);
+      window.addEventListener('load', scheduleMeasure);
+      measure();
+      onScrollUI();
+
+      /* ---------- Pausa animações das seções fora da tela ---------- */
+      (function pauseOffscreen() {
+        if (!('IntersectionObserver' in window)) return;
+        const io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) { e.target.classList.toggle('offscreen', !e.isIntersecting); });
+        }, { rootMargin: '80px 0px' });
+        document.querySelectorAll('.hero, .marquee-section, .modes-container, .cta-banner').forEach(function (el) { io.observe(el); });
+      })();
+
+      /* ---------- Luz que segue o cursor ---------- */
+      const light = document.getElementById('cursorLight');
+      if (canHover && !reducedMotion && light) {
+        let lx = 0, ly = 0, pending = false;
+        window.addEventListener('pointermove', function (e) {
+          lx = e.clientX; ly = e.clientY;
+          if (pending) return;
+          pending = true;
+          requestAnimationFrame(function () {
+            light.style.transform = 'translate3d(' + lx + 'px,' + ly + 'px,0)';
+            light.classList.add('on');
+            pending = false;
+          });
+        }, { passive: true });
+        document.addEventListener('mouseleave', function () { light.classList.remove('on'); });
+      }
+
+      /* ---------- Vaga-lumes (canvas) — sprite pré-renderizado, 30fps, adaptativo ---------- */
+      (function fireflies() {
+        const canvas = document.getElementById('fireflies');
+        if (!canvas || reducedMotion) return;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        /* Brilho desenhado uma única vez */
+        const sprite = document.createElement('canvas');
+        sprite.width = sprite.height = 48;
+        const sctx = sprite.getContext('2d');
+        const g = sctx.createRadialGradient(24, 24, 0, 24, 24, 24);
+        g.addColorStop(0, 'rgba(232, 245, 222, 1)');
+        g.addColorStop(0.12, 'rgba(214, 235, 204, 0.9)');
+        g.addColorStop(0.35, 'rgba(190, 215, 180, 0.22)');
+        g.addColorStop(1, 'rgba(190, 215, 180, 0)');
+        sctx.fillStyle = g;
+        sctx.fillRect(0, 0, 48, 48);
+
+        const FRAME_MS = 1000 / 30;
+        let w = 0, h = 0, flies = [], raf = 0, last = 0;
+        let budget = window.innerWidth < 700 ? 14 : 28;
+        let slowFrames = 0, sampled = 0;
+
+        function build() {
+          flies = [];
+          for (let i = 0; i < budget; i++) {
+            flies.push({
+              x: Math.random() * w,
+              y: Math.random() * h,
+              s: 7 + Math.random() * 12,
+              vx: (Math.random() - 0.5) * 0.36,
+              vy: -0.08 - Math.random() * 0.3,
+              depth: 0.05 + Math.random() * 0.35,
+              ph: Math.random() * Math.PI * 2,
+              sp: 0.5 + Math.random() * 1.1
+            });
+          }
+        }
+
+        function resize() {
+          w = window.innerWidth; h = window.innerHeight;
+          canvas.width = w; canvas.height = h;   /* dpr 1: são pontos de luz suaves */
+          build();
+        }
+
+        function frame(t) {
+          raf = requestAnimationFrame(frame);
+          const dt = t - last;
+          if (dt < FRAME_MS - 2) return;
+          last = t;
+
+          /* Adaptativo: se o aparelho está sofrendo, reduz e, em último caso, desliga */
+          if (++sampled > 20 && sampled <= 140) {
+            if (dt > 42) slowFrames++;
+            if (sampled === 140) {
+              if (slowFrames > 50) {
+                if (budget > 10) { budget = Math.floor(budget / 2); build(); sampled = 20; slowFrames = 0; }
+                else { cancelAnimationFrame(raf); canvas.style.display = 'none'; return; }
+              }
+            }
+          }
+
+          ctx.clearRect(0, 0, w, h);
+          const sy = window.scrollY;
+          const time = t / 1000;
+          const span = h + 40;
+          for (let i = 0; i < flies.length; i++) {
+            const f = flies[i];
+            f.x += f.vx + Math.sin(time * 0.6 + f.ph) * 0.24;
+            f.y += f.vy;
+            if (f.y < -20) { f.y = h + 20; f.x = Math.random() * w; }
+            if (f.x < -20) f.x = w + 20; else if (f.x > w + 20) f.x = -20;
+            const py = (((f.y - sy * f.depth) % span) + span) % span - 20;
+            ctx.globalAlpha = 0.25 + 0.6 * (0.5 + 0.5 * Math.sin(time * f.sp + f.ph));
+            ctx.drawImage(sprite, f.x - f.s, py - f.s, f.s * 2, f.s * 2);
+          }
+        }
+
+        function start() { if (!raf) raf = requestAnimationFrame(frame); }
+        function stop() { cancelAnimationFrame(raf); raf = 0; }
+
+        resize();
+        let rt = 0;
+        window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(resize, 150); });
+        document.addEventListener('visibilitychange', function () { document.hidden ? stop() : start(); });
+        start();
+      })();
+
+      /* ---------- Citação: acende palavra por palavra ---------- */
+      (function quoteScrub() {
+        const quote = quoteEl;
+        if (!quote || reducedMotion) return;
+        const words = [];
+        const frag = document.createDocumentFragment();
+        quote.childNodes.forEach(function (node) {
+          if (node.nodeType === 3) {
+            node.textContent.split(/(\s+)/).forEach(function (part) {
+              if (!part) return;
+              if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+              const s = document.createElement('span');
+              s.className = 'qw';
+              s.textContent = part;
+              words.push(s);
+              frag.appendChild(s);
+            });
+          } else {
+            const clone = node.cloneNode(true);
+            clone.classList.add('qw');
+            words.push(clone);
+            frag.appendChild(clone);
+          }
+        });
+        quote.textContent = '';
+        quote.appendChild(frag);
+
+        let litNow = 0;
+        scrollHooks.push(function (sy, vh) {
+          /* fora da zona visível: nada a fazer */
+          if (quoteTop - sy > vh || quoteTop + quoteH - sy < 0) return;
+          const top = quoteTop - sy;
+          const p = clamp((vh * 0.86 - top) / (vh * 0.5 + quoteH * 0.3), 0, 1);
+          const lit = Math.round(p * words.length * 1.04);
+          if (lit === litNow) return;
+          const from = Math.min(lit, litNow), to = Math.max(lit, litNow);
+          for (let i = from; i < to && i < words.length; i++) words[i].classList.toggle('on', i < lit);
+          litNow = lit;
+        });
+        measure();
+        onScrollUI();
+      })();
+
+      /* ---------- Modos: inclinação 3D da tela ---------- */
+      (function modeTilt() {
+        const wrap = document.querySelector('.mode-frame-wrap');
+        const frame = document.querySelector('.mode-screen-frame');
+        if (!wrap || !frame || !canHover || reducedMotion) return;
+        wrap.addEventListener('mousemove', function (e) {
+          const r = wrap.getBoundingClientRect();
+          const nx = (e.clientX - r.left) / r.width - 0.5;
+          const ny = (e.clientY - r.top) / r.height - 0.5;
+          frame.style.transform = 'rotateY(' + (nx * 16) + 'deg) rotateX(' + (-ny * 12) + 'deg)';
+        });
+        wrap.addEventListener('mouseleave', function () { frame.style.transform = ''; });
+      })();
+
+      /* ---------- Galeria: foco central, arrastar e profundidade ---------- */
+      (function gallery() {
+        const track = document.getElementById('galleryTrack');
+        if (!track) return;
+        const shots = Array.prototype.slice.call(track.querySelectorAll('.shot'));
+        let tick = false;
+
+        function update() {
+          const tr = track.getBoundingClientRect();
+          const cx = tr.left + tr.width / 2;
+          let best = null, bestD = Infinity;
+          shots.forEach(function (s) {
+            const r = s.getBoundingClientRect();
+            const dx = (r.left + r.width / 2 - cx) / (r.width * 1.25);
+            const d = Math.min(Math.abs(dx), 1);
+            s.style.setProperty('--s', (1 - 0.12 * d).toFixed(3));
+            s.style.setProperty('--o', (1 - 0.5 * d).toFixed(3));
+            s.style.setProperty('--ry', (clamp(dx, -1, 1) * -14).toFixed(1) + 'deg');
+            if (Math.abs(dx) < bestD) { bestD = Math.abs(dx); best = s; }
+          });
+          shots.forEach(function (s) { s.classList.toggle('is-center', s === best); });
+          tick = false;
+        }
+        track.addEventListener('scroll', function () {
+          if (!tick) { tick = true; requestAnimationFrame(update); }
+        }, { passive: true });
+        window.addEventListener('resize', update);
+        update();
+
+        /* Arrastar com o mouse */
+        if (!canHover) return;
+        let down = false, startX = 0, startLeft = 0, moved = 0;
+        track.addEventListener('pointerdown', function (e) {
+          if (e.pointerType !== 'mouse' || e.button !== 0) return;
+          down = true; moved = 0; startX = e.clientX; startLeft = track.scrollLeft;
+        });
+        window.addEventListener('pointermove', function (e) {
+          if (!down) return;
+          const dx = e.clientX - startX;
+          moved = Math.max(moved, Math.abs(dx));
+          if (moved > 4) track.classList.add('dragging');
+          track.scrollLeft = startLeft - dx;
+        });
+        window.addEventListener('pointerup', function () {
+          if (!down) return;
+          down = false;
+          track.classList.remove('dragging');
+        });
+      })();
     })();
   </script>
 
