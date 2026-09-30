@@ -149,7 +149,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           s.completedAt.day == now.day;
     }).toList();
 
-    final completedTasksCount = tasks.where((t) {
+    final scheduledToday = tasks.where((t) => t.isScheduledOn(now)).toList();
+    final completedTasksCount = scheduledToday.where((t) {
       return todaySessions.any((s) => s.taskId == t.id);
     }).length;
 
@@ -262,7 +263,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: DailyProgressHeader(
                 totalFocusedMinutes: totalFocusedMinutes,
                 completedTasksCount: completedTasksCount,
-                totalTasksCount: tasks.length,
+                totalTasksCount: scheduledToday.length,
                 onOpenStats: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const StatsScreen()),

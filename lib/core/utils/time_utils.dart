@@ -9,6 +9,26 @@ class TimeUtils {
     'Domingo',
   ];
 
+  static const List<String> weekdayInitials = [
+    'S',
+    'T',
+    'Q',
+    'Q',
+    'S',
+    'S',
+    'D',
+  ];
+
+  static const List<String> _weekdaysShortPt = [
+    'Seg',
+    'Ter',
+    'Qua',
+    'Qui',
+    'Sex',
+    'Sáb',
+    'Dom',
+  ];
+
   static const List<String> _monthsPt = [
     'Janeiro',
     'Fevereiro',
@@ -23,6 +43,20 @@ class TimeUtils {
     'Novembro',
     'Dezembro',
   ];
+
+  /// Resume os dias de repetição: "Todos os dias", "Dias úteis", "Seg, qua"...
+  static String formatWeekdays(Set<int> weekdays) {
+    final days = weekdays.where((d) => d >= 1 && d <= 7).toList()..sort();
+    if (days.length == 7 || days.isEmpty) return 'Todos os dias';
+    if (days.length == 5 && days.last == 5) return 'Dias úteis';
+    if (days.length == 2 && days.first == 6) return 'Fins de semana';
+    return days.indexed
+        .map((e) {
+          final name = _weekdaysShortPt[e.$2 - 1];
+          return e.$1 == 0 ? name : name.toLowerCase();
+        })
+        .join(', ');
+  }
 
   /// Formata segundos em `MM:SS` ou `HH:MM:SS`
   static String formatSeconds(int totalSeconds) {

@@ -18,7 +18,10 @@ class StatsScreen extends ConsumerWidget {
     final sessions = ref.watch(sessionListProvider);
     final tasks = ref.watch(taskListProvider);
 
-    final currentStreak = StreakCalculator.calculateCurrentStreak(sessions);
+    final currentStreak = StreakCalculator.calculateCurrentStreak(
+      sessions,
+      tasks: tasks,
+    );
     final totalMinutes = StreakCalculator.getTotalMinutes(sessions);
     final last7Days = StreakCalculator.getLast7DaysMetrics(sessions);
 

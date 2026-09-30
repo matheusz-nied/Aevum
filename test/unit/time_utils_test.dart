@@ -22,5 +22,12 @@ void main() {
       );
       expect(TimeUtils.formatSecondsSpoken(7200), '2 horas');
     });
+
+    test('formatWeekdays resume os dias de repetição', () {
+      expect(TimeUtils.formatWeekdays({1, 2, 3, 4, 5, 6, 7}), 'Todos os dias');
+      expect(TimeUtils.formatWeekdays({1, 2, 3, 4, 5}), 'Dias úteis');
+      expect(TimeUtils.formatWeekdays({6, 7}), 'Fins de semana');
+      expect(TimeUtils.formatWeekdays({5, 1, 3}), 'Seg, qua, sex');
+    });
   });
 }

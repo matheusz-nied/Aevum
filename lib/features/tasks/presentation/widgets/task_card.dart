@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/services/haptic_service.dart';
+import 'package:aevum/core/utils/time_utils.dart';
 import 'package:aevum/core/widgets/glass_container.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
 
@@ -125,6 +126,20 @@ class TaskCard extends StatelessWidget {
                               ),
                             ),
                           ),
+                          if (!task.isDaily) ...[
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                TimeUtils.formatWeekdays(task.weekdays),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.textMuted,
+                                ),
+                              ),
+                            ),
+                          ],
                           const SizedBox(width: 8),
                           // Visual mode
                           Row(

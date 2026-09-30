@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:aevum/features/stats/domain/streak_calculator.dart';
 import 'package:aevum/features/tasks/domain/session_record.dart';
+import 'package:aevum/features/tasks/domain/task_icon.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
 
 void main() {
   group('StreakCalculator Tests', () {
@@ -127,6 +129,88 @@ void main() {
         ),
         equals(0),
       );
+    });
+
+    group('com recorrência', () {
+      SessionRecord sessionOn(DateTime day) => SessionRecord(
+        id: day.toIso8601String(),
+        taskId: 't1',
+        completedAt: day,
+        durationSeconds: 900,
+        completedGoal: true,
+      );
+
+      // Hábito só de segunda, quarta e sexta.
+      final task = TaskModel(
+        id: 't1',
+        title: 'Treino',
+        targetMinutes: 30,
+        iconKey: TaskIcon.writing,
+        colorValue: 0xFF123456,
+        weekdays: {DateTime.monday, DateTime.wednesday, DateTime.friday},
+      );
+
+      test('dias sem o hábito agendado não quebram a sequência', () {
+        // 2026-03-02 é segunda-feira.
+        final sessions = [
+          sessionOn(DateTime(2026, 3, 2, 8)),
+          sessionOn(DateTime(2026, 3, 4, 8)),
+          sessionOn(DateTime(2026, 3, 6, 8)),
+        ];
+        // Domingo: sexta foi a última sessão e o fim de semana é descanso.
+        // Terça e quinta também são descanso para este hábito.
+        expect(
+          StreakCalculator.calculateCurrentStreak(
+            sessions,
+            tasks: [task],
+            now: DateTime(2026, 3, 8, 10),
+          ),
+          equals(3),
+        );
+      });
+
+      test('dia agendado perdido quebra a sequência', () {
+        final sessions = [
+          sessionOn(DateTime(2026, 3, 2, 8)),
+          sessionOn(DateTime(2026, 3, 6, 8)),
+        ];
+        // Quarta (4) estava agendada e ficou sem sessão.
+        expect(
+          StreakCalculator.calculateCurrentStreak(
+            sessions,
+            tasks: [task],
+            now: DateTime(2026, 3, 7, 10),
+          ),
+          equals(1),
+        );
+      });
+
+      test('hoje em aberto não quebra a sequência', () {
+        final sessions = [sessionOn(DateTime(2026, 3, 4, 8))];
+        // Quinta-feira sem sessão ainda (dia de descanso) e quarta feita.
+        expect(
+          StreakCalculator.calculateCurrentStreak(
+            sessions,
+            tasks: [task],
+            now: DateTime(2026, 3, 5, 10),
+          ),
+          equals(1),
+        );
+      });
+
+      test('sem hábitos, só dias consecutivos contam', () {
+        final sessions = [
+          sessionOn(DateTime(2026, 3, 2, 8)),
+          sessionOn(DateTime(2026, 3, 4, 8)),
+        ];
+        expect(
+          StreakCalculator.calculateCurrentStreak(
+            sessions,
+            now: DateTime(2026, 3, 4, 10),
+          ),
+          equals(1),
+        );
+      });
     });
 
     test('getLast7DaysMetrics returns exactly 7 metrics', () {

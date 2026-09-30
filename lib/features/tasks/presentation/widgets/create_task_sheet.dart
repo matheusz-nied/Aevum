@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:aevum/core/widgets/adaptive_backdrop_filter.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/services/haptic_service.dart';
+import 'package:aevum/core/utils/time_utils.dart';
 import 'package:aevum/core/widgets/glass_container.dart';
 import 'package:aevum/features/tasks/domain/task_icon.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
@@ -27,6 +28,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
   late int _selectedColorValue;
   late TaskIcon _selectedIcon;
   late TimerVisualMode _selectedVisualMode;
+  late Set<int> _weekdays;
   bool _canSubmit = false;
 
   static const List<int> _presetDurations = [5, 10, 15, 20, 25, 30, 45, 60];
@@ -43,6 +45,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
     _selectedIcon = task?.iconKey ?? TaskIcon.writing;
     _selectedVisualMode =
         task?.defaultVisualMode ?? TimerVisualMode.minimalDial;
+    _weekdays = {...(task?.weekdays ?? TaskModel.everyDay)};
     _canSubmit = _titleController.text.trim().isNotEmpty;
     _titleController.addListener(_onTitleChanged);
   }
@@ -73,6 +76,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
       iconKey: _selectedIcon,
       colorValue: _selectedColorValue,
       defaultVisualMode: _selectedVisualMode,
+      weekdays: _weekdays,
       createdAt: widget.existingTask?.createdAt ?? DateTime.now(),
     );
 
@@ -487,6 +491,75 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
 
     return Column(
       children: [buildRow(row1), const SizedBox(height: 8), buildRow(row2)],
+    );
+  }
+
+  Widget _buildWeekdaySelector() {
+    const dayNames = [
+      'segunda',
+      'terça',
+      'quarta',
+      'quinta',
+      'sexta',
+      'sábado',
+      'domingo',
+    ];
+    return Row(
+      children: List.generate(7, (i) {
+        final day = i + 1;
+        final isSelected = _weekdays.contains(day);
+        return Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 3),
+            child: Semantics(
+              button: true,
+              selected: isSelected,
+              label: dayNames[i],
+              excludeSemantics: true,
+              child: GestureDetector(
+                onTap: () {
+                  // Pelo menos um dia precisa ficar marcado.
+                  if (isSelected && _weekdays.length == 1) return;
+                  setState(() {
+                    isSelected ? _weekdays.remove(day) : _weekdays.add(day);
+                  });
+                  HapticService.selectionClick();
+                },
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  height: 38,
+                  decoration: BoxDecoration(
+                    color: isSelected
+                        ? _selectedColor.withValues(alpha: 0.20)
+                        : Colors.white.withValues(alpha: 0.04),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: isSelected
+                          ? _selectedColor.withValues(alpha: 0.75)
+                          : Colors.white.withValues(alpha: 0.08),
+                      width: isSelected ? 1.4 : 1.0,
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      TimeUtils.weekdayInitials[i],
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: isSelected
+                            ? FontWeight.w700
+                            : FontWeight.w500,
+                        color: isSelected
+                            ? AppColors.textWhite
+                            : AppColors.textMuted,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 
@@ -988,6 +1061,14 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                               subtitle: '$_targetMinutes min',
                             ),
                             _buildDurationPresets(),
+                            const SizedBox(height: 20),
+
+                            // Dias da semana
+                            _buildSectionHeader(
+                              title: 'Repetir',
+                              subtitle: TimeUtils.formatWeekdays(_weekdays),
+                            ),
+                            _buildWeekdaySelector(),
                             const SizedBox(height: 20),
 
                             // Seletor de Estilo do Timer

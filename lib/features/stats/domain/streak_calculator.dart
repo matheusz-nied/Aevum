@@ -1,4 +1,5 @@
 import 'package:aevum/features/tasks/domain/session_record.dart';
+import 'package:aevum/features/tasks/domain/task_model.dart';
 
 class DayFocusMetric {
   final DateTime date;
@@ -18,31 +19,39 @@ class StreakCalculator {
   static DateTime _civilDay(DateTime date) =>
       DateTime.utc(date.year, date.month, date.day);
 
-  /// Calcula a sequência de dias consecutivos com pelo menos 1 sessão concluída.
+  /// Calcula a sequência de dias com pelo menos 1 sessão concluída.
+  ///
+  /// Dias em que nenhum dos [tasks] se repete são de descanso: não contam nem
+  /// quebram a sequência. O dia de hoje ainda em aberto também não a quebra.
   /// [now] existe para permitir testes determinísticos.
   static int calculateCurrentStreak(
     List<SessionRecord> sessions, {
+    Iterable<TaskModel> tasks = const [],
     DateTime? now,
   }) {
     if (sessions.isEmpty) return 0;
 
-    final uniqueDates =
-        sessions.map((s) => _civilDay(s.completedAt)).toSet().toList()
-          ..sort((a, b) => b.compareTo(a));
+    final sessionDays = sessions.map((s) => _civilDay(s.completedAt)).toSet();
+    final earliest = sessionDays.reduce((a, b) => a.isBefore(b) ? a : b);
+    final taskList = tasks.toList();
+
+    bool isRestDay(DateTime day) =>
+        taskList.isNotEmpty &&
+        !taskList.any((t) => t.weekdays.contains(day.weekday));
 
     final today = _civilDay(now ?? DateTime.now());
+    var cursor = sessionDays.contains(today)
+        ? today
+        : today.subtract(const Duration(days: 1));
 
-    // A sequência é válida se o usuário fez hoje ou ontem
-    final daysSinceLast = today.difference(uniqueDates.first).inDays;
-    if (daysSinceLast != 0 && daysSinceLast != 1) return 0;
-
-    int streak = 1;
-    for (int i = 0; i < uniqueDates.length - 1; i++) {
-      if (uniqueDates[i].difference(uniqueDates[i + 1]).inDays == 1) {
+    int streak = 0;
+    while (!cursor.isBefore(earliest)) {
+      if (sessionDays.contains(cursor)) {
         streak++;
-      } else {
+      } else if (!isRestDay(cursor)) {
         break;
       }
+      cursor = cursor.subtract(const Duration(days: 1));
     }
 
     return streak;

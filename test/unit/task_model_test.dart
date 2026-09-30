@@ -73,5 +73,32 @@ void main() {
       expect(restored.toMap().containsKey('iconCodePoint'), isFalse);
       expect(restored.toMap()['defaultVisualMode'], 'focusFree');
     });
+
+    test('weekdays persiste e registros antigos valem todos os dias', () {
+      final task = TaskModel(
+        id: 'w',
+        title: 'Semanal',
+        targetMinutes: 10,
+        iconKey: TaskIcon.writing,
+        colorValue: 0xFF123456,
+        weekdays: {DateTime.saturday, DateTime.monday},
+      );
+      final restored = TaskModel.fromMap(task.toMap());
+
+      expect(restored.weekdays, {DateTime.monday, DateTime.saturday});
+      expect(restored.isDaily, isFalse);
+      expect(restored.isScheduledOn(DateTime(2026, 3, 2)), isTrue);
+      expect(restored.isScheduledOn(DateTime(2026, 3, 3)), isFalse);
+
+      final legacy = TaskModel.fromMap({
+        'id': 'old',
+        'title': 'Antigo',
+        'targetMinutes': 10,
+        'iconKey': 'writing',
+        'colorValue': 0xFF123456,
+      });
+      expect(legacy.weekdays, TaskModel.everyDay);
+      expect(legacy.isDaily, isTrue);
+    });
   });
 }
