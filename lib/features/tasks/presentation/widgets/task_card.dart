@@ -5,7 +5,7 @@ import 'package:aevum/core/utils/time_utils.dart';
 import 'package:aevum/core/widgets/glass_container.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
 
-/// Card de hábito em liquid glass, com a cor da tarefa refratada na borda.
+/// Card de hábito em vidro leve, com a cor do hábito no ícone e na ação.
 class TaskCard extends StatelessWidget {
   final TaskModel task;
   final bool isCompletedToday;
@@ -26,215 +26,302 @@ class TaskCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final accentColor = task.color;
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: GlassContainer(
-        borderRadius: 26,
-        blur: 22,
+        borderRadius: 24,
+        blur: 20,
         accentColor: accentColor,
         color: isCompletedToday
-            ? AppColors.emeraldMist.withValues(alpha: 0.18)
+            ? Color.alphaBlend(
+                accentColor.withValues(alpha: 0.08),
+                AppColors.liquidGlassSurface,
+              )
             : null,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(26),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(14, 13, 8, 13),
-            child: Row(
-              children: [
-                // Ícone da tarefa em orb tonal suave
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: accentColor.withValues(alpha: 0.12),
-                    border: Border.all(
-                      color: accentColor.withValues(alpha: 0.24),
-                      width: 1,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTap,
+            onLongPress: () {
+              HapticService.mediumImpact();
+              onEdit();
+            },
+            borderRadius: BorderRadius.circular(24),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(14, 14, 4, 14),
+              child: Row(
+                children: [
+                  _HabitGlyph(
+                    icon: task.iconData,
+                    color: accentColor,
+                    done: isCompletedToday,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          task.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.textWhite,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        _MetaLine(task: task, done: isCompletedToday),
+                      ],
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: accentColor.withValues(alpha: 0.10),
-                        blurRadius: 12,
-                        spreadRadius: -2,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
                   ),
-                  child: Center(
-                    child: Icon(task.iconData, color: accentColor, size: 22),
-                  ),
-                ),
-                const SizedBox(width: 14),
-
-                // Título e metadados
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              task.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textWhite,
-                                letterSpacing: -0.2,
-                              ),
-                            ),
-                          ),
-                          if (isCompletedToday)
-                            Padding(
-                              padding: const EdgeInsets.only(left: 6),
-                              child: Icon(
-                                Icons.check_rounded,
-                                color: AppColors.sage,
-                                size: 16,
-                              ),
-                            ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      Row(
-                        children: [
-                          // Badge suave: duração
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.05),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.08),
-                              ),
-                            ),
-                            child: Text(
-                              '${task.targetMinutes} min',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textWhite.withValues(
-                                  alpha: 0.85,
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (!task.isDaily) ...[
-                            const SizedBox(width: 8),
-                            Flexible(
-                              child: Text(
-                                TimeUtils.formatWeekdays(task.weekdays),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: AppColors.textMuted,
-                                ),
-                              ),
-                            ),
-                          ],
-                          const SizedBox(width: 8),
-                          // Visual mode
-                          Row(
-                            children: [
-                              Icon(
-                                task.defaultVisualMode.icon,
-                                size: 12,
-                                color: AppColors.textMuted,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                task.defaultVisualMode.displayName,
-                                style: const TextStyle(
-                                  fontSize: 11,
-                                  color: AppColors.textMuted,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                // Botão de play rápido em vidro tonal suave
-                GlassContainer(
-                  isCircle: true,
-                  blur: 14,
-                  accentColor: accentColor,
-                  color: accentColor.withValues(alpha: 0.10),
-                  child: IconButton(
+                  const SizedBox(width: 8),
+                  _PlayButton(
+                    color: accentColor,
+                    subdued: isCompletedToday,
                     tooltip: 'Iniciar ${task.title}',
                     onPressed: () {
                       HapticService.lightImpact();
                       onTap();
                     },
-                    style: IconButton.styleFrom(
-                      foregroundColor: accentColor,
-                      padding: const EdgeInsets.all(10),
-                    ),
-                    icon: const Icon(Icons.play_arrow_rounded, size: 22),
                   ),
-                ),
-
-                // Menu de opções
-                PopupMenuButton<String>(
-                  tooltip: 'Opções de ${task.title}',
-                  icon: Icon(
-                    Icons.more_vert_rounded,
-                    color: AppColors.textMuted,
-                    size: 20,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  onSelected: (val) {
-                    if (val == 'edit') onEdit();
-                    if (val == 'delete') onDelete();
-                  },
-                  itemBuilder: (ctx) => [
-                    const PopupMenuItem(
-                      value: 'edit',
-                      child: Row(
-                        children: [
-                          Icon(Icons.edit_outlined, size: 18),
-                          SizedBox(width: 10),
-                          Text('Editar'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem(
-                      value: 'delete',
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.delete_outline,
-                            color: AppColors.warning,
-                            size: 18,
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            'Excluir',
-                            style: TextStyle(color: AppColors.warning),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                  _OptionsMenu(task: task, onEdit: onEdit, onDelete: onDelete),
+                ],
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _HabitGlyph extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final bool done;
+
+  const _HabitGlyph({
+    required this.icon,
+    required this.color,
+    required this.done,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.square(
+      dimension: 50,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  color.withValues(alpha: 0.24),
+                  color.withValues(alpha: 0.07),
+                ],
+              ),
+              border: Border.all(color: color.withValues(alpha: 0.2)),
+            ),
+            child: Center(child: Icon(icon, color: color, size: 23)),
+          ),
+          Positioned(
+            right: -4,
+            bottom: -4,
+            child: AnimatedScale(
+              scale: done ? 1 : 0,
+              duration: const Duration(milliseconds: 380),
+              curve: Curves.easeOutBack,
+              child: Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.dawn,
+                  border: Border.all(color: AppColors.forestDeep, width: 2),
+                ),
+                child: const Icon(
+                  Icons.check_rounded,
+                  size: 12,
+                  color: AppColors.forestDeep,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetaLine extends StatelessWidget {
+  final TaskModel task;
+  final bool done;
+
+  const _MetaLine({required this.task, required this.done});
+
+  @override
+  Widget build(BuildContext context) {
+    const metaStyle = TextStyle(
+      fontSize: 12,
+      color: AppColors.textMuted,
+      fontWeight: FontWeight.w500,
+    );
+
+    Widget dot() => Container(
+      width: 3,
+      height: 3,
+      margin: const EdgeInsets.symmetric(horizontal: 7),
+      decoration: const BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColors.textFaint,
+      ),
+    );
+
+    return Row(
+      children: [
+        if (done) ...[
+          const Text(
+            'Feito hoje',
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.dawn,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          dot(),
+        ],
+        Text(
+          '${task.targetMinutes} min',
+          style: metaStyle.copyWith(
+            color: AppColors.textWhite.withValues(alpha: 0.82),
+          ),
+        ),
+        dot(),
+        Flexible(
+          child: Text(
+            task.isDaily
+                ? task.defaultVisualMode.displayName
+                : TimeUtils.formatWeekdays(task.weekdays),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: metaStyle,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PlayButton extends StatelessWidget {
+  final Color color;
+  final bool subdued;
+  final String tooltip;
+  final VoidCallback onPressed;
+
+  const _PlayButton({
+    required this.color,
+    required this.subdued,
+    required this.tooltip,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: Semantics(
+        button: true,
+        label: tooltip,
+        excludeSemantics: true,
+        child: GestureDetector(
+          onTap: onPressed,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: subdued ? color.withValues(alpha: 0.12) : color,
+              border: subdued
+                  ? Border.all(color: color.withValues(alpha: 0.3))
+                  : null,
+              boxShadow: subdued
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: color.withValues(alpha: 0.32),
+                        blurRadius: 16,
+                        spreadRadius: -4,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+            ),
+            child: Icon(
+              Icons.play_arrow_rounded,
+              size: 24,
+              color: subdued ? color : AppColors.forestDeep,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _OptionsMenu extends StatelessWidget {
+  final TaskModel task;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  const _OptionsMenu({
+    required this.task,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<String>(
+      tooltip: 'Opções de ${task.title}',
+      icon: const Icon(
+        Icons.more_vert_rounded,
+        color: AppColors.textFaint,
+        size: 20,
+      ),
+      position: PopupMenuPosition.under,
+      onSelected: (val) {
+        if (val == 'edit') onEdit();
+        if (val == 'delete') onDelete();
+      },
+      itemBuilder: (ctx) => const [
+        PopupMenuItem(
+          value: 'edit',
+          child: Row(
+            children: [
+              Icon(Icons.edit_outlined, size: 18, color: AppColors.sage),
+              SizedBox(width: 12),
+              Text('Editar'),
+            ],
+          ),
+        ),
+        PopupMenuItem(
+          value: 'delete',
+          child: Row(
+            children: [
+              Icon(Icons.delete_outline, color: AppColors.warning, size: 18),
+              SizedBox(width: 12),
+              Text('Excluir', style: TextStyle(color: AppColors.warning)),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

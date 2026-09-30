@@ -1,23 +1,31 @@
 import 'package:flutter/material.dart';
 
-/// Paleta "Floresta Nebulosa".
+/// Paleta "Floresta ao Amanhecer".
 ///
-/// Tons derivados de uma floresta úmida ao amanhecer: sombras quase pretas,
-/// verdes pinho dessaturados e névoa prata.
+/// Tons de uma floresta úmida no primeiro raio de sol: sombras de pinho quase
+/// pretas, verdes de musgo e névoa prata, e uma luz quente usada com
+/// parcimônia para os momentos que merecem calor.
 class AppColors {
   // Base: o preto nunca é neutro; ele sempre carrega um pouco de pinho.
-  static const Color forestBlack = Color(0xFF020806);
+  static const Color forestBlack = Color(0xFF020705);
   static const Color forestDeep = Color(0xFF06100C);
   static const Color forestMid = Color(0xFF0C1913);
   static const Color forestSurface = Color(0xFF13211A);
   static const Color forestSurfaceElevated = Color(0xFF1A2B22);
   static const Color forestSurfaceCard = Color(0xFF15251D);
 
+  // Céu atrás das copas, do topo (claro, com névoa) para o chão da mata.
+  static const Color canopySky = Color(0xFF1E3027);
+
   // Névoa/glow de fundo (usado no ForestBackground)
-  static const Color fogSilver = Color(0xFF93A199);
+  static const Color fogSilver = Color(0xFF9DAEA4);
   static const Color fogGlow = Color(0xFF61766A);
   static const Color fogGlow2 = Color(0xFF31483B);
   static const Color forestSilhouette = Color(0xFF0A1711);
+
+  // Luz do amanhecer: acento quente para sequência, conclusão e "hoje".
+  static const Color dawn = Color(0xFFE8D6A8);
+  static const Color dawnSoft = Color(0xFFCDBB8E);
 
   // Acentos verdes calmantes
   static const Color sage = Color(0xFFBAC9B5);
@@ -27,7 +35,8 @@ class AppColors {
   static const Color pineDeep = Color(0xFF536D5D);
   static const Color lichen = Color(0xFFA7B78F);
 
-  // Paleta de cores por tarefa (tons de verde calmantes)
+  // Paleta de cores por tarefa (tons de verde calmantes). Os valores ficam
+  // salvos nos hábitos do usuário: não altere, apenas acrescente.
   static const List<Color> taskColors = [
     emeraldMist,
     sage,
@@ -37,14 +46,14 @@ class AppColors {
     lichen,
   ];
 
-  // Superfície de vidro moderna: translúcida, suave e de alta legibilidade.
-  static Color get liquidGlassSurface => forestSurface.withValues(alpha: 0.64);
+  // Superfície de vidro: translúcida, leve e de alta legibilidade.
+  static Color get liquidGlassSurface => forestSurface.withValues(alpha: 0.52);
   static Color get liquidGlassStrong =>
-      forestSurfaceElevated.withValues(alpha: 0.78);
+      forestSurfaceElevated.withValues(alpha: 0.66);
   static Color get glassDark => forestSurface.withValues(alpha: 0.85);
-  static Color get glassBorderDark => Colors.white.withValues(alpha: 0.16);
-  static Color get glassBorderSoft => Colors.white.withValues(alpha: 0.08);
-  static Color get glassLightOnly => Colors.white.withValues(alpha: 0.06);
+  static Color get glassBorderDark => Colors.white.withValues(alpha: 0.14);
+  static Color get glassBorderSoft => Colors.white.withValues(alpha: 0.07);
+  static Color get glassLightOnly => Colors.white.withValues(alpha: 0.05);
   static Color get glassHighlight => Colors.white.withValues(alpha: 0.10);
 
   // Texto

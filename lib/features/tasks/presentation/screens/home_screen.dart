@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/services/haptic_service.dart';
 import 'package:aevum/core/widgets/forest_background.dart';
-import 'package:aevum/core/widgets/glass_container.dart';
+import 'package:aevum/core/theme/app_typography.dart';
+import 'package:aevum/core/utils/time_utils.dart';
+import 'package:aevum/core/widgets/fade_slide_in.dart';
+import 'package:aevum/core/widgets/glass_icon_button.dart';
 import 'package:aevum/features/about/presentation/about_screen.dart';
 import 'package:aevum/features/stats/presentation/screens/stats_screen.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
@@ -154,223 +157,287 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       return todaySessions.any((s) => s.taskId == t.id);
     }).length;
 
+    final segments = [
+      for (final task in scheduledToday)
+        DailyRingSegment(
+          color: task.color,
+          done: todaySessions.any((s) => s.taskId == task.id),
+        ),
+    ];
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: ForestBackground(
-        child: CustomScrollView(
-          slivers: [
-            // AppBar em vidro
-            SliverToBoxAdapter(
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
+        child: Stack(
+          children: [
+            CustomScrollView(
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              slivers: [
+                SliverToBoxAdapter(
+                  child: SafeArea(
+                    bottom: false,
+                    child: FadeSlideIn(child: _HomeHeader(now: now)),
+                  ),
+                ),
+
+                SliverToBoxAdapter(
+                  child: FadeSlideIn(
+                    index: 1,
+                    child: DailyProgressHeader(
+                      totalFocusedMinutes: totalFocusedMinutes,
+                      completedTasksCount: completedTasksCount,
+                      totalTasksCount: scheduledToday.length,
+                      segments: segments,
+                      onOpenStats: () => _openStats(context),
+                    ),
+                  ),
+                ),
+
+                SliverToBoxAdapter(
+                  child: FadeSlideIn(
+                    index: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(22, 30, 22, 8),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
                         children: [
-                          GlassContainer(
-                            isCircle: true,
-                            accentColor: AppColors.sage,
-                            padding: const EdgeInsets.all(10),
-                            child: ClipOval(
-                              child: Image.asset(
-                                'assets/app/aevum-mark.png',
-                                width: 22,
-                                height: 22,
-                              ),
+                          Text(
+                            'Seus hábitos',
+                            style: AppTypography.serif(
+                              size: 22,
+                              weight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(width: 11),
-                          const Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Aevum',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 21,
-                                  letterSpacing: -0.5,
-                                  color: AppColors.textWhite,
-                                ),
-                              ),
-                              Text(
-                                'EVOLUA NO SEU TEMPO',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 11,
-                                  letterSpacing: 1.35,
-                                  color: AppColors.textMuted,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          GlassContainer(
-                            isCircle: true,
-                            accentColor: AppColors.sage,
-                            child: IconButton(
-                              onPressed: () {
-                                HapticService.lightImpact();
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const StatsScreen(),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(
-                                Icons.insights_rounded,
-                                size: 20,
-                                color: AppColors.sage,
-                              ),
-                              tooltip: 'Estatísticas',
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          GlassContainer(
-                            isCircle: true,
-                            accentColor: AppColors.sage,
-                            child: IconButton(
-                              onPressed: () {
-                                HapticService.lightImpact();
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (_) => const AboutScreen(),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(
-                                Icons.info_outline_rounded,
-                                size: 20,
-                                color: AppColors.sage,
-                              ),
-                              tooltip: 'Sobre o Aevum',
+                          const Spacer(),
+                          Text(
+                            '${tasks.length} ${tasks.length == 1 ? 'ativo' : 'ativos'}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textMuted,
                             ),
                           ),
                         ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
 
-            // Daily Progress Header
-            SliverToBoxAdapter(
-              child: DailyProgressHeader(
-                totalFocusedMinutes: totalFocusedMinutes,
-                completedTasksCount: completedTasksCount,
-                totalTasksCount: scheduledToday.length,
-                onOpenStats: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const StatsScreen()),
-                  );
-                },
-              ),
-            ),
+                if (tasks.isEmpty)
+                  const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: FadeSlideIn(index: 3, child: _EmptyHabits()),
+                  )
+                else
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final task = tasks[index];
+                      final isDone = todaySessions.any(
+                        (s) => s.taskId == task.id,
+                      );
 
-            // Section Title
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 22, 20, 9),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Seus hábitos',
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.25,
-                        color: AppColors.textWhite,
-                      ),
-                    ),
-                    Text(
-                      '${tasks.length} ${tasks.length == 1 ? 'ativo' : 'ativos'}',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        letterSpacing: 0.4,
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-
-            // Tasks List
-            if (tasks.isEmpty)
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.park_rounded,
-                        size: 64,
-                        color: AppColors.textFaint,
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Nenhum hábito cadastrado',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textWhite.withValues(alpha: 0.75),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Crie seu primeiro hábito e comece no seu ritmo.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            else
-              SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  final task = tasks[index];
-                  final isDone = todaySessions.any((s) => s.taskId == task.id);
-
-                  // Cada card tem 2 CustomPaints + 2 BoxShadows: isola o
-                  // raster para o scroll não repintar cards parados.
-                  return RepaintBoundary(
-                    child: TaskCard(
-                      task: task,
-                      isCompletedToday: isDone,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => ActiveTimerScreen(task: task),
+                      // Isola o raster para o scroll não repintar cards parados.
+                      return FadeSlideIn(
+                        key: ValueKey(task.id),
+                        index: index + 3,
+                        child: RepaintBoundary(
+                          child: TaskCard(
+                            task: task,
+                            isCompletedToday: isDone,
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => ActiveTimerScreen(task: task),
+                                ),
+                              );
+                            },
+                            onEdit: () =>
+                                _openCreateTaskSheet(context, ref, task),
+                            onDelete: () => _deleteWithUndo(context, ref, task),
                           ),
-                        );
-                      },
-                      onEdit: () => _openCreateTaskSheet(context, ref, task),
-                      onDelete: () => _deleteWithUndo(context, ref, task),
-                    ),
-                  );
-                }, childCount: tasks.length),
-              ),
+                        ),
+                      );
+                    }, childCount: tasks.length),
+                  ),
 
-            const SliverToBoxAdapter(child: SizedBox(height: 90)),
+                const SliverToBoxAdapter(child: SizedBox(height: 140)),
+              ],
+            ),
+
+            // Névoa no rodapé: a lista se dissolve sob o botão de criar.
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: 150,
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.forestBlack.withValues(alpha: 0),
+                        AppColors.forestBlack.withValues(alpha: 0.55),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: Padding(
-        padding: const EdgeInsets.only(right: 2, bottom: 4),
+        padding: const EdgeInsets.only(right: 2, bottom: 6),
         child: GlassCreateTaskButton(
           onPressed: () => _openCreateTaskSheet(context, ref),
         ),
+      ),
+    );
+  }
+
+  void _openStats(BuildContext context) {
+    HapticService.lightImpact();
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (_) => const StatsScreen()));
+  }
+}
+
+/// Topo da home: marca, atalhos e uma saudação conforme a hora do dia.
+class _HomeHeader extends StatelessWidget {
+  final DateTime now;
+
+  const _HomeHeader({required this.now});
+
+  String get _greeting {
+    final hour = now.hour;
+    if (hour >= 5 && hour < 12) return 'Bom dia';
+    if (hour >= 12 && hour < 18) return 'Boa tarde';
+    return 'Boa noite';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(22, 12, 16, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              ClipOval(
+                child: Image.asset(
+                  'assets/app/aevum-mark.png',
+                  width: 30,
+                  height: 30,
+                  cacheWidth: 90,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'Aevum',
+                style: AppTypography.serif(size: 20, weight: FontWeight.w500),
+              ),
+              const Spacer(),
+              GlassIconButton(
+                icon: Icons.insights_rounded,
+                tooltip: 'Estatísticas',
+                color: AppColors.sage,
+                onPressed: () => Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => const StatsScreen())),
+              ),
+              const SizedBox(width: 8),
+              GlassIconButton(
+                icon: Icons.info_outline_rounded,
+                tooltip: 'Sobre o Aevum',
+                color: AppColors.sage,
+                onPressed: () => Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (_) => const AboutScreen())),
+              ),
+            ],
+          ),
+          const SizedBox(height: 28),
+          Text(
+            TimeUtils.formatHeaderDate(now).toUpperCase(),
+            style: AppTypography.eyebrow,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            _greeting,
+            style: AppTypography.serif(
+              size: 40,
+              weight: FontWeight.w400,
+              height: 1.05,
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            'Evolua no seu tempo.',
+            style: TextStyle(
+              color: AppColors.textMuted,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _EmptyHabits extends StatelessWidget {
+  const _EmptyHabits();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(40, 12, 40, 150),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 84,
+            height: 84,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
+                colors: [
+                  AppColors.sage.withValues(alpha: 0.18),
+                  AppColors.sage.withValues(alpha: 0.02),
+                ],
+              ),
+              border: Border.all(color: AppColors.sage.withValues(alpha: 0.2)),
+            ),
+            child: const Icon(
+              Icons.park_outlined,
+              size: 38,
+              color: AppColors.sage,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Plante o primeiro hábito',
+            textAlign: TextAlign.center,
+            style: AppTypography.serif(size: 22, weight: FontWeight.w500),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Nenhum hábito cadastrado ainda. Comece pequeno, no seu ritmo.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14,
+              height: 1.5,
+              color: AppColors.textMuted,
+            ),
+          ),
+        ],
       ),
     );
   }

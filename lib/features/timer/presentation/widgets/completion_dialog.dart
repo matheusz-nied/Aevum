@@ -1,6 +1,7 @@
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/quotes/inspiration_quotes.dart';
 import 'package:aevum/core/services/haptic_service.dart';
+import 'package:aevum/core/theme/app_typography.dart';
 import 'package:aevum/core/widgets/glass_container.dart';
 import 'package:aevum/features/tasks/domain/session_record.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
@@ -97,7 +98,7 @@ class _CompletionDialogState extends State<CompletionDialog>
               blur: 28,
               strong: true,
               accentColor: accentColor,
-              color: AppColors.forestSurface.withValues(alpha: 0.34),
+              color: AppColors.forestSurface.withValues(alpha: 0.82),
               padding: const EdgeInsets.fromLTRB(24, 26, 24, 22),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -107,13 +108,7 @@ class _CompletionDialogState extends State<CompletionDialog>
                   Text(
                     widget.completedGoal ? 'Hábito concluído' : 'Sessão salva',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 25,
-                      height: 1.1,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.textWhite,
-                      letterSpacing: -0.65,
-                    ),
+                    style: AppTypography.serif(size: 30, height: 1.1),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -137,11 +132,12 @@ class _CompletionDialogState extends State<CompletionDialog>
                   Text(
                     '“$_praise”',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      height: 1.45,
+                    style: AppTypography.serif(
+                      size: 16,
+                      height: 1.5,
                       fontStyle: FontStyle.italic,
                       color: AppColors.textMuted,
+                      letterSpacing: 0,
                     ),
                   ),
                   const SizedBox(height: 26),
@@ -183,7 +179,7 @@ class _CelebrationOrb extends StatelessWidget {
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
                   colors: [
-                    accentColor.withValues(alpha: 0.25),
+                    AppColors.dawn.withValues(alpha: 0.22),
                     accentColor.withValues(alpha: 0.04),
                   ],
                 ),
@@ -196,7 +192,7 @@ class _CelebrationOrb extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.check_rounded, size: 38, color: accentColor),
+            const Icon(Icons.check_rounded, size: 38, color: AppColors.dawn),
           ],
         ),
       ),
@@ -265,7 +261,7 @@ class _GlassConfirmButton extends StatelessWidget {
       height: 54,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(99),
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -290,7 +286,7 @@ class _GlassConfirmButton extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             onTap: onPressed,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(99),
             child: const Center(
               child: Row(
                 mainAxisSize: MainAxisSize.min,

@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:aevum/core/constants/app_colors.dart';
+import 'package:aevum/core/theme/app_typography.dart';
 
-/// Tema "Floresta Nebulosa" — somente modo escuro, com verdes profundos
-/// calmantes e componentes premium para complementar o efeito glass.
+/// Tema "Floresta ao Amanhecer" — somente modo escuro, com verdes profundos
+/// calmantes, tipografia serena e componentes leves para o efeito glass.
 class AppTheme {
   static ThemeData get darkTheme {
     final colorScheme = ColorScheme.fromSeed(
@@ -10,6 +12,7 @@ class AppTheme {
       brightness: Brightness.dark,
       primary: AppColors.sage,
       secondary: AppColors.emeraldMist,
+      tertiary: AppColors.dawn,
       surface: AppColors.forestSurface,
       error: AppColors.warning,
     );
@@ -17,34 +20,45 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: Colors.transparent,
+      fontFamily: AppTypography.body,
+      scaffoldBackgroundColor: AppColors.forestDeep,
       colorScheme: colorScheme.copyWith(
         surface: AppColors.forestSurface,
         surfaceContainerHigh: AppColors.forestSurfaceElevated,
         onSurface: AppColors.textWhite,
       ),
-      splashColor: AppColors.sage.withValues(alpha: 0.10),
-      highlightColor: AppColors.sage.withValues(alpha: 0.06),
+      splashColor: AppColors.sage.withValues(alpha: 0.08),
+      highlightColor: AppColors.sage.withValues(alpha: 0.05),
       dividerColor: AppColors.glassBorderSoft,
+      dividerTheme: DividerThemeData(
+        color: AppColors.glassBorderSoft,
+        thickness: 1,
+        space: 1,
+      ),
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: FadeForwardsPageTransitionsBuilder(
+            backgroundColor: AppColors.forestDeep,
+          ),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
       cardTheme: CardThemeData(
         color: Colors.transparent,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22),
-          side: BorderSide(color: AppColors.glassBorderDark, width: 1),
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: AppColors.glassBorderSoft, width: 1),
         ),
       ),
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: false,
-        titleTextStyle: TextStyle(
-          color: AppColors.textWhite,
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          letterSpacing: -0.5,
-        ),
-        iconTheme: IconThemeData(color: AppColors.textWhite),
+        titleTextStyle: AppTypography.serif(size: 24, weight: FontWeight.w500),
+        iconTheme: const IconThemeData(color: AppColors.textWhite),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: AppColors.sage,
@@ -53,25 +67,94 @@ class AppTheme {
         elevation: 4,
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: AppColors.forestSurfaceElevated,
+        backgroundColor: AppColors.forestSurface,
         surfaceTintColor: Colors.transparent,
+        barrierColor: AppColors.forestBlack.withValues(alpha: 0.62),
+        titleTextStyle: AppTypography.serif(size: 24, weight: FontWeight.w500),
+        contentTextStyle: const TextStyle(
+          fontFamily: AppTypography.body,
+          color: AppColors.textMuted,
+          fontSize: 15,
+          height: 1.5,
+        ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
-          side: BorderSide(color: AppColors.glassBorderDark),
+          borderRadius: BorderRadius.circular(30),
+          side: BorderSide(color: AppColors.glassBorderSoft),
         ),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
+      snackBarTheme: SnackBarThemeData(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: AppColors.forestSurfaceElevated,
+        elevation: 0,
+        insetPadding: const EdgeInsets.fromLTRB(16, 0, 16, 18),
+        contentTextStyle: const TextStyle(
+          fontFamily: AppTypography.body,
+          color: AppColors.textWhite,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        actionTextColor: AppColors.dawn,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+          side: BorderSide(color: AppColors.glassBorderSoft),
+        ),
+      ),
       popupMenuTheme: PopupMenuThemeData(
         color: AppColors.forestSurfaceElevated.withValues(alpha: 0.98),
         surfaceTintColor: Colors.transparent,
         elevation: 12,
+        textStyle: const TextStyle(
+          fontFamily: AppTypography.body,
+          color: AppColors.textWhite,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
-          side: BorderSide(color: AppColors.glassBorderDark),
+          side: BorderSide(color: AppColors.glassBorderSoft),
         ),
+      ),
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: AppColors.forestSurfaceElevated,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        textStyle: const TextStyle(
+          fontFamily: AppTypography.body,
+          color: AppColors.textWhite,
+          fontSize: 12,
+        ),
+      ),
+      listTileTheme: const ListTileThemeData(
+        iconColor: AppColors.sage,
+        titleTextStyle: TextStyle(
+          fontFamily: AppTypography.body,
+          color: AppColors.textWhite,
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+        ),
+        subtitleTextStyle: TextStyle(
+          fontFamily: AppTypography.body,
+          color: AppColors.textMuted,
+          fontSize: 13,
+          height: 1.35,
+        ),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: Colors.white.withValues(alpha: 0.05),
+        side: BorderSide(color: AppColors.glassBorderSoft),
+        labelStyle: const TextStyle(
+          fontFamily: AppTypography.body,
+          color: AppColors.textWhite,
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(99)),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -99,36 +182,55 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.sage,
           foregroundColor: AppColors.forestDeep,
+          disabledBackgroundColor: AppColors.sage.withValues(alpha: 0.4),
           elevation: 0,
-          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+          textStyle: const TextStyle(
+            fontFamily: AppTypography.body,
+            fontWeight: FontWeight.w700,
+            fontSize: 16,
+            letterSpacing: -0.1,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(99),
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          textStyle: const TextStyle(
+            fontFamily: AppTypography.body,
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(99),
           ),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(foregroundColor: AppColors.sage),
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.sage,
+          textStyle: const TextStyle(
+            fontFamily: AppTypography.body,
+            fontWeight: FontWeight.w700,
+            fontSize: 15,
+          ),
+        ),
       ),
-      textTheme: const TextTheme(
-        headlineLarge: TextStyle(
-          color: AppColors.textWhite,
-          fontSize: 32,
-          fontWeight: FontWeight.w800,
-          letterSpacing: -1,
+      textTheme: TextTheme(
+        headlineLarge: AppTypography.serif(
+          size: 36,
+          weight: FontWeight.w400,
+          height: 1.1,
         ),
-        headlineMedium: TextStyle(
-          color: AppColors.textWhite,
-          fontSize: 24,
-          fontWeight: FontWeight.w700,
-          letterSpacing: -0.5,
-        ),
-        titleLarge: TextStyle(
+        headlineMedium: AppTypography.serif(size: 28, weight: FontWeight.w400),
+        titleLarge: const TextStyle(
           color: AppColors.textWhite,
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
-        bodyLarge: TextStyle(color: AppColors.textWhite, fontSize: 15),
-        bodyMedium: TextStyle(
+        bodyLarge: const TextStyle(color: AppColors.textWhite, fontSize: 15),
+        bodyMedium: const TextStyle(
           color: AppColors.textMuted,
           fontSize: 13,
           height: 1.4,

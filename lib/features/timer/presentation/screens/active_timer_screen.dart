@@ -5,7 +5,9 @@ import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/services/haptic_service.dart';
 import 'package:aevum/core/services/screen_awake_service.dart';
 import 'package:aevum/core/services/timer_session_store.dart';
+import 'package:aevum/core/theme/app_typography.dart';
 import 'package:aevum/core/utils/time_utils.dart';
+import 'package:aevum/core/widgets/glass_icon_button.dart';
 import 'package:aevum/core/widgets/forest_background.dart';
 import 'package:aevum/features/tasks/domain/session_record.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
@@ -251,94 +253,20 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
           child: SafeArea(
             child: Column(
               children: [
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
 
-                // App bar inline (transparente)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: SizedBox(
-                    height: 40,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              widget.task.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textWhite,
-                              ),
-                            ),
-                            const Text(
-                              'SESSÃO EM ANDAMENTO',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: 1.2,
-                                color: AppColors.textMuted,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: IconButton(
-                            tooltip: 'Voltar',
-                            icon: const Icon(
-                              Icons.arrow_back_ios_new_rounded,
-                              size: 17,
-                              color: AppColors.textWhite,
-                            ),
-                            style: IconButton.styleFrom(
-                              foregroundColor: AppColors.textWhite,
-                              padding: EdgeInsets.zero,
-                              minimumSize: const Size(36, 36),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            onPressed: () {
-                              HapticService.lightImpact();
-                              _requestExit();
-                            },
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              HapticService.mediumImpact();
-                              timerNotifier.complete();
-                              ScreenAwakeService.setEnabled(false);
-                            },
-                            style: TextButton.styleFrom(
-                              foregroundColor: accentColor,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                              ),
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: const Text(
-                              'Concluir',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                _SessionTopBar(
+                  title: widget.task.title,
+                  accentColor: accentColor,
+                  onBack: _requestExit,
+                  onComplete: () {
+                    HapticService.mediumImpact();
+                    timerNotifier.complete();
+                    ScreenAwakeService.setEnabled(false);
+                  },
                 ),
 
-                const SizedBox(height: 8),
+                const SizedBox(height: 14),
 
                 // Mode Selector
                 Center(
@@ -462,5 +390,115 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
           onAddMinutes: (mins) => notifier.addMinutes(mins),
         );
     }
+  }
+}
+
+/// Topo da sessão: voltar, nome do hábito com o estado ao vivo e "Concluir".
+class _SessionTopBar extends ConsumerWidget {
+  final String title;
+  final Color accentColor;
+  final VoidCallback onBack;
+  final VoidCallback onComplete;
+
+  const _SessionTopBar({
+    required this.title,
+    required this.accentColor,
+    required this.onBack,
+    required this.onComplete,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isRunning = ref.watch(
+      timerControllerProvider.select((s) => s.isRunning),
+    );
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          GlassIconButton(
+            icon: Icons.arrow_back_ios_new_rounded,
+            iconSize: 17,
+            tooltip: 'Voltar',
+            onPressed: onBack,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: AppTypography.serif(size: 20, weight: FontWeight.w500),
+                ),
+                const SizedBox(height: 3),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 400),
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isRunning ? AppColors.dawn : AppColors.textFaint,
+                        boxShadow: isRunning
+                            ? [
+                                BoxShadow(
+                                  color: AppColors.dawn.withValues(alpha: 0.7),
+                                  blurRadius: 6,
+                                ),
+                              ]
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(width: 7),
+                    Text(
+                      isRunning ? 'EM FOCO' : 'EM PAUSA',
+                      style: AppTypography.eyebrow.copyWith(fontSize: 11),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onComplete,
+              borderRadius: BorderRadius.circular(99),
+              child: Ink(
+                height: 44,
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(99),
+                  color: accentColor.withValues(alpha: 0.14),
+                  border: Border.all(color: accentColor.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.check_rounded, size: 17, color: accentColor),
+                    const SizedBox(width: 5),
+                    Text(
+                      'Concluir',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: accentColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

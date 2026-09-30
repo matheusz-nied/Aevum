@@ -8,7 +8,10 @@ import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/providers/app_state_provider.dart';
 import 'package:aevum/core/services/backup_codec.dart';
 import 'package:aevum/core/widgets/forest_background.dart';
+import 'package:aevum/core/theme/app_typography.dart';
+import 'package:aevum/core/widgets/fade_slide_in.dart';
 import 'package:aevum/core/widgets/glass_container.dart';
+import 'package:aevum/core/widgets/glass_icon_button.dart';
 import 'package:aevum/features/about/presentation/privacy_policy_screen.dart';
 import 'package:aevum/features/tasks/providers/task_providers.dart';
 
@@ -125,66 +128,85 @@ class AboutScreen extends ConsumerWidget {
     return Scaffold(
       body: ForestBackground(
         child: SafeArea(
-          child: CustomScrollView(
-            slivers: [
-              const SliverAppBar(
-                backgroundColor: Colors.transparent,
-                title: Text('Sobre o Aevum'),
+          bottom: false,
+          child: ListView(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 6, 16, 48),
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: GlassIconButton(
+                  icon: Icons.arrow_back_ios_new_rounded,
+                  iconSize: 17,
+                  tooltip: 'Voltar',
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
               ),
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
-                sliver: SliverList.list(
+              const SizedBox(height: 18),
+              FadeSlideIn(
+                child: Column(
                   children: [
-                    GlassContainer(
-                      strong: true,
-                      borderRadius: 30,
-                      accentColor: AppColors.sage,
-                      child: const Padding(
-                        padding: EdgeInsets.all(26),
-                        child: Column(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(22),
-                              ),
-                              child: Image(
-                                image: AssetImage('assets/app/aevum-mark.png'),
-                                width: 80,
-                                height: 80,
-                              ),
-                            ),
-                            SizedBox(height: 16),
-                            Text(
-                              'Aevum',
-                              style: TextStyle(
-                                color: AppColors.textWhite,
-                                fontSize: 30,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            Text(
-                              'Evolua no seu tempo',
-                              style: TextStyle(
-                                color: AppColors.sage,
-                                fontSize: 16,
-                              ),
-                            ),
-                            SizedBox(height: 16),
-                            Text(
-                              'Hábitos saudáveis com constância tranquila, sem transformar o progresso em uma corrida.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: AppColors.textMuted,
-                                fontSize: 14,
-                                height: 1.5,
-                              ),
-                            ),
-                          ],
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(26),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.sage.withValues(alpha: 0.22),
+                            blurRadius: 40,
+                            spreadRadius: -8,
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(26),
+                        child: Image.asset(
+                          'assets/app/aevum-mark.png',
+                          width: 88,
+                          height: 88,
+                          cacheWidth: 264,
                         ),
                       ),
                     ),
                     const SizedBox(height: 18),
+                    Text(
+                      'Aevum',
+                      style: AppTypography.serif(
+                        size: 38,
+                        weight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Evolua no seu tempo',
+                      style: AppTypography.serif(
+                        size: 17,
+                        color: AppColors.sage,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      child: Text(
+                        'Hábitos saudáveis com constância tranquila, sem transformar o progresso em uma corrida.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: AppColors.textMuted,
+                          fontSize: 14,
+                          height: 1.55,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 28),
+
+              FadeSlideIn(
+                index: 1,
+                child: _AboutSection(
+                  title: 'Privacidade',
+                  children: [
                     _AboutAction(
                       icon: Icons.shield_outlined,
                       title: 'Política de Privacidade',
@@ -202,6 +224,44 @@ class AboutScreen extends ConsumerWidget {
                         onTap: () =>
                             _openLink(context, AppLinks.privacyPolicyUrl),
                       ),
+                  ],
+                ),
+              ),
+
+              FadeSlideIn(
+                index: 2,
+                child: _AboutSection(
+                  title: 'Seus dados',
+                  children: [
+                    _AboutAction(
+                      icon: Icons.upload_rounded,
+                      title: 'Exportar backup',
+                      subtitle: 'Copia hábitos e sessões como texto',
+                      onTap: () => _exportBackup(context, ref),
+                    ),
+                    _AboutAction(
+                      icon: Icons.download_rounded,
+                      title: 'Importar backup',
+                      subtitle:
+                          'Lê o backup copiado para a área de transferência',
+                      onTap: () => _importBackup(context, ref),
+                    ),
+                    _AboutAction(
+                      icon: Icons.delete_forever_outlined,
+                      title: 'Apagar todos os dados',
+                      subtitle: 'Remove hábitos, sessões e preferências',
+                      color: AppColors.warning,
+                      onTap: () => _confirmReset(context, ref),
+                    ),
+                  ],
+                ),
+              ),
+
+              FadeSlideIn(
+                index: 3,
+                child: _AboutSection(
+                  title: 'Projeto',
+                  children: [
                     _AboutAction(
                       icon: Icons.balance_rounded,
                       title: 'Licença MIT',
@@ -249,42 +309,57 @@ class AboutScreen extends ConsumerWidget {
                             : 'Carregando…',
                       ),
                     ),
-                    _AboutAction(
-                      icon: Icons.upload_rounded,
-                      title: 'Exportar backup',
-                      subtitle: 'Copia hábitos e sessões como texto',
-                      onTap: () => _exportBackup(context, ref),
-                    ),
-                    _AboutAction(
-                      icon: Icons.download_rounded,
-                      title: 'Importar backup',
-                      subtitle:
-                          'Lê o backup copiado para a área de transferência',
-                      onTap: () => _importBackup(context, ref),
-                    ),
-                    const SizedBox(height: 18),
-                    OutlinedButton.icon(
-                      onPressed: () => _confirmReset(context, ref),
-                      icon: const Icon(Icons.delete_forever_outlined),
-                      label: const Text('Apagar todos os dados'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: AppColors.warning,
-                        minimumSize: const Size.fromHeight(52),
-                        side: const BorderSide(color: AppColors.warning),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'Feito com cuidado, aberto e independente.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: AppColors.textMuted),
-                    ),
                   ],
                 ),
+              ),
+              const SizedBox(height: 12),
+              const Text(
+                'Feito com cuidado, aberto e independente.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.textFaint, fontSize: 13),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Grupo de ações numa única superfície de vidro, com divisórias finas.
+class _AboutSection extends StatelessWidget {
+  const _AboutSection({required this.title, required this.children});
+
+  final String title;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 22),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
+            child: Text(title.toUpperCase(), style: AppTypography.eyebrow),
+          ),
+          GlassContainer(
+            borderRadius: 24,
+            child: Column(
+              children: [
+                for (var i = 0; i < children.length; i++) ...[
+                  if (i > 0)
+                    Divider(
+                      indent: 62,
+                      color: Colors.white.withValues(alpha: 0.06),
+                    ),
+                  children[i],
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -296,29 +371,44 @@ class _AboutAction extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.onTap,
+    this.color = AppColors.sage,
   });
 
   final IconData icon;
   final String title;
   final String? subtitle;
   final VoidCallback? onTap;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: GlassContainer(
-        borderRadius: 18,
-        child: ListTile(
-          minTileHeight: 56,
-          leading: Icon(icon, color: AppColors.sage),
-          title: Text(title),
-          subtitle: subtitle == null ? null : Text(subtitle!),
-          trailing: onTap == null
-              ? null
-              : const Icon(Icons.chevron_right_rounded),
-          onTap: onTap,
+    final isDestructive = color == AppColors.warning;
+    return Material(
+      color: Colors.transparent,
+      child: ListTile(
+        minTileHeight: 60,
+        contentPadding: const EdgeInsets.fromLTRB(14, 4, 12, 4),
+        leading: Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(11),
+            color: color.withValues(alpha: 0.12),
+          ),
+          child: Icon(icon, color: color, size: 18),
         ),
+        title: Text(
+          title,
+          style: isDestructive ? TextStyle(color: color) : null,
+        ),
+        subtitle: subtitle == null ? null : Text(subtitle!),
+        trailing: onTap == null
+            ? null
+            : const Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.textFaint,
+              ),
+        onTap: onTap,
       ),
     );
   }
