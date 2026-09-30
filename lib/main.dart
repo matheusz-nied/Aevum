@@ -8,12 +8,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/providers/app_state_provider.dart';
 import 'core/debug/screenshot_fixtures.dart';
 import 'core/services/app_preferences.dart';
+import 'core/services/timer_session_store.dart';
 import 'core/theme/app_theme.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
 import 'features/tasks/data/session_repository.dart';
 import 'features/tasks/data/task_repository.dart';
 import 'features/tasks/presentation/screens/home_screen.dart';
 import 'features/tasks/providers/task_providers.dart';
+import 'features/timer/providers/timer_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +32,8 @@ void main() async {
   await localeInitialization;
   final taskRepo = await taskRepositoryInitialization;
   final sessionRepo = await sessionRepositoryInitialization;
-  final preferences = AppPreferences(await preferencesInitialization);
+  final sharedPreferences = await preferencesInitialization;
+  final preferences = AppPreferences(sharedPreferences);
 
   const screenshotMode = bool.fromEnvironment('AEVUM_SCREENSHOT_MODE');
   if (kDebugMode && screenshotMode) {
@@ -47,6 +50,9 @@ void main() async {
         taskRepositoryProvider.overrideWithValue(taskRepo),
         sessionRepositoryProvider.overrideWithValue(sessionRepo),
         appPreferencesProvider.overrideWithValue(preferences),
+        timerSessionStoreProvider.overrideWithValue(
+          TimerSessionStore(sharedPreferences),
+        ),
       ],
       child: const AevumApp(),
     ),

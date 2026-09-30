@@ -74,10 +74,7 @@ class _GlassCreateTaskButtonState extends State<GlassCreateTaskButton> {
                           gradient: const LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              AppColors.sage,
-                              Color(0xFFA5B89F),
-                            ],
+                            colors: [AppColors.sage, Color(0xFFA5B89F)],
                           ),
                           boxShadow: [
                             BoxShadow(

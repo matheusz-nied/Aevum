@@ -13,6 +13,7 @@ import 'package:aevum/features/tasks/presentation/widgets/glass_create_task_butt
 import 'package:aevum/features/tasks/presentation/widgets/task_card.dart';
 import 'package:aevum/features/tasks/providers/task_providers.dart';
 import 'package:aevum/features/timer/presentation/screens/active_timer_screen.dart';
+import 'package:aevum/features/timer/providers/timer_controller.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({
@@ -34,6 +35,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _offerSavedSession());
     if (widget.openCreateOnStart) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted || _handledInitialCreate) return;
@@ -41,6 +43,55 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         widget.onInitialCreateOpened?.call();
         _openCreateTaskSheet(context, ref);
       });
+    }
+  }
+
+  /// Se o sistema encerrou o app no meio de uma sessão, oferece retomá-la.
+  Future<void> _offerSavedSession() async {
+    final store = ref.read(timerSessionStoreProvider);
+    final snapshot = store?.load();
+    if (store == null || snapshot == null || !mounted) return;
+
+    final task = ref
+        .read(taskListProvider)
+        .where((t) => t.id == snapshot.taskId)
+        .firstOrNull;
+    if (task == null || snapshot.elapsedMs < 1000) {
+      await store.clear();
+      return;
+    }
+
+    final minutes = Duration(milliseconds: snapshot.elapsedMs).inMinutes;
+    final resume = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Retomar sessão?'),
+        content: Text(
+          'O app foi fechado durante "${task.title}", com $minutes min já feitos. Quer continuar de onde parou?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Descartar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Retomar'),
+          ),
+        ],
+      ),
+    );
+    if (!mounted) return;
+
+    if (resume == true) {
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => ActiveTimerScreen(task: task, resumeFrom: snapshot),
+        ),
+      );
+    } else {
+      await store.clear();
     }
   }
 

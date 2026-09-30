@@ -251,8 +251,9 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                         color: isPlaceholder
                             ? AppColors.textFaint
                             : AppColors.textWhite,
-                        fontStyle:
-                            isPlaceholder ? FontStyle.italic : FontStyle.normal,
+                        fontStyle: isPlaceholder
+                            ? FontStyle.italic
+                            : FontStyle.normal,
                         letterSpacing: -0.2,
                       ),
                     ),
@@ -276,7 +277,9 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
-                              color: AppColors.textWhite.withValues(alpha: 0.85),
+                              color: AppColors.textWhite.withValues(
+                                alpha: 0.85,
+                              ),
                             ),
                           ),
                         ),
@@ -345,8 +348,8 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
           color: isFocused
               ? _selectedColor.withValues(alpha: 0.55)
               : _canSubmit
-                  ? _selectedColor.withValues(alpha: 0.28)
-                  : Colors.white.withValues(alpha: 0.10),
+              ? _selectedColor.withValues(alpha: 0.28)
+              : Colors.white.withValues(alpha: 0.10),
           width: isFocused ? 1.4 : 1.0,
         ),
         boxShadow: [
@@ -374,10 +377,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
         cursorColor: _selectedColor,
         decoration: InputDecoration(
           hintText: 'Ex: Escrita do dia, Meditação, Leitura...',
-          hintStyle: const TextStyle(
-            color: AppColors.textFaint,
-            fontSize: 14,
-          ),
+          hintStyle: const TextStyle(color: AppColors.textFaint, fontSize: 14),
           filled: false,
           border: InputBorder.none,
           enabledBorder: InputBorder.none,
@@ -466,8 +466,9 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                         '${duration}m',
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight:
-                              isSelected ? FontWeight.w700 : FontWeight.w500,
+                          fontWeight: isSelected
+                              ? FontWeight.w700
+                              : FontWeight.w500,
                           color: isSelected
                               ? AppColors.textWhite
                               : AppColors.textMuted,
@@ -485,11 +486,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
     }
 
     return Column(
-      children: [
-        buildRow(row1),
-        const SizedBox(height: 8),
-        buildRow(row2),
-      ],
+      children: [buildRow(row1), const SizedBox(height: 8), buildRow(row2)],
     );
   }
 
@@ -556,8 +553,9 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                             mode.displayName,
                             style: TextStyle(
                               fontSize: 13,
-                              fontWeight:
-                                  isSelected ? FontWeight.w700 : FontWeight.w500,
+                              fontWeight: isSelected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                               color: isSelected
                                   ? AppColors.textWhite
                                   : AppColors.textMuted,
@@ -580,9 +578,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.03),
             borderRadius: BorderRadius.circular(11),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.06),
-            ),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
           ),
           child: Row(
             children: [
@@ -734,8 +730,9 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontSize: 10,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.w500,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
                           color: isSelected
                               ? AppColors.textWhite
                               : AppColors.textFaint,
@@ -933,7 +930,8 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                   left: 18,
                   right: 18,
                   top: 14,
-                  bottom: keyboardInset +
+                  bottom:
+                      keyboardInset +
                       (keyboardInset > 0 ? 12 : safeBottom + 20),
                 ),
                 child: Column(

@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/services/haptic_service.dart';
 import 'package:aevum/core/services/screen_awake_service.dart';
+import 'package:aevum/core/services/timer_session_store.dart';
 import 'package:aevum/core/widgets/forest_background.dart';
 import 'package:aevum/features/tasks/domain/session_record.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
@@ -22,7 +23,10 @@ import 'package:aevum/features/timer/providers/timer_controller.dart';
 class ActiveTimerScreen extends ConsumerStatefulWidget {
   final TaskModel task;
 
-  const ActiveTimerScreen({super.key, required this.task});
+  /// Sessão salva a retomar; se nula, começa uma sessão nova.
+  final TimerSessionSnapshot? resumeFrom;
+
+  const ActiveTimerScreen({super.key, required this.task, this.resumeFrom});
 
   @override
   ConsumerState<ActiveTimerScreen> createState() => _ActiveTimerScreenState();
@@ -49,7 +53,13 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(timerControllerProvider.notifier).start(widget.task);
+      final notifier = ref.read(timerControllerProvider.notifier);
+      final resumeFrom = widget.resumeFrom;
+      if (resumeFrom != null) {
+        notifier.restore(widget.task, resumeFrom);
+      } else {
+        notifier.start(widget.task);
+      }
       ScreenAwakeService.setEnabled(true);
     });
   }

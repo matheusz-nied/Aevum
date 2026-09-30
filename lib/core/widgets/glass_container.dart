@@ -59,9 +59,7 @@ class GlassContainer extends StatelessWidget {
         boxShadow: [
           // Sombra ambiente suave e profunda
           BoxShadow(
-            color: Colors.black.withValues(
-              alpha: strong ? 0.36 : 0.24,
-            ),
+            color: Colors.black.withValues(alpha: strong ? 0.36 : 0.24),
             blurRadius: strong ? 28 : 18,
             spreadRadius: -4,
             offset: Offset(0, strong ? 10 : 6),
@@ -200,8 +198,10 @@ class _ModernGlassBorderPainter extends CustomPainter {
     if (isCircle) {
       canvas.drawOval(insetRect, borderPaint);
     } else {
-      final cornerRadius =
-          (radius - strokeWidth / 2).clamp(0.0, double.infinity);
+      final cornerRadius = (radius - strokeWidth / 2).clamp(
+        0.0,
+        double.infinity,
+      );
       canvas.drawRRect(
         RRect.fromRectAndRadius(insetRect, Radius.circular(cornerRadius)),
         borderPaint,
