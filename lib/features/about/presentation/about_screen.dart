@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:aevum/core/config/app_links.dart';
 import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/providers/app_state_provider.dart';
+import 'package:aevum/core/services/backup_codec.dart';
 import 'package:aevum/core/widgets/forest_background.dart';
 import 'package:aevum/core/widgets/glass_container.dart';
 import 'package:aevum/features/about/presentation/privacy_policy_screen.dart';
+import 'package:aevum/features/tasks/providers/task_providers.dart';
 
 class AboutScreen extends ConsumerWidget {
   const AboutScreen({super.key});
@@ -21,6 +24,70 @@ class AboutScreen extends ConsumerWidget {
         const SnackBar(content: Text('Não foi possível abrir este link.')),
       );
     }
+  }
+
+  void _showMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _exportBackup(BuildContext context, WidgetRef ref) async {
+    final tasks = ref.read(taskListProvider);
+    final sessions = ref.read(sessionListProvider);
+    await Clipboard.setData(
+      ClipboardData(text: BackupCodec.encode(tasks, sessions)),
+    );
+    if (!context.mounted) return;
+    _showMessage(
+      context,
+      'Backup copiado. Cole em um lugar seguro, como uma nota sua.',
+    );
+  }
+
+  Future<void> _importBackup(BuildContext context, WidgetRef ref) async {
+    final clipboard = await Clipboard.getData(Clipboard.kTextPlain);
+    if (!context.mounted) return;
+
+    final BackupData backup;
+    try {
+      backup = BackupCodec.decode(clipboard?.text ?? '');
+    } on FormatException {
+      _showMessage(
+        context,
+        'Copie um backup do Aevum antes de importar: a área de transferência não tem um válido.',
+      );
+      return;
+    }
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Importar backup?'),
+        content: Text(
+          '${backup.tasks.length} hábitos e ${backup.sessions.length} sessões serão adicionados. '
+          'Itens que já existem serão atualizados e nada será apagado.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: const Text('Importar'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    await ref.read(taskListProvider.notifier).importTasks(backup.tasks);
+    await ref
+        .read(sessionListProvider.notifier)
+        .importSessions(backup.sessions);
+    if (!context.mounted) return;
+    _showMessage(context, 'Backup importado.');
   }
 
   Future<void> _confirmReset(BuildContext context, WidgetRef ref) async {
@@ -181,6 +248,19 @@ class AboutScreen extends ConsumerWidget {
                             ? '${snapshot.data!.version} (${snapshot.data!.buildNumber})'
                             : 'Carregando…',
                       ),
+                    ),
+                    _AboutAction(
+                      icon: Icons.upload_rounded,
+                      title: 'Exportar backup',
+                      subtitle: 'Copia hábitos e sessões como texto',
+                      onTap: () => _exportBackup(context, ref),
+                    ),
+                    _AboutAction(
+                      icon: Icons.download_rounded,
+                      title: 'Importar backup',
+                      subtitle:
+                          'Lê o backup copiado para a área de transferência',
+                      onTap: () => _importBackup(context, ref),
                     ),
                     const SizedBox(height: 18),
                     OutlinedButton.icon(

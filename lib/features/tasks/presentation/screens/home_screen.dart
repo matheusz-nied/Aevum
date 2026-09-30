@@ -118,33 +118,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  void _confirmDelete(BuildContext context, WidgetRef ref, TaskModel task) {
+  void _deleteWithUndo(BuildContext context, WidgetRef ref, TaskModel task) {
     HapticService.mediumImpact();
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Excluir hábito?'),
-        content: Text(
-          'Deseja realmente remover "${task.title}"? O histórico de sessões será mantido.',
+    final notifier = ref.read(taskListProvider.notifier);
+    notifier.deleteTask(task.id);
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Text('"${task.title}" foi excluído.'),
+          duration: const Duration(seconds: 6),
+          action: SnackBarAction(
+            label: 'Desfazer',
+            onPressed: () => notifier.addTask(task),
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () {
-              ref.read(taskListProvider.notifier).deleteTask(task.id);
-              Navigator.of(ctx).pop();
-            },
-            child: const Text(
-              'Excluir',
-              style: TextStyle(color: AppColors.warning),
-            ),
-          ),
-        ],
-      ),
-    );
+      );
   }
 
   @override
@@ -365,7 +354,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         );
                       },
                       onEdit: () => _openCreateTaskSheet(context, ref, task),
-                      onDelete: () => _confirmDelete(context, ref, task),
+                      onDelete: () => _deleteWithUndo(context, ref, task),
                     ),
                   );
                 }, childCount: tasks.length),

@@ -27,6 +27,11 @@ class TaskListNotifier extends StateNotifier<List<TaskModel>> {
     state = _repository.getAllTasks();
   }
 
+  Future<void> importTasks(Iterable<TaskModel> tasks) async {
+    await _repository.saveTasks(tasks);
+    state = _repository.getAllTasks();
+  }
+
   Future<void> deleteTask(String id) async {
     await _repository.deleteTask(id);
     state = _repository.getAllTasks();
@@ -55,6 +60,11 @@ class SessionListNotifier extends StateNotifier<List<SessionRecord>> {
 
   Future<void> recordSession(SessionRecord session) async {
     await _repository.addSession(session);
+    state = _repository.getAllSessions();
+  }
+
+  Future<void> importSessions(Iterable<SessionRecord> sessions) async {
+    await _repository.addSessions(sessions);
     state = _repository.getAllSessions();
   }
 

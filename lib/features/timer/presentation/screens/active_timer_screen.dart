@@ -185,6 +185,8 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
                 completedAt: DateTime.now(),
                 durationSeconds: state.elapsedSeconds,
                 completedGoal: _reachedGoal(state),
+                taskTitle: widget.task.title,
+                taskColorValue: widget.task.colorValue,
               ),
             );
         _leave();

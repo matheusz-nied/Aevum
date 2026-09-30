@@ -277,7 +277,11 @@ class StatsScreen extends ConsumerWidget {
                 else
                   ...sessions.take(10).map((session) {
                     final task = tasksById[session.taskId];
-                    final taskColor = task?.color ?? AppColors.textMuted;
+                    final taskColor =
+                        task?.color ??
+                        (session.taskColorValue != null
+                            ? Color(session.taskColorValue!)
+                            : AppColors.textMuted);
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 8),
@@ -320,7 +324,9 @@ class StatsScreen extends ConsumerWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      task?.title ?? 'Hábito removido',
+                                      task?.title ??
+                                          session.taskTitle ??
+                                          'Hábito removido',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 14,

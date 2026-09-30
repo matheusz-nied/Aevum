@@ -16,6 +16,10 @@ class SessionRepository {
     await _box.put(session.id, session.toMap());
   }
 
+  Future<void> addSessions(Iterable<SessionRecord> sessions) async {
+    await _box.putAll({for (final s in sessions) s.id: s.toMap()});
+  }
+
   List<SessionRecord> getAllSessions() {
     final List<SessionRecord> list = [];
     for (var key in _box.keys) {

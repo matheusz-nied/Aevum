@@ -49,6 +49,10 @@ class TaskRepository {
     await _box.put(task.id, task.toMap());
   }
 
+  Future<void> saveTasks(Iterable<TaskModel> tasks) async {
+    await _box.putAll({for (final task in tasks) task.id: task.toMap()});
+  }
+
   Future<void> deleteTask(String id) async {
     await _box.delete(id);
   }

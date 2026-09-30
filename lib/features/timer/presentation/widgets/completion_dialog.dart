@@ -64,6 +64,8 @@ class _CompletionDialogState extends State<CompletionDialog>
       completedAt: DateTime.now(),
       durationSeconds: widget.durationSeconds,
       completedGoal: widget.completedGoal,
+      taskTitle: widget.task.title,
+      taskColorValue: widget.task.colorValue,
     );
     widget.onConfirm(session);
     Navigator.of(context).pop();
