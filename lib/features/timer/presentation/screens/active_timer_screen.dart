@@ -254,10 +254,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
               children: [
                 const SizedBox(height: 6),
 
-                _SessionTopBar(
-                  title: widget.task.title,
-                  onBack: _requestExit,
-                ),
+                _SessionTopBar(title: widget.task.title, onBack: _requestExit),
 
                 const SizedBox(height: 14),
 
