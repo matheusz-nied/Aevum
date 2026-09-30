@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 import 'package:aevum/core/constants/app_colors.dart';
-import 'package:aevum/core/services/haptic_service.dart';
 import 'package:aevum/core/services/screen_awake_service.dart';
 import 'package:aevum/core/services/timer_session_store.dart';
 import 'package:aevum/core/theme/app_typography.dart';
@@ -257,13 +256,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
 
                 _SessionTopBar(
                   title: widget.task.title,
-                  accentColor: accentColor,
                   onBack: _requestExit,
-                  onComplete: () {
-                    HapticService.mediumImpact();
-                    timerNotifier.complete();
-                    ScreenAwakeService.setEnabled(false);
-                  },
                 ),
 
                 const SizedBox(height: 14),
@@ -393,19 +386,13 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
   }
 }
 
-/// Topo da sessão: voltar, nome do hábito com o estado ao vivo e "Concluir".
+/// Topo da sessão: voltar e o nome do hábito com o estado ao vivo.
+/// Não há "Concluir": o hábito se conclui sozinho quando o tempo acaba.
 class _SessionTopBar extends ConsumerWidget {
   final String title;
-  final Color accentColor;
   final VoidCallback onBack;
-  final VoidCallback onComplete;
 
-  const _SessionTopBar({
-    required this.title,
-    required this.accentColor,
-    required this.onBack,
-    required this.onComplete,
-  });
+  const _SessionTopBar({required this.title, required this.onBack});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -466,37 +453,8 @@ class _SessionTopBar extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 12),
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: onComplete,
-              borderRadius: BorderRadius.circular(99),
-              child: Ink(
-                height: 44,
-                padding: const EdgeInsets.symmetric(horizontal: 14),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(99),
-                  color: accentColor.withValues(alpha: 0.14),
-                  border: Border.all(color: accentColor.withValues(alpha: 0.3)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.check_rounded, size: 17, color: accentColor),
-                    const SizedBox(width: 5),
-                    Text(
-                      'Concluir',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: accentColor,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          // Contrapeso do botão voltar para manter o título centralizado.
+          const SizedBox(width: 44),
         ],
       ),
     );
