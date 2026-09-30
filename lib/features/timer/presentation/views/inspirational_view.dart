@@ -186,7 +186,7 @@ class _InspirationalViewState extends State<InspirationalView> {
                                 ? 'em pausa'
                                 : 'pronto',
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 11,
                               fontWeight: FontWeight.w500,
                               letterSpacing: 2.4,
                               color: accentColor.withValues(alpha: 0.78),

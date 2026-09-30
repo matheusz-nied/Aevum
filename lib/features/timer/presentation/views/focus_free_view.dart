@@ -141,7 +141,7 @@ class _CalmHeader extends StatelessWidget {
         key: ValueKey(label),
         style: TextStyle(
           color: AppColors.textMuted.withValues(alpha: 0.64),
-          fontSize: 10,
+          fontSize: 11,
           fontWeight: FontWeight.w600,
           letterSpacing: 2.8,
         ),

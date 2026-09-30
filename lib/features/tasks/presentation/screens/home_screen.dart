@@ -208,7 +208,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 'EVOLUA NO SEU TEMPO',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 8,
+                                  fontSize: 11,
                                   letterSpacing: 1.35,
                                   color: AppColors.textMuted,
                                 ),

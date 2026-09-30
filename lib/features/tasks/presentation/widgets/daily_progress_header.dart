@@ -48,7 +48,7 @@ class DailyProgressHeader extends StatelessWidget {
                         TimeUtils.formatHeaderDate(DateTime.now())
                             .toUpperCase(),
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 1.7,
                           color: AppColors.textMuted,
@@ -67,7 +67,7 @@ class DailyProgressHeader extends StatelessWidget {
                           Text(
                             'RITMO DO DIA',
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 11,
                               fontWeight: FontWeight.w600,
                               letterSpacing: 1.3,
                               color: AppColors.textMuted,

@@ -5,6 +5,7 @@ import 'package:aevum/core/constants/app_colors.dart';
 import 'package:aevum/core/services/haptic_service.dart';
 import 'package:aevum/core/services/screen_awake_service.dart';
 import 'package:aevum/core/services/timer_session_store.dart';
+import 'package:aevum/core/utils/time_utils.dart';
 import 'package:aevum/core/widgets/forest_background.dart';
 import 'package:aevum/features/tasks/domain/session_record.dart';
 import 'package:aevum/features/tasks/domain/task_model.dart';
@@ -276,7 +277,7 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
                             const Text(
                               'SESSÃO EM ANDAMENTO',
                               style: TextStyle(
-                                fontSize: 8,
+                                fontSize: 11,
                                 fontWeight: FontWeight.w600,
                                 letterSpacing: 1.2,
                                 color: AppColors.textMuted,
@@ -358,12 +359,16 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
                       final notifier = ref.read(
                         timerControllerProvider.notifier,
                       );
-                      return AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 400),
-                        child: _buildVisualModeView(
-                          viewState.visualMode,
-                          viewState,
-                          notifier,
+                      return Semantics(
+                        container: true,
+                        label: _timerSemanticsLabel(viewState),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 400),
+                          child: _buildVisualModeView(
+                            viewState.visualMode,
+                            viewState,
+                            notifier,
+                          ),
                         ),
                       );
                     },
@@ -375,6 +380,19 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
         ),
       ),
     );
+  }
+
+  /// Rótulo para leitores de tela; vale para todos os modos visuais, inclusive
+  /// o Foco Livre, que não mostra o relógio.
+  String _timerSemanticsLabel(TimerState state) {
+    final time = TimeUtils.formatSecondsSpoken(state.remainingSeconds);
+    final status = state.isRunning
+        ? 'em andamento'
+        : state.isPaused
+        ? 'em pausa'
+        : 'pronto';
+    final kind = widget.task.isCountUp ? 'decorrido' : 'restante';
+    return 'Timer $status, $time $kind';
   }
 
   Widget _buildVisualModeView(

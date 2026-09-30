@@ -218,7 +218,7 @@ class _PageShell extends StatelessWidget {
                   eyebrow,
                   style: const TextStyle(
                     color: AppColors.textMuted,
-                    fontSize: 10,
+                    fontSize: 11,
                     letterSpacing: 2.6,
                     fontWeight: FontWeight.w700,
                   ),

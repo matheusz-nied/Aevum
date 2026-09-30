@@ -37,6 +37,24 @@ class TimeUtils {
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
+  /// Formata segundos por extenso para leitores de tela
+  /// (ex: `1 hora, 2 minutos e 5 segundos`).
+  static String formatSecondsSpoken(int totalSeconds) {
+    if (totalSeconds < 0) totalSeconds = 0;
+    final hours = totalSeconds ~/ 3600;
+    final minutes = (totalSeconds % 3600) ~/ 60;
+    final seconds = totalSeconds % 60;
+
+    final parts = <String>[
+      if (hours > 0) '$hours ${hours == 1 ? 'hora' : 'horas'}',
+      if (minutes > 0) '$minutes ${minutes == 1 ? 'minuto' : 'minutos'}',
+      if (seconds > 0 || totalSeconds == 0)
+        '$seconds ${seconds == 1 ? 'segundo' : 'segundos'}',
+    ];
+    if (parts.length == 1) return parts.first;
+    return '${parts.sublist(0, parts.length - 1).join(', ')} e ${parts.last}';
+  }
+
   /// Formata minutos em formato amigável (ex: `15m`, `1h 30m`)
   static String formatMinutesReadable(int minutes) {
     if (minutes < 60) {

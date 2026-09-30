@@ -112,7 +112,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                 Text(
                   title.toUpperCase(),
                   style: const TextStyle(
-                    fontSize: 10,
+                    fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.3,
                     color: AppColors.textMuted,
@@ -126,7 +126,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: _selectedColor.withValues(alpha: 0.95),
                       ),
@@ -153,7 +153,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
             Text(
               isEditing ? 'EDITAR RITMO' : 'NOVO RITMO',
               style: TextStyle(
-                fontSize: 10,
+                fontSize: 11,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.4,
                 color: _selectedColor,
@@ -729,7 +729,7 @@ class _CreateTaskSheetState extends State<CreateTaskSheet> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontSize: 10,
+                          fontSize: 11,
                           fontWeight: isSelected
                               ? FontWeight.w600
                               : FontWeight.w500,
