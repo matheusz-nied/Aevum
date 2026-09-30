@@ -74,6 +74,15 @@ void main() {
       expect(controller.state.status, equals(TimerStatus.completed));
     });
 
+    test('clear() stops the ticker and returns to a blank idle state', () {
+      controller.start(sampleTask);
+      controller.clear();
+
+      expect(controller.state.status, equals(TimerStatus.idle));
+      expect(controller.state.task, isNull);
+      expect(controller.state.elapsedSeconds, equals(0));
+    });
+
     test('never emits the same elapsed second twice in sequence', () async {
       controller.start(sampleTask);
       final elapsedValues = <int>[];

@@ -13,44 +13,32 @@ class DayFocusMetric {
 }
 
 class StreakCalculator {
-  /// Calcula a sequência de dias consecutivos com pelo menos 1 sessão concluída
-  static int calculateCurrentStreak(List<SessionRecord> sessions) {
+  /// Dia civil como data UTC: a diferença entre dois dias é sempre múltiplo
+  /// exato de 24h, mesmo em fusos com horário de verão.
+  static DateTime _civilDay(DateTime date) =>
+      DateTime.utc(date.year, date.month, date.day);
+
+  /// Calcula a sequência de dias consecutivos com pelo menos 1 sessão concluída.
+  /// [now] existe para permitir testes determinísticos.
+  static int calculateCurrentStreak(
+    List<SessionRecord> sessions, {
+    DateTime? now,
+  }) {
     if (sessions.isEmpty) return 0;
 
-    // Agrupar datas únicas normalizadas para meia-noite
     final uniqueDates =
-        sessions
-            .map(
-              (s) => DateTime(
-                s.completedAt.year,
-                s.completedAt.month,
-                s.completedAt.day,
-              ),
-            )
-            .toSet()
-            .toList()
+        sessions.map((s) => _civilDay(s.completedAt)).toSet().toList()
           ..sort((a, b) => b.compareTo(a));
 
-    if (uniqueDates.isEmpty) return 0;
-
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final yesterday = today.subtract(const Duration(days: 1));
+    final today = _civilDay(now ?? DateTime.now());
 
     // A sequência é válida se o usuário fez hoje ou ontem
-    final mostRecent = uniqueDates.first;
-    if (!mostRecent.isAtSameMomentAs(today) &&
-        !mostRecent.isAtSameMomentAs(yesterday)) {
-      return 0;
-    }
+    final daysSinceLast = today.difference(uniqueDates.first).inDays;
+    if (daysSinceLast != 0 && daysSinceLast != 1) return 0;
 
     int streak = 1;
     for (int i = 0; i < uniqueDates.length - 1; i++) {
-      final current = uniqueDates[i];
-      final next = uniqueDates[i + 1];
-
-      final diffInDays = current.difference(next).inDays;
-      if (diffInDays == 1) {
+      if (uniqueDates[i].difference(uniqueDates[i + 1]).inDays == 1) {
         streak++;
       } else {
         break;

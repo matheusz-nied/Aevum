@@ -10,12 +10,14 @@ import 'package:uuid/uuid.dart';
 class CompletionDialog extends StatefulWidget {
   final TaskModel task;
   final int durationSeconds;
+  final bool completedGoal;
   final ValueChanged<SessionRecord> onConfirm;
 
   const CompletionDialog({
     super.key,
     required this.task,
     required this.durationSeconds,
+    required this.completedGoal,
     required this.onConfirm,
   });
 
@@ -61,7 +63,7 @@ class _CompletionDialogState extends State<CompletionDialog>
       taskId: widget.task.id,
       completedAt: DateTime.now(),
       durationSeconds: widget.durationSeconds,
-      completedGoal: true,
+      completedGoal: widget.completedGoal,
     );
     widget.onConfirm(session);
     Navigator.of(context).pop();
@@ -71,7 +73,11 @@ class _CompletionDialogState extends State<CompletionDialog>
   Widget build(BuildContext context) {
     final accentColor = widget.task.color;
     final minutes = widget.durationSeconds ~/ 60;
-    final durationLabel = minutes == 1 ? '1 minuto' : '$minutes minutos';
+    final durationLabel = switch (minutes) {
+      0 => 'Menos de 1 minuto',
+      1 => '1 minuto',
+      _ => '$minutes minutos',
+    };
 
     return Dialog(
       elevation: 0,
@@ -96,10 +102,10 @@ class _CompletionDialogState extends State<CompletionDialog>
                 children: [
                   _CelebrationOrb(accentColor: accentColor),
                   const SizedBox(height: 22),
-                  const Text(
-                    'Hábito concluído',
+                  Text(
+                    widget.completedGoal ? 'Hábito concluído' : 'Sessão salva',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 25,
                       height: 1.1,
                       fontWeight: FontWeight.w700,

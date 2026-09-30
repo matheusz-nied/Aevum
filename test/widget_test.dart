@@ -72,6 +72,104 @@ void main() {
     expect(find.text('Entendi'), findsOneWidget);
   });
 
+  group('System back on the active timer', () {
+    final task = TaskModel(
+      id: 'back',
+      title: 'Leitura',
+      targetMinutes: 10,
+      iconKey: TaskIcon.nature,
+      colorValue: AppColors.emeraldMist.toARGB32(),
+    );
+
+    Future<ProviderContainer> openTimer(WidgetTester tester) async {
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp(
+            home: Builder(
+              builder: (context) => Scaffold(
+                body: TextButton(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => ActiveTimerScreen(task: task),
+                    ),
+                  ),
+                  child: const Text('abrir'),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('abrir'));
+      await tester.pumpAndSettle();
+      return ProviderScope.containerOf(
+        tester.element(find.byType(ActiveTimerScreen)),
+      );
+    }
+
+    testWidgets('leaves right away and clears the timer when nothing elapsed', (
+      tester,
+    ) async {
+      final container = await openTimer(tester);
+      expect(
+        container.read(timerControllerProvider).status,
+        TimerStatus.running,
+      );
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ActiveTimerScreen), findsNothing);
+      expect(container.read(timerControllerProvider).status, TimerStatus.idle);
+    });
+
+    testWidgets('asks before leaving once time has elapsed and can resume', (
+      tester,
+    ) async {
+      final container = await openTimer(tester);
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 1100)),
+      );
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      expect(find.text('Sair da sessão?'), findsOneWidget);
+      expect(find.byType(ActiveTimerScreen), findsOneWidget);
+      expect(
+        container.read(timerControllerProvider).status,
+        TimerStatus.paused,
+      );
+
+      await tester.tap(find.text('Continuar'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ActiveTimerScreen), findsOneWidget);
+      expect(
+        container.read(timerControllerProvider).status,
+        TimerStatus.running,
+      );
+    });
+
+    testWidgets('discarding leaves the screen and stops the timer', (
+      tester,
+    ) async {
+      final container = await openTimer(tester);
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 1100)),
+      );
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Descartar'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(ActiveTimerScreen), findsNothing);
+      expect(container.read(timerControllerProvider).status, TimerStatus.idle);
+      expect(container.read(timerControllerProvider).elapsedSeconds, 0);
+    });
+  });
+
   testWidgets('DailyProgressHeader renders percentage and minutes correctly', (
     WidgetTester tester,
   ) async {
@@ -335,7 +433,10 @@ void main() {
     await tester.pump();
 
     // Preview should reflect typed text
-    expect(find.text('Leitura Noturna'), findsNWidgets(2)); // TextField & Preview
+    expect(
+      find.text('Leitura Noturna'),
+      findsNWidgets(2),
+    ); // TextField & Preview
 
     // Select duration: 25m
     await tester.tap(find.text('25m'));
@@ -345,7 +446,10 @@ void main() {
     // Select visual mode: Mandala Flow
     await tester.tap(find.text('Mandala Flow'));
     await tester.pumpAndSettle();
-    expect(find.text('Geometria sagrada pulsante com ritmo de respiração'), findsOneWidget);
+    expect(
+      find.text('Geometria sagrada pulsante com ritmo de respiração'),
+      findsOneWidget,
+    );
 
     // Drag main scroll view to reveal icon selector and tap Natureza
     await tester.drag(

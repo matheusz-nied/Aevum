@@ -78,6 +78,57 @@ void main() {
       expect(streak, equals(1));
     });
 
+    test(
+      'calculateCurrentStreak counts days across month and year boundary',
+      () {
+        SessionRecord at(String id, DateTime d) => SessionRecord(
+          id: id,
+          taskId: 't1',
+          completedAt: d,
+          durationSeconds: 900,
+          completedGoal: true,
+        );
+        final sessions = [
+          at('1', DateTime(2026, 1, 1, 23, 50)),
+          at('2', DateTime(2025, 12, 31, 0, 5)),
+          at('3', DateTime(2025, 12, 30, 12)),
+        ];
+
+        final streak = StreakCalculator.calculateCurrentStreak(
+          sessions,
+          now: DateTime(2026, 1, 1, 8),
+        );
+        expect(streak, equals(3));
+      },
+    );
+
+    test('calculateCurrentStreak is valid when last session was yesterday', () {
+      final sessions = [
+        SessionRecord(
+          id: '1',
+          taskId: 't1',
+          completedAt: DateTime(2026, 3, 1, 23, 59),
+          durationSeconds: 900,
+          completedGoal: true,
+        ),
+      ];
+
+      expect(
+        StreakCalculator.calculateCurrentStreak(
+          sessions,
+          now: DateTime(2026, 3, 2, 0, 1),
+        ),
+        equals(1),
+      );
+      expect(
+        StreakCalculator.calculateCurrentStreak(
+          sessions,
+          now: DateTime(2026, 3, 3, 0, 1),
+        ),
+        equals(0),
+      );
+    });
+
     test('getLast7DaysMetrics returns exactly 7 metrics', () {
       final metrics = StreakCalculator.getLast7DaysMetrics([]);
       expect(metrics.length, equals(7));

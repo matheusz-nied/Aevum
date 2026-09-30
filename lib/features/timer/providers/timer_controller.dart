@@ -96,6 +96,15 @@ class TimerController extends StateNotifier<TimerState> {
     HapticService.mediumImpact();
   }
 
+  /// Encerra a sessão sem feedback: para o ticker e volta ao estado inicial.
+  /// Usado ao sair da tela, já que o provider é global e sobrevive a ela.
+  void clear() {
+    _ticker?.cancel();
+    _accumulatedSeconds = 0;
+    _segmentStartTime = null;
+    state = const TimerState();
+  }
+
   void complete() {
     _ticker?.cancel();
     if (_segmentStartTime != null) {
