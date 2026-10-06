@@ -120,7 +120,12 @@ class _ActiveTimerScreenState extends ConsumerState<ActiveTimerScreen>
       notifier.pause();
       ScreenAwakeService.setEnabled(false);
     } else {
-      notifier.resume();
+      // Após "Reiniciar" o timer fica ocioso: resume() só vale para pausado.
+      if (state.status == TimerStatus.idle) {
+        notifier.start(widget.task, initialMode: state.visualMode);
+      } else {
+        notifier.resume();
+      }
       ScreenAwakeService.setEnabled(true);
     }
   }
